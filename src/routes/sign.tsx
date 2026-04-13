@@ -1,13 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { SignIn, useUser } from '@clerk/react'
 
 export const Route = createFileRoute('/sign')({
   component: Sign,
 })
 
 function Sign() {
+  const { isLoaded, isSignedIn } = useUser()
+
+  if (!isLoaded) return null
+
+  if (isSignedIn) {
+    return <Navigate to="/bookings" />
+  }
+
   return (
-    <div className="p-2">
-      <h3>Sign In / Up</h3>
+    <div className="flex justify-center p-4">
+      <SignIn routing="path" path="/sign" />
     </div>
   )
 }

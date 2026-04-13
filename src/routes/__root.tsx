@@ -1,35 +1,30 @@
-import { createRootRoute, Outlet, Link } from '@tanstack/react-router'
-import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react'
+import { createRootRoute, Outlet, Link } from '@tanstack/react-router';
+import { Show, UserButton } from '@clerk/react';
+import { Header, Footer } from '../components';
 
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header className="p-4 flex gap-4 items-center">
-        <nav className="flex gap-4 flex-1">
-          <Link to="/" className="[&.active]:font-bold">
-            Home
-          </Link>{' '}
-          <Link to="/bookings" className="[&.active]:font-bold">
-            Bookings
-          </Link>
-          <Link to="/sign" className="[&.active]:font-bold">
-            Sign In / Up
-          </Link>
-        </nav>
-        <div className="flex gap-4">
-          <Show when="signed-out">
-            <SignInButton />
-            <SignUpButton />
-          </Show>
+function RootComponent() {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header>
+        <div className="flex items-center w-full gap-4">
           <Show when="signed-in">
+            <nav className="flex flex-1 gap-4 text-[#2C694E]">
+              <Link to="/bookings" className="[&.active]:font-bold">
+                Bookings
+              </Link>
+            </nav>
             <UserButton />
           </Show>
         </div>
-      </header>
-      <hr />
-      <div className="p-4">
+      </Header>
+      <main className="flex-1 p-4">
         <Outlet />
-      </div>
-    </>
-  ),
-})
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export const Route = createRootRoute({
+  component: RootComponent,
+});

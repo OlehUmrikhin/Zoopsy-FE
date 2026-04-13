@@ -1,10 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { useUser } from '@clerk/react'
 
 export const Route = createFileRoute('/bookings')({
-  component: Bookings,
+  component: BookingsPage,
 })
 
-function Bookings() {
+function BookingsPage() {
+  const { isLoaded, isSignedIn } = useUser()
+
+  if (!isLoaded) return null
+
+  if (!isSignedIn) {
+    return <Navigate to="/sign" />
+  }
+
   return (
     <div className="p-2">
       <h3>Bookings</h3>
