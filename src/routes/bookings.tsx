@@ -6,12 +6,16 @@ export const Route = createFileRoute('/bookings')({
 })
 
 function BookingsPage() {
-  const { isLoaded, isSignedIn } = useUser()
+  const { isLoaded, isSignedIn, user } = useUser()
 
   if (!isLoaded) return null
 
   if (!isSignedIn) {
     return <Navigate to="/sign" />
+  }
+
+  if (!user?.unsafeMetadata?.role) {
+    return <Navigate to="/role-selector" />
   }
 
   return (

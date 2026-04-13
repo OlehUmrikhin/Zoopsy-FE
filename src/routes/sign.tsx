@@ -6,17 +6,20 @@ export const Route = createFileRoute('/sign')({
 })
 
 function Sign() {
-  const { isLoaded, isSignedIn } = useUser()
+  const { isLoaded, isSignedIn, user } = useUser()
 
   if (!isLoaded) return null
 
   if (isSignedIn) {
-    return <Navigate to="/bookings" />
+    if (user?.unsafeMetadata?.role) {
+      return <Navigate to="/bookings" />
+    }
+    return <Navigate to="/role-selector" />
   }
 
   return (
     <div className="flex justify-center p-4">
-      <SignIn routing="path" path="/sign" />
+      <SignIn routing="path" path="/sign" fallbackRedirectUrl="/" signUpFallbackRedirectUrl="/" />
     </div>
   )
 }

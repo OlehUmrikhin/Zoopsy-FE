@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignRouteImport } from './routes/sign'
+import { Route as RoleSelectorRouteImport } from './routes/role-selector'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SignRoute = SignRouteImport.update({
   id: '/sign',
   path: '/sign',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoleSelectorRoute = RoleSelectorRouteImport.update({
+  id: '/role-selector',
+  path: '/role-selector',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingsRoute = BookingsRouteImport.update({
@@ -32,30 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bookings': typeof BookingsRoute
+  '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bookings': typeof BookingsRoute
+  '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bookings': typeof BookingsRoute
+  '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bookings' | '/sign'
+  fullPaths: '/' | '/bookings' | '/role-selector' | '/sign'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bookings' | '/sign'
-  id: '__root__' | '/' | '/bookings' | '/sign'
+  to: '/' | '/bookings' | '/role-selector' | '/sign'
+  id: '__root__' | '/' | '/bookings' | '/role-selector' | '/sign'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BookingsRoute: typeof BookingsRoute
+  RoleSelectorRoute: typeof RoleSelectorRoute
   SignRoute: typeof SignRoute
 }
 
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/sign'
       fullPath: '/sign'
       preLoaderRoute: typeof SignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/role-selector': {
+      id: '/role-selector'
+      path: '/role-selector'
+      fullPath: '/role-selector'
+      preLoaderRoute: typeof RoleSelectorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookings': {
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BookingsRoute: BookingsRoute,
+  RoleSelectorRoute: RoleSelectorRoute,
   SignRoute: SignRoute,
 }
 export const routeTree = rootRouteImport

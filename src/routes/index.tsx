@@ -6,12 +6,15 @@ export const Route = createFileRoute('/')({
 })
 
 function Index() {
-  const { isLoaded, isSignedIn } = useUser()
+  const { isLoaded, isSignedIn, user } = useUser()
 
   if (!isLoaded) return null
 
   if (isSignedIn) {
-    return <Navigate to="/bookings" />
+    if (user?.unsafeMetadata?.role) {
+      return <Navigate to="/bookings" />
+    }
+    return <Navigate to="/role-selector" />
   }
 
   return <Navigate to="/sign" />

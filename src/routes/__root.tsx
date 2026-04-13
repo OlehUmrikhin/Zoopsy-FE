@@ -5,19 +5,21 @@ import { Header, Footer } from '../components';
 function RootComponent() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header>
-        <div className="flex items-center w-full gap-4">
-          <Show when="signed-in">
-            <nav className="flex flex-1 gap-4 text-[#2C694E]">
-              <Link to="/bookings" className="[&.active]:font-bold">
-                Bookings
-              </Link>
-            </nav>
-            <UserButton />
-          </Show>
-        </div>
-      </Header>
-      <main className="flex-1 p-4">
+      <div className="sticky top-0 z-50 bg-white">
+        <Header>
+          <div className="flex items-center w-full gap-4">
+            <Show when="signed-in">
+              <nav className="flex flex-1 gap-4 text-[#2C694E]">
+                <Link to="/bookings" className="[&.active]:font-bold">
+                  Bookings
+                </Link>
+              </nav>
+              <UserButton />
+            </Show>
+          </div>
+        </Header>
+      </div>
+      <main className="flex-1 p-0 flex flex-col">
         <Outlet />
       </main>
       <Footer />
