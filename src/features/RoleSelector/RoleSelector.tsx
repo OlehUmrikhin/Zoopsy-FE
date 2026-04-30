@@ -1,23 +1,27 @@
 import { useNavigate, Link } from '@tanstack/react-router';
-import { useUser } from '@clerk/react';
+import { useUser, useAuth } from '@clerk/react';
 import { FaPaw } from 'react-icons/fa';
 import { FaHouseMedical } from 'react-icons/fa6';
+import { setUserRole } from '../../api';
 
 export const RoleSelector = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   const handleRoleSelection = async (role: 'owner' | 'sitter') => {
     if (!user) return;
 
     try {
-      await user.update({
-        unsafeMetadata: { ...user.unsafeMetadata, role },
-      });
-      console.log('Role selected:', role);
-      navigate({ to: '/bookings' });
+      const token = await getToken();
+      if (!token) throw new Error('No token');
+      await setUserRole(role, token);
+      // Зберігаємо роль як bridge поки Clerk propagate publicMetadata після reload
+      sessionStorage.setItem('roleJustSet', role);
+      window.location.href = '/bookings';
     } catch (error) {
       console.error('Failed to update role', error);
+      alert(`Error: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 

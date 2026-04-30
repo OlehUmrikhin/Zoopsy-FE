@@ -11,15 +11,15 @@ function Sign() {
   if (!isLoaded) return null
 
   if (isSignedIn) {
-    if (user?.unsafeMetadata?.role) {
-      return <Navigate to="/bookings" />
-    }
+    const role = user?.publicMetadata?.role
+    if (role === 'admin') return <Navigate to="/admin" />
+    if (role) return <Navigate to="/bookings" />
     return <Navigate to="/role-selector" />
   }
 
   return (
     <div className="flex justify-center p-4">
-      <SignIn routing="path" path="/sign" fallbackRedirectUrl="/" signUpFallbackRedirectUrl="/" />
+      <SignIn routing="hash" fallbackRedirectUrl="/" signUpFallbackRedirectUrl="/" />
     </div>
   )
 }

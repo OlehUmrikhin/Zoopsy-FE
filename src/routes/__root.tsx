@@ -1,8 +1,15 @@
-import { createRootRoute, Outlet, Link } from '@tanstack/react-router';
+import { createRootRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
 import { Show, UserButton } from '@clerk/react';
 import { Header, Footer } from '../components';
 
 function RootComponent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdmin = pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return <Outlet />;
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="sticky top-0 z-50 bg-white">

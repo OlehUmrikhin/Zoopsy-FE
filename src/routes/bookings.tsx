@@ -14,9 +14,11 @@ function BookingsPage() {
     return <Navigate to="/sign" />
   }
 
-  if (!user?.unsafeMetadata?.role) {
-    return <Navigate to="/role-selector" />
-  }
+  const pendingRole = sessionStorage.getItem('roleJustSet');
+  const role = (user?.publicMetadata?.role as string) || pendingRole;
+  if (pendingRole) sessionStorage.removeItem('roleJustSet');
+  if (!role) return <Navigate to="/role-selector" />
+  if (role === 'admin') return <Navigate to="/admin" />
 
   return (
     <div className="p-2">
