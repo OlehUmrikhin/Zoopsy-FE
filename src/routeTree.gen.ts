@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignRouteImport } from './routes/sign'
 import { Route as RoleSelectorRouteImport } from './routes/role-selector'
+import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,6 +25,11 @@ const SignRoute = SignRouteImport.update({
 const RoleSelectorRoute = RoleSelectorRouteImport.update({
   id: '/role-selector',
   path: '/role-selector',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerRoute = OwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingsRoute = BookingsRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/bookings': typeof BookingsRoute
+  '/owner': typeof OwnerRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/admin/': typeof AdminIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bookings': typeof BookingsRoute
+  '/owner': typeof OwnerRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/admin': typeof AdminIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/bookings': typeof BookingsRoute
+  '/owner': typeof OwnerRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/admin/': typeof AdminIndexRoute
@@ -77,16 +86,18 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/bookings'
+    | '/owner'
     | '/role-selector'
     | '/sign'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bookings' | '/role-selector' | '/sign' | '/admin'
+  to: '/' | '/bookings' | '/owner' | '/role-selector' | '/sign' | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/bookings'
+    | '/owner'
     | '/role-selector'
     | '/sign'
     | '/admin/'
@@ -96,6 +107,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   BookingsRoute: typeof BookingsRoute
+  OwnerRoute: typeof OwnerRoute
   RoleSelectorRoute: typeof RoleSelectorRoute
   SignRoute: typeof SignRoute
 }
@@ -114,6 +126,13 @@ declare module '@tanstack/react-router' {
       path: '/role-selector'
       fullPath: '/role-selector'
       preLoaderRoute: typeof RoleSelectorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookings': {
@@ -163,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   BookingsRoute: BookingsRoute,
+  OwnerRoute: OwnerRoute,
   RoleSelectorRoute: RoleSelectorRoute,
   SignRoute: SignRoute,
 }
