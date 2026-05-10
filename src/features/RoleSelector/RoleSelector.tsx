@@ -18,7 +18,7 @@ export const RoleSelector = () => {
       toast.success('Роль успішно встановлено!');
       // Зберігаємо роль як bridge поки Clerk propagate publicMetadata після reload
       sessionStorage.setItem('roleJustSet', role);
-      window.location.href = role === 'owner' ? '/owner' : '/bookings';
+      window.location.href = '/profile';
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Не вдалося встановити роль');
     }

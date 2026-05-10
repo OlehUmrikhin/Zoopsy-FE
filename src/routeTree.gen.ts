@@ -11,7 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignRouteImport } from './routes/sign'
 import { Route as RoleSelectorRouteImport } from './routes/role-selector'
-import { Route as OwnerRouteImport } from './routes/owner'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as FindSitterRouteImport } from './routes/find-sitter'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -27,9 +28,14 @@ const RoleSelectorRoute = RoleSelectorRouteImport.update({
   path: '/role-selector',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OwnerRoute = OwnerRouteImport.update({
-  id: '/owner',
-  path: '/owner',
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindSitterRoute = FindSitterRouteImport.update({
+  id: '/find-sitter',
+  path: '/find-sitter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingsRoute = BookingsRouteImport.update({
@@ -57,7 +63,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/bookings': typeof BookingsRoute
-  '/owner': typeof OwnerRoute
+  '/find-sitter': typeof FindSitterRoute
+  '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/admin/': typeof AdminIndexRoute
@@ -65,7 +72,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bookings': typeof BookingsRoute
-  '/owner': typeof OwnerRoute
+  '/find-sitter': typeof FindSitterRoute
+  '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/admin': typeof AdminIndexRoute
@@ -75,7 +83,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/bookings': typeof BookingsRoute
-  '/owner': typeof OwnerRoute
+  '/find-sitter': typeof FindSitterRoute
+  '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/admin/': typeof AdminIndexRoute
@@ -86,18 +95,27 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/bookings'
-    | '/owner'
+    | '/find-sitter'
+    | '/profile'
     | '/role-selector'
     | '/sign'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bookings' | '/owner' | '/role-selector' | '/sign' | '/admin'
+  to:
+    | '/'
+    | '/bookings'
+    | '/find-sitter'
+    | '/profile'
+    | '/role-selector'
+    | '/sign'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/bookings'
-    | '/owner'
+    | '/find-sitter'
+    | '/profile'
     | '/role-selector'
     | '/sign'
     | '/admin/'
@@ -107,7 +125,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   BookingsRoute: typeof BookingsRoute
-  OwnerRoute: typeof OwnerRoute
+  FindSitterRoute: typeof FindSitterRoute
+  ProfileRoute: typeof ProfileRoute
   RoleSelectorRoute: typeof RoleSelectorRoute
   SignRoute: typeof SignRoute
 }
@@ -128,11 +147,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoleSelectorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/owner': {
-      id: '/owner'
-      path: '/owner'
-      fullPath: '/owner'
-      preLoaderRoute: typeof OwnerRouteImport
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-sitter': {
+      id: '/find-sitter'
+      path: '/find-sitter'
+      fullPath: '/find-sitter'
+      preLoaderRoute: typeof FindSitterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookings': {
@@ -182,7 +208,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   BookingsRoute: BookingsRoute,
-  OwnerRoute: OwnerRoute,
+  FindSitterRoute: FindSitterRoute,
+  ProfileRoute: ProfileRoute,
   RoleSelectorRoute: RoleSelectorRoute,
   SignRoute: SignRoute,
 }

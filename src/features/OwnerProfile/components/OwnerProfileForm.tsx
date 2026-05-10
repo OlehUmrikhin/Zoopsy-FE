@@ -3,7 +3,7 @@ import { Button } from '@heroui/react'
 import { PersonalDataSection } from './PersonalDataSection'
 import { PetsSection } from './PetsSection'
 import { useUpdateOwnerProfile } from '@api/user/mutations'
-import { useCurrentUser } from '@api'
+import { useOwnerProfile } from '@api'
 
 export type OwnerProfileFormValues = {
   fullName: string
@@ -31,7 +31,7 @@ const SPECIES_REVERSE_MAP: Record<number, string> = {
 }
 
 export function OwnerProfileForm() {
-  const { data: currentUser } = useCurrentUser()
+  const { data: currentUser } = useOwnerProfile()
 
   const methods = useForm<OwnerProfileFormValues>({
     values: currentUser

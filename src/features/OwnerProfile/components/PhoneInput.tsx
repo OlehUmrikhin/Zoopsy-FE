@@ -32,7 +32,7 @@ export function PhoneInput({ value = '', onChange, onBlur, name }: PhoneInputPro
   }
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, '').slice(0, 7)
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 9)
     onChange?.(`${code}${digits}`)
   }
 
@@ -86,8 +86,8 @@ export function PhoneInput({ value = '', onChange, onBlur, name }: PhoneInputPro
           onChange={handleNumberChange}
           onBlur={onBlur}
           inputMode="numeric"
-          maxLength={7}
-          placeholder="1234567"
+          maxLength={9}
+          placeholder="123456789"
           className={cn(
             'flex-1 bg-zoopsy-mint rounded-xl h-12 px-3',
             'text-zoopsy-dark-gray font-inter text-sm outline-none',
