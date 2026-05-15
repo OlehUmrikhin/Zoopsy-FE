@@ -5,8 +5,12 @@ import { SitterFilters } from './components/SitterFilters'
 import { SitterCard } from './components/SitterCard'
 import { MapStub } from './components/MapStub'
 
-export function FindSitterPage() {
-  const [params, setParams] = useState<SitterSearchParams>({})
+type Props = {
+  initialParams?: SitterSearchParams
+}
+
+export function FindSitterPage({ initialParams }: Props = {}) {
+  const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {})
   const { data: sitters, isLoading } = useSitters(params)
 
   return (

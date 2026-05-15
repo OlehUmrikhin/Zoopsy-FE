@@ -1,11 +1,17 @@
 import { createRootRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
-import { Show, UserButton } from '@clerk/react';
+import { Show, UserButton, useUser } from '@clerk/react';
 import { ToastContainer } from 'react-toastify';
 import { Header, Footer } from '../components';
+import { getAuthRedirectPath } from '../utils';
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { isSignedIn, user } = useUser();
   const isAdmin = pathname.startsWith('/admin');
+
+  const logoHref = isSignedIn
+    ? getAuthRedirectPath(user?.publicMetadata?.role)
+    : undefined;
 
   if (isAdmin) {
     return <Outlet />;
@@ -15,7 +21,7 @@ function RootComponent() {
     <div className="flex min-h-screen flex-col">
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="sticky top-0 z-50 bg-white">
-        <Header>
+        <Header logoHref={logoHref}>
           <div className="flex items-center w-full gap-4">
             <Show when="signed-in">
               <nav className="flex flex-1 gap-4 text-[#2C694E]">

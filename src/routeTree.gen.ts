@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignRouteImport } from './routes/sign'
 import { Route as RoleSelectorRouteImport } from './routes/role-selector'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as FindSitterRouteImport } from './routes/find-sitter'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
@@ -31,6 +32,11 @@ const RoleSelectorRoute = RoleSelectorRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FindSitterRoute = FindSitterRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/bookings': typeof BookingsRoute
   '/find-sitter': typeof FindSitterRoute
+  '/home': typeof HomeRoute
   '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bookings': typeof BookingsRoute
   '/find-sitter': typeof FindSitterRoute
+  '/home': typeof HomeRoute
   '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/bookings': typeof BookingsRoute
   '/find-sitter': typeof FindSitterRoute
+  '/home': typeof HomeRoute
   '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookings'
     | '/find-sitter'
+    | '/home'
     | '/profile'
     | '/role-selector'
     | '/sign'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bookings'
     | '/find-sitter'
+    | '/home'
     | '/profile'
     | '/role-selector'
     | '/sign'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookings'
     | '/find-sitter'
+    | '/home'
     | '/profile'
     | '/role-selector'
     | '/sign'
@@ -126,6 +138,7 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   BookingsRoute: typeof BookingsRoute
   FindSitterRoute: typeof FindSitterRoute
+  HomeRoute: typeof HomeRoute
   ProfileRoute: typeof ProfileRoute
   RoleSelectorRoute: typeof RoleSelectorRoute
   SignRoute: typeof SignRoute
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/find-sitter': {
@@ -209,6 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   BookingsRoute: BookingsRoute,
   FindSitterRoute: FindSitterRoute,
+  HomeRoute: HomeRoute,
   ProfileRoute: ProfileRoute,
   RoleSelectorRoute: RoleSelectorRoute,
   SignRoute: SignRoute,

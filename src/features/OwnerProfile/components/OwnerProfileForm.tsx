@@ -4,6 +4,7 @@ import { PersonalDataSection } from './PersonalDataSection'
 import { PetsSection } from './PetsSection'
 import { useUpdateOwnerProfile } from '@api/user/mutations'
 import { useOwnerProfile } from '@api'
+import { SPECIES_MAP, SPECIES_REVERSE_MAP } from '@api/owner/types'
 
 export type OwnerProfileFormValues = {
   fullName: string
@@ -18,16 +19,6 @@ export type OwnerProfileFormValues = {
     breed: string
     weight: string
   }[]
-}
-
-const SPECIES_MAP: Record<string, number> = {
-  dog: 0,
-  cat: 1,
-}
-
-const SPECIES_REVERSE_MAP: Record<number, string> = {
-  0: 'dog',
-  1: 'cat',
 }
 
 export function OwnerProfileForm() {
