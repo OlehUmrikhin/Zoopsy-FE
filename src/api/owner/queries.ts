@@ -9,5 +9,6 @@ export function useOwnerProfile() {
   return useQuery({
     queryKey: ownerQueryKeys.me(),
     queryFn: fetchOwnerProfile,
+    staleTime: 5 * 60 * 1000,
   });
 }
