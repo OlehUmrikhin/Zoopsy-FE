@@ -9,6 +9,12 @@ function RootComponent() {
   const { isSignedIn, user } = useUser();
   const isAdmin = pathname.startsWith('/admin');
 
+  const isSignPage = pathname.startsWith('/sign');
+  const isRoleSelectorPage = pathname.startsWith('/role-selector');
+  const isSitter = user?.publicMetadata?.role === 'sitter';
+
+  const hideNav = isSignPage || isRoleSelectorPage || isSitter;
+
   const logoHref = isSignedIn
     ? getAuthRedirectPath(user?.publicMetadata?.role)
     : undefined;
@@ -21,14 +27,16 @@ function RootComponent() {
     <div className="flex min-h-screen flex-col">
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="sticky top-0 z-50 bg-white">
-        <Header logoHref={logoHref}>
+        <Header logoHref={logoHref} hideNav={hideNav}>
           <div className="flex items-center w-full gap-4">
             <Show when="signed-in">
-              <nav className="flex flex-1 gap-4 text-[#2C694E]">
-                <Link to="/bookings" className="[&.active]:font-bold">
-                  Bookings
-                </Link>
-              </nav>
+              {!hideNav && (
+                <nav className="flex flex-1 gap-4 text-[#2C694E]">
+                  <Link to="/bookings" className="[&.active]:font-bold">
+                    Bookings
+                  </Link>
+                </nav>
+              )}
               <UserButton />
             </Show>
           </div>
