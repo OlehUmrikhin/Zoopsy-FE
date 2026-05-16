@@ -9,16 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TopRouteImport } from './routes/top'
 import { Route as SignRouteImport } from './routes/sign'
 import { Route as RoleSelectorRouteImport } from './routes/role-selector'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as FindSitterRouteImport } from './routes/find-sitter'
+import { Route as DownloadApkRouteImport } from './routes/download-apk'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 
+const TopRoute = TopRouteImport.update({
+  id: '/top',
+  path: '/top',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignRoute = SignRouteImport.update({
   id: '/sign',
   path: '/sign',
@@ -34,6 +44,11 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -44,9 +59,24 @@ const FindSitterRoute = FindSitterRouteImport.update({
   path: '/find-sitter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DownloadApkRoute = DownloadApkRouteImport.update({
+  id: '/download-apk',
+  path: '/download-apk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingsRoute = BookingsRouteImport.update({
   id: '/bookings',
   path: '/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiAssistantRoute = AiAssistantRouteImport.update({
+  id: '/ai-assistant',
+  path: '/ai-assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -68,34 +98,49 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/ai-assistant': typeof AiAssistantRoute
   '/bookings': typeof BookingsRoute
+  '/calendar': typeof CalendarRoute
+  '/download-apk': typeof DownloadApkRoute
   '/find-sitter': typeof FindSitterRoute
   '/home': typeof HomeRoute
+  '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
+  '/top': typeof TopRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-assistant': typeof AiAssistantRoute
   '/bookings': typeof BookingsRoute
+  '/calendar': typeof CalendarRoute
+  '/download-apk': typeof DownloadApkRoute
   '/find-sitter': typeof FindSitterRoute
   '/home': typeof HomeRoute
+  '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
+  '/top': typeof TopRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/ai-assistant': typeof AiAssistantRoute
   '/bookings': typeof BookingsRoute
+  '/calendar': typeof CalendarRoute
+  '/download-apk': typeof DownloadApkRoute
   '/find-sitter': typeof FindSitterRoute
   '/home': typeof HomeRoute
+  '/map': typeof MapRoute
   '/profile': typeof ProfileRoute
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
+  '/top': typeof TopRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -103,49 +148,76 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/ai-assistant'
     | '/bookings'
+    | '/calendar'
+    | '/download-apk'
     | '/find-sitter'
     | '/home'
+    | '/map'
     | '/profile'
     | '/role-selector'
     | '/sign'
+    | '/top'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-assistant'
     | '/bookings'
+    | '/calendar'
+    | '/download-apk'
     | '/find-sitter'
     | '/home'
+    | '/map'
     | '/profile'
     | '/role-selector'
     | '/sign'
+    | '/top'
     | '/admin'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/ai-assistant'
     | '/bookings'
+    | '/calendar'
+    | '/download-apk'
     | '/find-sitter'
     | '/home'
+    | '/map'
     | '/profile'
     | '/role-selector'
     | '/sign'
+    | '/top'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  AiAssistantRoute: typeof AiAssistantRoute
   BookingsRoute: typeof BookingsRoute
+  CalendarRoute: typeof CalendarRoute
+  DownloadApkRoute: typeof DownloadApkRoute
   FindSitterRoute: typeof FindSitterRoute
   HomeRoute: typeof HomeRoute
+  MapRoute: typeof MapRoute
   ProfileRoute: typeof ProfileRoute
   RoleSelectorRoute: typeof RoleSelectorRoute
   SignRoute: typeof SignRoute
+  TopRoute: typeof TopRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/top': {
+      id: '/top'
+      path: '/top'
+      fullPath: '/top'
+      preLoaderRoute: typeof TopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign': {
       id: '/sign'
       path: '/sign'
@@ -167,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -181,11 +260,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FindSitterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/download-apk': {
+      id: '/download-apk'
+      path: '/download-apk'
+      fullPath: '/download-apk'
+      preLoaderRoute: typeof DownloadApkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/bookings': {
       id: '/bookings'
       path: '/bookings'
       fullPath: '/bookings'
       preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-assistant': {
+      id: '/ai-assistant'
+      path: '/ai-assistant'
+      fullPath: '/ai-assistant'
+      preLoaderRoute: typeof AiAssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -227,12 +327,17 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  AiAssistantRoute: AiAssistantRoute,
   BookingsRoute: BookingsRoute,
+  CalendarRoute: CalendarRoute,
+  DownloadApkRoute: DownloadApkRoute,
   FindSitterRoute: FindSitterRoute,
   HomeRoute: HomeRoute,
+  MapRoute: MapRoute,
   ProfileRoute: ProfileRoute,
   RoleSelectorRoute: RoleSelectorRoute,
   SignRoute: SignRoute,
+  TopRoute: TopRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
