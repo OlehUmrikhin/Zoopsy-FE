@@ -82,6 +82,12 @@ export function SitterPersonalDataSection() {
           />
         </div>
 
+        <ZoopsyInput
+          label="АДРЕСА"
+          placeholder="Введіть адресу"
+          {...register('address')}
+        />
+
         <div className="grid grid-cols-2 gap-4">
           <Controller
             name="phoneNumber"

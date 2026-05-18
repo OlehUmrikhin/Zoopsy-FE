@@ -46,7 +46,7 @@ export function OwnerProfileForm() {
   const { mutate: updateOwnerProfile } = useUpdateOwnerProfile()
 
   const onSubmit = methods.handleSubmit((values) => {
-    updateOwnerProfile({
+    const payload: any = {
       fullName: values.fullName,
       gender: values.gender,
       city: values.city,
@@ -60,7 +60,11 @@ export function OwnerProfileForm() {
         gender: '',
         age: 0,
       })),
-    })
+    }
+
+    if (values.email) payload.email = values.email
+
+    updateOwnerProfile(payload)
   })
 
   return (

@@ -16,7 +16,9 @@ export type UpdateSitterProfilePayload = {
   fullName: string;
   gender: string;
   city: string;
+  address: string;
   phoneNumber: string;
+  email?: string;
   experienceYears: number;
   housingType: string;
   description: string;

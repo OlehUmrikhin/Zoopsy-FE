@@ -17,6 +17,7 @@ export type SitterProfileFormValues = {
   fullName: string
   gender: string
   city: string
+  address: string
   phoneNumber: string
   email: string
   experienceYears: string
@@ -67,6 +68,7 @@ function buildInitialValues(profile: ReturnType<typeof useSitterProfile>['data']
     fullName: profile?.fullName ?? '',
     gender: profile?.gender ?? '',
     city: profile?.city ?? '',
+    address: profile?.address ?? '',
     phoneNumber: profile?.phoneNumber ?? '',
     email: profile?.email ?? '',
     experienceYears: String(profile?.experienceYears ?? ''),
@@ -118,10 +120,11 @@ export function SitterProfileForm() {
         : []),
     ]
 
-    updateSitterProfile({
+    const payload = {
       fullName: values.fullName,
       gender: values.gender,
       city: values.city,
+      address: values.address,
       phoneNumber: values.phoneNumber,
       experienceYears: Number(values.experienceYears),
       housingType: values.housingType,
@@ -129,7 +132,11 @@ export function SitterProfileForm() {
       workSchedules,
       services,
       dogWeightPreferences: values.petSpecies.includes(0) ? values.dogWeightPreferences : [],
-    })
+    } as any
+
+    if (values.email) payload.email = values.email
+
+    updateSitterProfile(payload)
   })
 
   if(!sitterProfile) return null

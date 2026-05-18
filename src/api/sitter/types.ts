@@ -16,6 +16,7 @@ export type SitterProfile = {
   email: string;
   gender: string;
   city: string;
+  address: string;
   phoneNumber: string;
   experienceYears: number;
   housingType: string;
