@@ -30,6 +30,8 @@ export type SitterProfileFormValues = {
   dogServices: ServiceFormEntry[]
   catServices: ServiceFormEntry[]
   dogWeightPreferences: number[]
+  latitude: number | null
+  longitude: number | null
 }
 
 export const DOG_SERVICE_DEFS = [
@@ -89,6 +91,8 @@ function buildInitialValues(profile: ReturnType<typeof useSitterProfile>['data']
       pricePerUnit: String(catMap.get(serviceType) ?? ''),
     })),
     dogWeightPreferences: profile?.dogWeightPreferences ?? [],
+    latitude: profile?.latitude ?? null,
+    longitude: profile?.longitude ?? null,
   }
 }
 
@@ -135,6 +139,8 @@ export function SitterProfileForm() {
     } as any
 
     if (values.email) payload.email = values.email
+    if (values.latitude != null) payload.latitude = values.latitude
+    if (values.longitude != null) payload.longitude = values.longitude
 
     updateSitterProfile(payload)
   })

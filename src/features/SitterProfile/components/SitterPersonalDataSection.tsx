@@ -3,6 +3,7 @@ import { MdOutlineEdit } from 'react-icons/md'
 import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput'
 import { ZoopsySelect, ZoopsySelectItem } from '@features/OwnerProfile/components/ZoopsySelect'
 import { PhoneInput } from '@features/OwnerProfile/components/PhoneInput'
+import { AddressAutocomplete } from './AddressAutocomplete'
 import type { SitterProfileFormValues } from './SitterProfileForm'
 
 const GENDER_OPTIONS = [
@@ -25,7 +26,7 @@ const HOUSING_OPTIONS = [
 ]
 
 export function SitterPersonalDataSection() {
-  const { register, control } = useFormContext<SitterProfileFormValues>()
+  const { register, control, setValue } = useFormContext<SitterProfileFormValues>()
 
   return (
     <div className="bg-white rounded-2xl p-6">
@@ -82,10 +83,22 @@ export function SitterPersonalDataSection() {
           />
         </div>
 
-        <ZoopsyInput
-          label="АДРЕСА"
-          placeholder="Введіть адресу"
-          {...register('address')}
+        <Controller
+          name="address"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <AddressAutocomplete
+              value={value}
+              onChange={onChange}
+              onCoordinatesChange={(lat, lng) => {
+                setValue('latitude', lat, { shouldDirty: true })
+                setValue('longitude', lng, { shouldDirty: true })
+              }}
+              onCityChange={(cityKey) => {
+                setValue('city', cityKey, { shouldDirty: true })
+              }}
+            />
+          )}
         />
 
         <div className="grid grid-cols-2 gap-4">

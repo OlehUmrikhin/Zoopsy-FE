@@ -84,12 +84,18 @@ export function HomePage() {
 
   function handleSearch() {
     if (!canSearch) return
+    const isDog = selectedPet?.species === 0
+    const weight = selectedPet?.weight
+    const dogWeightCategory = isDog && weight != null
+      ? weight < 10 ? 0 : weight <= 25 ? 1 : 2
+      : undefined
     navigate({
       to: '/find-sitter',
       search: {
         city: selectedCity,
         serviceType: selectedService!,
         petSpecies: selectedPet?.species,
+        dogWeightCategory,
       },
     })
   }

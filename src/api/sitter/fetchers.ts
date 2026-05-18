@@ -25,6 +25,8 @@ export type UpdateSitterProfilePayload = {
   workSchedules: WorkSchedule[];
   services: SitterService[];
   dogWeightPreferences: number[];
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 export async function patchSitterProfile(payload: UpdateSitterProfilePayload) {
