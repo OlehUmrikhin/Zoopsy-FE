@@ -1,70 +1,75 @@
-import { FormProvider, useForm } from 'react-hook-form'
-import { Button } from '@heroui/react'
-import { SitterPersonalDataSection } from './SitterPersonalDataSection'
-import { SitterWorkScheduleSection } from './SitterWorkScheduleSection'
-import { SitterPetSpeciesSection } from './SitterPetSpeciesSection'
-import { SitterServicesSection } from './SitterServicesSection'
-import { SitterDogWeightSection } from './SitterDogWeightSection'
-import { useSitterProfile, useUpdateSitterProfile } from '@api'
+import { FormProvider, useForm } from 'react-hook-form';
+import { Button } from '@heroui/react';
+import { SitterPersonalDataSection } from './SitterPersonalDataSection';
+import { SitterWorkScheduleSection } from './SitterWorkScheduleSection';
+import { SitterPetSpeciesSection } from './SitterPetSpeciesSection';
+import { SitterServicesSection } from './SitterServicesSection';
+import { SitterDogWeightSection } from './SitterDogWeightSection';
+import { useSitterProfile, useUpdateSitterProfile } from '@api';
+import { toast } from 'react-toastify';
+import type { UpdateSitterProfilePayload } from '@api/sitter/fetchers';
 
 export type ServiceFormEntry = {
-  serviceType: number
-  enabled: boolean
-  pricePerUnit: string
-}
+  serviceType: number;
+  enabled: boolean;
+  pricePerUnit: string;
+};
 
 export type SitterProfileFormValues = {
-  fullName: string
-  gender: string
-  city: string
-  address: string
-  phoneNumber: string
-  email: string
-  experienceYears: string
-  housingType: string
-  description: string
-  workDays: number[]
-  workStartTime: string
-  workEndTime: string
-  petSpecies: number[]
-  dogServices: ServiceFormEntry[]
-  catServices: ServiceFormEntry[]
-  dogWeightPreferences: number[]
-  latitude: number | null
-  longitude: number | null
-}
+  fullName: string;
+  gender: string;
+  city: string;
+  address: string;
+  phoneNumber: string;
+  email: string;
+  experienceYears: string;
+  housingType: string;
+  description: string;
+  workDays: number[];
+  workStartTime: string;
+  workEndTime: string;
+  petSpecies: number[];
+  dogServices: ServiceFormEntry[];
+  catServices: ServiceFormEntry[];
+  dogWeightPreferences: number[];
+  latitude: number | null;
+  longitude: number | null;
+};
 
 export const DOG_SERVICE_DEFS = [
   { serviceType: 0, label: 'Перетримка' },
   { serviceType: 1, label: 'Прогулянка' },
   { serviceType: 2, label: 'Грумерство' },
   { serviceType: 3, label: 'Ветеринарство' },
-]
+];
 
 export const CAT_SERVICE_DEFS = [
   { serviceType: 0, label: 'Перетримка' },
   { serviceType: 3, label: 'Ветеринарство' },
-]
+];
 
-function buildInitialValues(profile: ReturnType<typeof useSitterProfile>['data']): SitterProfileFormValues {
-  const firstSchedule = profile?.workSchedules?.[0]
-  const workDays = profile?.workSchedules?.map((s) => s.dayOfWeek) ?? []
-  const workStartTime = firstSchedule?.startTime ?? '08:00'
-  const workEndTime = firstSchedule?.endTime ?? '20:00'
+function buildInitialValues(
+  profile: ReturnType<typeof useSitterProfile>['data'],
+): SitterProfileFormValues {
+  const firstSchedule = profile?.workSchedules?.[0];
+  const workDays = profile?.workSchedules?.map((s) => s.dayOfWeek) ?? [];
+  const workStartTime = firstSchedule?.startTime ?? '08:00';
+  const workEndTime = firstSchedule?.endTime ?? '20:00';
 
   const dogMap = new Map(
-    (profile?.services ?? []).filter((s) => s.petSpecies === 0).map((s) => [s.serviceType, s.pricePerUnit]),
-  )
+    (profile?.services ?? [])
+      .filter((s) => s.petSpecies === 0)
+      .map((s) => [s.serviceType, s.pricePerUnit]),
+  );
   const catMap = new Map(
-    (profile?.services ?? []).filter((s) => s.petSpecies === 1).map((s) => [s.serviceType, s.pricePerUnit]),
-  )
+    (profile?.services ?? [])
+      .filter((s) => s.petSpecies === 1)
+      .map((s) => [s.serviceType, s.pricePerUnit]),
+  );
 
-  const hasDogServices = dogMap.size > 0
-  const hasCatServices = catMap.size > 0
-  const petSpecies = [
-    ...(hasDogServices ? [0] : []),
-    ...(hasCatServices ? [1] : []),
-  ]
+  const hasDogServices = dogMap.size > 0;
+  const hasCatServices = catMap.size > 0;
+  const petSpecies = [...(hasDogServices ? [0] : []), ...(hasCatServices ? [1] : [])];
 
   return {
     fullName: profile?.fullName ?? '',
@@ -93,36 +98,44 @@ function buildInitialValues(profile: ReturnType<typeof useSitterProfile>['data']
     dogWeightPreferences: profile?.dogWeightPreferences ?? [],
     latitude: profile?.latitude ?? null,
     longitude: profile?.longitude ?? null,
-  }
+  };
 }
 
 export function SitterProfileForm() {
-  const { data: sitterProfile } = useSitterProfile()
-  const { mutate: updateSitterProfile } = useUpdateSitterProfile()
+  const { data: sitterProfile } = useSitterProfile();
+  const { mutate: updateSitterProfile } = useUpdateSitterProfile();
 
   const methods = useForm<SitterProfileFormValues>({
     values: buildInitialValues(sitterProfile),
-  })
+  });
 
-  const onSubmit = methods.handleSubmit((values) => {
+  const onSubmit = methods.handleSubmit(async (values) => {
     const workSchedules = values.workDays.map((dayOfWeek) => ({
       dayOfWeek,
       startTime: values.workStartTime,
       endTime: values.workEndTime,
-    }))
+    }));
 
     const services = [
       ...(values.petSpecies.includes(0)
         ? values.dogServices
             .filter((s) => s.enabled)
-            .map((s) => ({ serviceType: s.serviceType, petSpecies: 0, pricePerUnit: Number(s.pricePerUnit) }))
+            .map((s) => ({
+              serviceType: s.serviceType,
+              petSpecies: 0,
+              pricePerUnit: Number(s.pricePerUnit),
+            }))
         : []),
       ...(values.petSpecies.includes(1)
         ? values.catServices
             .filter((s) => s.enabled)
-            .map((s) => ({ serviceType: s.serviceType, petSpecies: 1, pricePerUnit: Number(s.pricePerUnit) }))
+            .map((s) => ({
+              serviceType: s.serviceType,
+              petSpecies: 1,
+              pricePerUnit: Number(s.pricePerUnit),
+            }))
         : []),
-    ]
+    ];
 
     const payload = {
       fullName: values.fullName,
@@ -136,16 +149,20 @@ export function SitterProfileForm() {
       workSchedules,
       services,
       dogWeightPreferences: values.petSpecies.includes(0) ? values.dogWeightPreferences : [],
-    } as any
+    } as UpdateSitterProfilePayload;
 
-    if (values.email) payload.email = values.email
-    if (values.latitude != null) payload.latitude = values.latitude
-    if (values.longitude != null) payload.longitude = values.longitude
+    if (values.email) payload.email = values.email;
+    if (values.latitude != null) payload.latitude = values.latitude;
+    if (values.longitude != null) payload.longitude = values.longitude;
+    try {
+      await updateSitterProfile(payload);
+      toast.success('Профіль успішно оновлено!');
+    } catch {
+      toast.error('Помилка при оновленні профілю. Спробуйте ще раз.');
+    }
+  });
 
-    updateSitterProfile(payload)
-  })
-
-  if(!sitterProfile) return null
+  if (!sitterProfile) return null;
 
   return (
     <FormProvider {...methods}>

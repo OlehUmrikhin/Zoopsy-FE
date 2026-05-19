@@ -1,14 +1,14 @@
-import { useCallback, useMemo, useState } from 'react'
-import { GoogleMap, useJsApiLoader, Circle, OverlayView } from '@react-google-maps/api'
-import type { SitterSearchResult } from '@api/sitter/types'
-import { MapStub } from './MapStub'
+import { useCallback, useMemo, useState } from 'react';
+import { GoogleMap, useJsApiLoader, Circle, OverlayView } from '@react-google-maps/api';
+import type { SitterSearchResult } from '@api/sitter/types';
+import { MapStub } from './MapStub';
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 // Must match the libraries used in AddressAutocomplete to share the same loader instance
-const LIBRARIES: ('places')[] = ['places']
+const LIBRARIES: 'places'[] = ['places'];
 
-const DEFAULT_CENTER = { lat: 49.9935, lng: 36.2304 } // Kharkiv
-const DEFAULT_ZOOM = 12
+const DEFAULT_CENTER = { lat: 49.9935, lng: 36.2304 }; // Kharkiv
+const DEFAULT_ZOOM = 12;
 
 /**
  * Generates a deterministic random offset from real coordinates to protect sitter privacy.
@@ -20,39 +20,39 @@ function getApproximateLocation(
   seed: string,
   jitterRadiusMeters = 400,
 ): { lat: number; lng: number } {
-  let hash = 5381
+  let hash = 5381;
   for (let i = 0; i < seed.length; i++) {
-    hash = (((hash << 5) + hash) ^ seed.charCodeAt(i)) >>> 0
+    hash = (((hash << 5) + hash) ^ seed.charCodeAt(i)) >>> 0;
   }
-  const angle = (hash % 6284) / 1000 // 0..2π range
-  const distance = (((hash >> 5) & 0xfff) / 0xfff) * jitterRadiusMeters
-  const dLat = (distance / 111320) * Math.cos(angle)
-  const dLng = (distance / (111320 * Math.cos((lat * Math.PI) / 180))) * Math.sin(angle)
-  return { lat: lat + dLat, lng: lng + dLng }
+  const angle = (hash % 6284) / 1000; // 0..2π range
+  const distance = (((hash >> 5) & 0xfff) / 0xfff) * jitterRadiusMeters;
+  const dLat = (distance / 111320) * Math.cos(angle);
+  const dLng = (distance / (111320 * Math.cos((lat * Math.PI) / 180))) * Math.sin(angle);
+  return { lat: lat + dLat, lng: lng + dLng };
 }
 
 type Props = {
-  sitters: SitterSearchResult[]
-  highlightedSitterId?: string | null
-  onSitterClick?: (userId: string) => void
-}
+  sitters: SitterSearchResult[];
+  highlightedSitterId?: string | null;
+  onSitterClick?: (userId: string) => void;
+};
 
 export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Props) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: API_KEY,
     libraries: LIBRARIES,
-  })
+  });
 
-  const [, setMap] = useState<google.maps.Map | null>(null)
+  const [, setMap] = useState<google.maps.Map | null>(null);
 
   const onLoad = useCallback((mapInstance: google.maps.Map) => {
-    setMap(mapInstance)
-  }, [])
+    setMap(mapInstance);
+  }, []);
 
   const onUnmount = useCallback(() => {
-    setMap(null)
-  }, [])
+    setMap(null);
+  }, []);
 
   const markers = useMemo(
     () =>
@@ -63,10 +63,10 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
           approxPos: getApproximateLocation(s.latitude!, s.longitude!, s.userId),
         })),
     [sitters],
-  )
+  );
 
   if (loadError || !isLoaded) {
-    return <MapStub />
+    return <MapStub />;
   }
 
   return (
@@ -74,7 +74,7 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
       mapContainerStyle={{
         width: '100%',
         height: '100%',
-        minHeight: '500px'
+        minHeight: '500px',
       }}
       center={DEFAULT_CENTER}
       zoom={DEFAULT_ZOOM}
@@ -88,7 +88,7 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
       }}
     >
       {markers.map(({ sitter, approxPos }) => {
-        const isHighlighted = sitter.userId === highlightedSitterId
+        const isHighlighted = sitter.userId === highlightedSitterId;
 
         return (
           <div key={sitter.userId}>
@@ -104,10 +104,7 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
                 clickable: false,
               }}
             />
-            <OverlayView
-              position={approxPos}
-              mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-            >
+            <OverlayView position={approxPos} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
               <button
                 type="button"
                 onClick={() => onSitterClick?.(sitter.userId)}
@@ -140,8 +137,8 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
               </button>
             </OverlayView>
           </div>
-        )
+        );
       })}
     </GoogleMap>
-  )
+  );
 }

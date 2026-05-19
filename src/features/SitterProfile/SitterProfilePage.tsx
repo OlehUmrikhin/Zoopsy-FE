@@ -1,7 +1,7 @@
-import { SitterCurrentBooking } from './components/SitterCurrentBooking'
-import { SitterBalanceCard } from './components/SitterBalanceCard'
-import { SitterRatingCard } from './components/SitterRatingCard'
-import { SitterProfileForm } from './components/SitterProfileForm'
+import { SitterCurrentBooking } from './components/SitterCurrentBooking';
+import { SitterBalanceCard } from './components/SitterBalanceCard';
+import { SitterRatingCard } from './components/SitterRatingCard';
+import { SitterProfileForm } from './components/SitterProfileForm';
 
 export function SitterProfilePage() {
   return (
@@ -31,5 +31,5 @@ export function SitterProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

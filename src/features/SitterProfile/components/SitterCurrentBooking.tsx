@@ -1,12 +1,12 @@
-import { MdChat, MdPhoneIphone } from 'react-icons/md'
-import { Button } from '@heroui/react'
+import { MdChat, MdPhoneIphone } from 'react-icons/md';
+import { Button } from '@heroui/react';
 
 const BOOKING_DETAILS = [
   { label: 'Послуга:', value: 'Перетримка' },
   { label: 'Термін:', value: '15.03 – 20.03 (5 діб)' },
   { label: 'Ціна:', value: '2500 грн' },
   { label: 'Власник:', value: 'Олена К.' },
-]
+];
 
 export function SitterCurrentBooking() {
   return (
@@ -18,11 +18,17 @@ export function SitterCurrentBooking() {
       {/* Pet card */}
       <div className="bg-zoopsy-bg rounded-xl p-3 flex items-center gap-3">
         <div className="w-14 h-14 rounded-xl bg-zoopsy-mint flex-shrink-0 overflow-hidden">
-          <img src="https://placedog.net/200/200" alt="Макс" className="w-full h-full object-cover" />
+          <img
+            src="https://placedog.net/200/200"
+            alt="Макс"
+            className="w-full h-full object-cover"
+          />
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <p className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-base leading-tight">Макс</p>
+            <p className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-base leading-tight">
+              Макс
+            </p>
             <p className="text-zoopsy-gray font-inter text-xs">12 кг</p>
           </div>
           <div className="flex items-center gap-1 mt-1">
@@ -66,5 +72,5 @@ export function SitterCurrentBooking() {
         Завантажити АРК ↓
       </Button>
     </div>
-  )
+  );
 }

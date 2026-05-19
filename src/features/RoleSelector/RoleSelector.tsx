@@ -1,4 +1,3 @@
-import { useNavigate, Link } from '@tanstack/react-router';
 import { useUser } from '@clerk/react';
 import { toast } from 'react-toastify';
 import { FaPaw } from 'react-icons/fa';
@@ -6,7 +5,6 @@ import { FaHouseMedical } from 'react-icons/fa6';
 import { useSetUserRole } from '@api';
 
 export const RoleSelector = () => {
-  const navigate = useNavigate();
   const { user } = useUser();
   const setUserRole = useSetUserRole();
 

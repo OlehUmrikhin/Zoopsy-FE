@@ -1,40 +1,40 @@
-import type { ChangeEvent } from 'react'
-import { Select, Label, ListBox, ListBoxItem } from '@heroui/react'
-import cn from 'classnames'
+import type { ChangeEvent } from 'react';
+import { Select, Label, ListBox, ListBoxItem } from '@heroui/react';
+import cn from 'classnames';
 
 const COUNTRY_CODES = [
   { code: '+380', flag: '🇺🇦', label: '🇺🇦 +380' },
-//   { code: '+1',   flag: '🇺🇸', label: '🇺🇸 +1'   },
-//   { code: '+44',  flag: '🇬🇧', label: '🇬🇧 +44'  },
-//   { code: '+49',  flag: '🇩🇪', label: '🇩🇪 +49'  },
-//   { code: '+48',  flag: '🇵🇱', label: '🇵🇱 +48'  },
-]
+  //   { code: '+1',   flag: '🇺🇸', label: '🇺🇸 +1'   },
+  //   { code: '+44',  flag: '🇬🇧', label: '🇬🇧 +44'  },
+  //   { code: '+49',  flag: '🇩🇪', label: '🇩🇪 +49'  },
+  //   { code: '+48',  flag: '🇵🇱', label: '🇵🇱 +48'  },
+];
 
 /** Splits a full phone value like "+38097123456" into { code: "+380", number: "97123456" } */
 function splitPhone(value: string) {
-  const match = COUNTRY_CODES.find(({ code }) => value.startsWith(code))
-  if (match) return { code: match.code, number: value.slice(match.code.length) }
-  return { code: '+380', number: value.replace(/^\+?\d{1,4}/, '') }
+  const match = COUNTRY_CODES.find(({ code }) => value.startsWith(code));
+  if (match) return { code: match.code, number: value.slice(match.code.length) };
+  return { code: '+380', number: value.replace(/^\+?\d{1,4}/, '') };
 }
 
 type PhoneInputProps = {
-  value?: string
-  onChange?: (value: string) => void
-  onBlur?: () => void
-  name?: string
-}
+  value?: string;
+  onChange?: (value: string) => void;
+  onBlur?: () => void;
+  name?: string;
+};
 
 export function PhoneInput({ value = '', onChange, onBlur, name }: PhoneInputProps) {
-  const { code, number } = splitPhone(value)
+  const { code, number } = splitPhone(value);
 
   const handleCodeChange = (key: string | number | null) => {
-    onChange?.(`${key ?? '+380'}${number}`)
-  }
+    onChange?.(`${key ?? '+380'}${number}`);
+  };
 
   const handleNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, '').slice(0, 9)
-    onChange?.(`${code}${digits}`)
-  }
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
+    onChange?.(`${code}${digits}`);
+  };
 
   return (
     <div className="flex flex-col gap-1">
@@ -96,5 +96,5 @@ export function PhoneInput({ value = '', onChange, onBlur, name }: PhoneInputPro
         />
       </div>
     </div>
-  )
+  );
 }

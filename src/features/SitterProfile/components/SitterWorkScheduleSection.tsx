@@ -1,16 +1,20 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import cn from 'classnames'
-import { TimeField } from '@heroui/react'
-import { parseTime } from '@internationalized/date'
-import type { TimeValue } from 'react-aria-components'
-import type { SitterProfileFormValues } from './SitterProfileForm'
+import { Controller, useFormContext } from 'react-hook-form';
+import cn from 'classnames';
+import { TimeField } from '@heroui/react';
+import { parseTime } from '@internationalized/date';
+import type { TimeValue } from 'react-aria-components';
+import type { SitterProfileFormValues } from './SitterProfileForm';
 
 function timeFromString(value: string): TimeValue | null {
-  try { return parseTime(value) } catch { return null }
+  try {
+    return parseTime(value);
+  } catch {
+    return null;
+  }
 }
 
 function timeToString(value: TimeValue): string {
-  return `${String(value.hour).padStart(2, '0')}:${String(value.minute).padStart(2, '0')}`
+  return `${String(value.hour).padStart(2, '0')}:${String(value.minute).padStart(2, '0')}`;
 }
 
 const DAYS = [
@@ -21,10 +25,10 @@ const DAYS = [
   { value: 4, label: 'Пт' },
   { value: 5, label: 'Сб' },
   { value: 6, label: 'Нд' },
-]
+];
 
 export function SitterWorkScheduleSection() {
-  const { control } = useFormContext<SitterProfileFormValues>()
+  const { control } = useFormContext<SitterProfileFormValues>();
 
   return (
     <div className="bg-white rounded-2xl p-6">
@@ -40,16 +44,16 @@ export function SitterWorkScheduleSection() {
             render={({ field: { value, onChange } }) => (
               <div className="flex flex-wrap gap-2">
                 {DAYS.map((day) => {
-                  const selected = value?.includes(day.value)
+                  const selected = value?.includes(day.value);
                   return (
                     <button
                       key={day.value}
                       type="button"
                       onClick={() => {
                         if (selected) {
-                          onChange(value.filter((d: number) => d !== day.value))
+                          onChange(value.filter((d: number) => d !== day.value));
                         } else {
-                          onChange([...value, day.value].sort())
+                          onChange([...value, day.value].sort());
                         }
                       }}
                       className={cn(
@@ -61,7 +65,7 @@ export function SitterWorkScheduleSection() {
                     >
                       {day.label}
                     </button>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -126,5 +130,5 @@ export function SitterWorkScheduleSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }

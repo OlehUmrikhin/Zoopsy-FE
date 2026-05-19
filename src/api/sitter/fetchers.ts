@@ -1,14 +1,26 @@
 import { axiosInstance } from '../../lib/axios';
 import { SITTER_PATHS } from './paths';
-import type { SitterProfile, SitterSearchParams, SitterSearchResult, PaginatedResponse, WorkSchedule, SitterService } from './types';
+import type {
+  SitterProfile,
+  SitterSearchParams,
+  SitterSearchResult,
+  PaginatedResponse,
+  WorkSchedule,
+  SitterService,
+} from './types';
 
 export async function fetchSitterProfile() {
   const { data } = await axiosInstance.get<SitterProfile>(SITTER_PATHS.me);
   return data;
 }
 
-export async function fetchSitters(params: SitterSearchParams): Promise<PaginatedResponse<SitterSearchResult>> {
-  const { data } = await axiosInstance.get<PaginatedResponse<SitterSearchResult>>(SITTER_PATHS.list, { params });
+export async function fetchSitters(
+  params: SitterSearchParams,
+): Promise<PaginatedResponse<SitterSearchResult>> {
+  const { data } = await axiosInstance.get<PaginatedResponse<SitterSearchResult>>(
+    SITTER_PATHS.list,
+    { params },
+  );
   return data;
 }
 

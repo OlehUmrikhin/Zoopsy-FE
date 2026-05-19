@@ -1,15 +1,15 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { MdOutlineEdit } from 'react-icons/md'
-import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput'
-import { ZoopsySelect, ZoopsySelectItem } from '@features/OwnerProfile/components/ZoopsySelect'
-import { PhoneInput } from '@features/OwnerProfile/components/PhoneInput'
-import { AddressAutocomplete } from './AddressAutocomplete'
-import type { SitterProfileFormValues } from './SitterProfileForm'
+import { Controller, useFormContext } from 'react-hook-form';
+import { MdOutlineEdit } from 'react-icons/md';
+import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput';
+import { ZoopsySelect, ZoopsySelectItem } from '@features/OwnerProfile/components/ZoopsySelect';
+import { PhoneInput } from '@features/OwnerProfile/components/PhoneInput';
+import { AddressAutocomplete } from './AddressAutocomplete';
+import type { SitterProfileFormValues } from './SitterProfileForm';
 
 const GENDER_OPTIONS = [
   { value: 'male', label: 'Чоловіча' },
   { value: 'female', label: 'Жіноча' },
-]
+];
 
 const CITY_OPTIONS = [
   { value: 'kyiv', label: 'Київ' },
@@ -17,16 +17,16 @@ const CITY_OPTIONS = [
   { value: 'kharkiv', label: 'Харків' },
   { value: 'odesa', label: 'Одеса' },
   { value: 'dnipro', label: 'Дніпро' },
-]
+];
 
 const HOUSING_OPTIONS = [
   { value: 'apartment', label: 'Квартира' },
   { value: 'house', label: 'Будинок' },
   { value: 'studio', label: 'Студія' },
-]
+];
 
 export function SitterPersonalDataSection() {
-  const { register, control, setValue } = useFormContext<SitterProfileFormValues>()
+  const { register, control, setValue } = useFormContext<SitterProfileFormValues>();
 
   return (
     <div className="bg-white rounded-2xl p-6">
@@ -91,11 +91,11 @@ export function SitterPersonalDataSection() {
               value={value}
               onChange={onChange}
               onCoordinatesChange={(lat, lng) => {
-                setValue('latitude', lat, { shouldDirty: true })
-                setValue('longitude', lng, { shouldDirty: true })
+                setValue('latitude', lat, { shouldDirty: true });
+                setValue('longitude', lng, { shouldDirty: true });
               }}
               onCityChange={(cityKey) => {
-                setValue('city', cityKey, { shouldDirty: true })
+                setValue('city', cityKey, { shouldDirty: true });
               }}
             />
           )}
@@ -152,5 +152,5 @@ export function SitterPersonalDataSection() {
         />
       </div>
     </div>
-  )
+  );
 }

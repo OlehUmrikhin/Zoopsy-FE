@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({ children, logoHref, hideNav }) =
           <div className="flex items-center h-full">
             {logoHref ? (
               <Link
-                to={logoHref as any}
+                to={logoHref as string}
                 className="text-2xl font-bold leading-8 text-zoopsy-green-700 font-plus-jakarta tracking-[-0.6px] hover:opacity-80 transition-opacity"
               >
                 Zoopsy
@@ -28,33 +28,46 @@ export const Header: React.FC<HeaderProps> = ({ children, logoHref, hideNav }) =
               </span>
             )}
           </div>
-        {!hideNav && (
-          <Show when="signed-in">
-            <div className="hidden lg:flex items-center gap-5">
-              <Link to="/download-apk" className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors">
-                Завантаження APK
-              </Link>
-              <Link to="/map" className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors">
-                Найближчі сервіси/Мапа
-              </Link>
-              <Link to="/ai-assistant" className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors">
-                AI-ассистент
-              </Link>
-              <Link to="/top" className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors">
-                Топ найкращих
-              </Link>
-              <Link to="/calendar" className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors">
-                Календар догляду
-              </Link>
-            </div>
-          </Show>
-        )}
+          {!hideNav && (
+            <Show when="signed-in">
+              <div className="hidden lg:flex items-center gap-5">
+                <Link
+                  to="/download-apk"
+                  className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"
+                >
+                  Завантаження APK
+                </Link>
+                <Link
+                  to="/map"
+                  className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"
+                >
+                  Найближчі сервіси/Мапа
+                </Link>
+                <Link
+                  to="/ai-assistant"
+                  className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"
+                >
+                  AI-ассистент
+                </Link>
+                <Link
+                  to="/top"
+                  className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"
+                >
+                  Топ найкращих
+                </Link>
+                <Link
+                  to="/calendar"
+                  className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"
+                >
+                  Календар догляду
+                </Link>
+              </div>
+            </Show>
+          )}
         </div>
 
         {/* Права частина: Кнопки, профіль (передаються через children) */}
-        <div className="flex items-center h-full gap-6">
-          {children}
-        </div>
+        <div className="flex items-center h-full gap-6">{children}</div>
       </nav>
     </header>
   );

@@ -1,11 +1,11 @@
-import { MdAccessTime, MdChat } from 'react-icons/md'
+import { MdAccessTime, MdChat } from 'react-icons/md';
 
 const SERVICE_DETAILS = [
   { label: 'Послуга:', value: 'Перетримка' },
   { label: 'Термін:', value: '15.03 - 20.03 (5 діб)' },
   { label: 'Ціна:', value: '2500 грн' },
   { label: 'Пет-сіттер:', value: 'Олена К.' },
-]
+];
 
 export function OwnerCurrentBooking() {
   return (
@@ -61,5 +61,5 @@ export function OwnerCurrentBooking() {
         </button>
       </div>
     </div>
-  )
+  );
 }

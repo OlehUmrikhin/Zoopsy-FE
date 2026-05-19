@@ -1,6 +1,6 @@
-import { OwnerBalanceCard } from './components/OwnerBalanceCard'
-import { OwnerCurrentBooking } from './components/OwnerCurrentBooking'
-import { OwnerProfileForm } from './components/OwnerProfileForm'
+import { OwnerBalanceCard } from './components/OwnerBalanceCard';
+import { OwnerCurrentBooking } from './components/OwnerCurrentBooking';
+import { OwnerProfileForm } from './components/OwnerProfileForm';
 
 export function OwnerProfilePage() {
   return (
@@ -27,5 +27,5 @@ export function OwnerProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -9,5 +9,5 @@ export function AdminDashboard() {
       </p>
       {/* Dashboard content goes here */}
     </div>
-  )
+  );
 }

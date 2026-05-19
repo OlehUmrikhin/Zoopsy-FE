@@ -1,19 +1,18 @@
-import { useState } from 'react'
-import { useSitters } from '@api'
-import type { SitterSearchParams } from '@api/sitter/types'
-import { SitterFilters } from './components/SitterFilters'
-import { SitterCard } from './components/SitterCard'
-import { SittersMap } from './components/SittersMap'
-import { MapStub } from './components/MapStub'
+import { useState } from 'react';
+import { useSitters } from '@api';
+import type { SitterSearchParams } from '@api/sitter/types';
+import { SitterFilters } from './components/SitterFilters';
+import { SitterCard } from './components/SitterCard';
+import { SittersMap } from './components/SittersMap';
 
 type Props = {
-  initialParams?: SitterSearchParams
-}
+  initialParams?: SitterSearchParams;
+};
 
 export function FindSitterPage({ initialParams }: Props = {}) {
-  const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {})
-  const [highlightedSitterId, setHighlightedSitterId] = useState<string | null>(null)
-  const { data: sitters, isLoading } = useSitters(params)
+  const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {});
+  const [highlightedSitterId, setHighlightedSitterId] = useState<string | null>(null);
+  const { data: sitters, isLoading } = useSitters(params);
 
   return (
     <div className="min-h-screen bg-zoopsy-mint flex">
@@ -76,5 +75,5 @@ export function FindSitterPage({ initialParams }: Props = {}) {
         </div>
       </div>
     </div>
-  )
+  );
 }

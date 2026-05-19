@@ -1,16 +1,16 @@
-import { forwardRef, type ReactNode } from 'react'
-import { Input, type InputProps } from '@heroui/react'
-import cn from 'classnames'
+import { forwardRef, type ReactNode } from 'react';
+import { Input, type InputProps } from '@heroui/react';
+import cn from 'classnames';
 
 type ZoopsyInputProps = {
-  label?: string
-  endContent?: ReactNode
-  wrapperClassName?: string
-} & Omit<InputProps, 'variant' | 'className'>
+  label?: string;
+  endContent?: ReactNode;
+  wrapperClassName?: string;
+} & Omit<InputProps, 'variant' | 'className'>;
 
 export const ZoopsyInput = forwardRef<HTMLInputElement, ZoopsyInputProps>(
   ({ label, endContent, wrapperClassName, id, ...props }, ref) => {
-    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-')
+    const inputId = id ?? label?.toLowerCase().replace(/\s+/g, '-');
     return (
       <div className={cn('flex flex-col gap-1', wrapperClassName)}>
         {label && (
@@ -40,8 +40,8 @@ export const ZoopsyInput = forwardRef<HTMLInputElement, ZoopsyInputProps>(
           )}
         </div>
       </div>
-    )
+    );
   },
-)
+);
 
-ZoopsyInput.displayName = 'ZoopsyInput'
+ZoopsyInput.displayName = 'ZoopsyInput';

@@ -46,7 +46,18 @@ export type SitterSearchParams = {
 
 export type SitterSearchResult = Pick<
   SitterProfile,
-  'userId' | 'fullName' | 'gender' | 'city' | 'experienceYears' | 'housingType' | 'description' | 'rating' | 'services' | 'dogWeightPreferences' | 'latitude' | 'longitude'
+  | 'userId'
+  | 'fullName'
+  | 'gender'
+  | 'city'
+  | 'experienceYears'
+  | 'housingType'
+  | 'description'
+  | 'rating'
+  | 'services'
+  | 'dogWeightPreferences'
+  | 'latitude'
+  | 'longitude'
 >;
 
 export type PaginatedResponse<T> = {

@@ -1,60 +1,60 @@
-import { useForm, Controller } from 'react-hook-form'
-import cn from 'classnames'
-import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput'
-import type { SitterSearchParams } from '@api/sitter/types'
+import { useForm, Controller } from 'react-hook-form';
+import cn from 'classnames';
+import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput';
+import type { SitterSearchParams } from '@api/sitter/types';
 
 const SERVICE_TYPES = [
   { value: 0, label: 'Перетримка' },
   { value: 1, label: 'Прогулянка' },
   { value: 2, label: 'Грумерство' },
   { value: 3, label: 'Ветеринарство' },
-]
+];
 
 const PET_SPECIES = [
   { value: 0, label: 'Собаки' },
   { value: 1, label: 'Коти' },
-]
+];
 
 const HOUSING_TYPES = [
   { value: 'apartment', label: 'Квартира' },
   { value: 'studio', label: 'Студія' },
   { value: 'house', label: 'Власний будинок' },
-]
+];
 
 const GENDERS = [
   { value: 'male', label: 'Чоловік' },
   { value: 'female', label: 'Жінка' },
-]
+];
 
 const EXPERIENCE_OPTIONS = [
   { value: 0, label: 'Будь-який' },
   { value: 1, label: '1+ рік' },
   { value: 3, label: '3+ роки' },
   { value: 5, label: '5+ років' },
-]
+];
 
 const DOG_WEIGHT_CATEGORIES = [
   { value: 0, label: 'Малі (до 10 кг)' },
   { value: 1, label: 'Середні (10–25 кг)' },
   { value: 2, label: 'Великі (понад 25 кг)' },
-]
+];
 
 export type FilterFormValues = {
-  minPrice: string
-  maxPrice: string
-  serviceType: number | null
-  petSpecies: number | null
-  housingType: string | null
-  minExperienceYears: number | null
-  gender: string | null
-  dogWeightCategory: number | null
-  city: string
-}
+  minPrice: string;
+  maxPrice: string;
+  serviceType: number | null;
+  petSpecies: number | null;
+  housingType: string | null;
+  minExperienceYears: number | null;
+  gender: string | null;
+  dogWeightCategory: number | null;
+  city: string;
+};
 
 type Props = {
-  onChange: (params: SitterSearchParams) => void
-  initialValues?: SitterSearchParams
-}
+  onChange: (params: SitterSearchParams) => void;
+  initialValues?: SitterSearchParams;
+};
 
 function RadioOption<T extends string | number>({
   label,
@@ -62,10 +62,10 @@ function RadioOption<T extends string | number>({
   selected,
   onSelect,
 }: {
-  label: string
-  value: T
-  selected: boolean
-  onSelect: (value: T | null) => void
+  label: string;
+  value: T;
+  selected: boolean;
+  onSelect: (value: T | null) => void;
 }) {
   return (
     <label className="flex items-center gap-2 cursor-pointer group">
@@ -83,7 +83,7 @@ function RadioOption<T extends string | number>({
       </button>
       <span className="font-inter text-sm text-zoopsy-dark-gray">{label}</span>
     </label>
-  )
+  );
 }
 
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
@@ -94,7 +94,7 @@ function FilterGroup({ title, children }: { title: string; children: React.React
       </p>
       {children}
     </div>
-  )
+  );
 }
 
 export function SitterFilters({ onChange, initialValues }: Props) {
@@ -110,23 +110,23 @@ export function SitterFilters({ onChange, initialValues }: Props) {
       dogWeightCategory: initialValues?.dogWeightCategory ?? null,
       city: initialValues?.city ?? '',
     },
-  })
+  });
 
   const onSubmit = handleSubmit((values) => {
-    const params: SitterSearchParams = {}
-    if (values.minPrice) params.minPrice = Number(values.minPrice)
-    if (values.maxPrice) params.maxPrice = Number(values.maxPrice)
-    if (values.serviceType !== null) params.serviceType = values.serviceType
-    if (values.petSpecies !== null) params.petSpecies = values.petSpecies
-    if (values.housingType) params.housingType = values.housingType
-    if (values.minExperienceYears !== null) params.minExperienceYears = values.minExperienceYears
-    if (values.gender) params.gender = values.gender
-    if (values.dogWeightCategory !== null) params.dogWeightCategory = values.dogWeightCategory
-    if (values.city) params.city = values.city
-    onChange(params)
-  })
+    const params: SitterSearchParams = {};
+    if (values.minPrice) params.minPrice = Number(values.minPrice);
+    if (values.maxPrice) params.maxPrice = Number(values.maxPrice);
+    if (values.serviceType !== null) params.serviceType = values.serviceType;
+    if (values.petSpecies !== null) params.petSpecies = values.petSpecies;
+    if (values.housingType) params.housingType = values.housingType;
+    if (values.minExperienceYears !== null) params.minExperienceYears = values.minExperienceYears;
+    if (values.gender) params.gender = values.gender;
+    if (values.dogWeightCategory !== null) params.dogWeightCategory = values.dogWeightCategory;
+    if (values.city) params.city = values.city;
+    onChange(params);
+  });
 
-  const petSpecies = watch('petSpecies')
+  const petSpecies = watch('petSpecies');
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
@@ -137,8 +137,20 @@ export function SitterFilters({ onChange, initialValues }: Props) {
       {/* Price */}
       <FilterGroup title="Ціна (грн/год)">
         <div className="grid grid-cols-2 gap-2">
-          <ZoopsyInput label="від" placeholder="100" type="number" min={0} {...register('minPrice')} />
-          <ZoopsyInput label="до" placeholder="2000" type="number" min={0} {...register('maxPrice')} />
+          <ZoopsyInput
+            label="від"
+            placeholder="100"
+            type="number"
+            min={0}
+            {...register('minPrice')}
+          />
+          <ZoopsyInput
+            label="до"
+            placeholder="2000"
+            type="number"
+            min={0}
+            {...register('maxPrice')}
+          />
         </div>
       </FilterGroup>
 
@@ -273,5 +285,5 @@ export function SitterFilters({ onChange, initialValues }: Props) {
         Застосувати
       </button>
     </form>
-  )
+  );
 }

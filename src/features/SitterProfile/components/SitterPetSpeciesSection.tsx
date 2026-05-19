@@ -1,15 +1,15 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { FaDog, FaCat, FaCheck } from 'react-icons/fa'
-import cn from 'classnames'
-import type { SitterProfileFormValues } from './SitterProfileForm'
+import { Controller, useFormContext } from 'react-hook-form';
+import { FaDog, FaCat, FaCheck } from 'react-icons/fa';
+import cn from 'classnames';
+import type { SitterProfileFormValues } from './SitterProfileForm';
 
 const SPECIES_OPTIONS = [
   { value: 0, label: 'Собаки', Icon: FaDog },
   { value: 1, label: 'Коти', Icon: FaCat },
-]
+];
 
 export function SitterPetSpeciesSection() {
-  const { control } = useFormContext<SitterProfileFormValues>()
+  const { control } = useFormContext<SitterProfileFormValues>();
 
   return (
     <div className="bg-white rounded-2xl p-6">
@@ -28,16 +28,16 @@ export function SitterPetSpeciesSection() {
         render={({ field: { value, onChange } }) => (
           <div className="flex gap-4">
             {SPECIES_OPTIONS.map(({ value: species, label, Icon }) => {
-              const selected = value.includes(species)
+              const selected = value.includes(species);
               return (
                 <button
                   key={species}
                   type="button"
                   onClick={() => {
                     if (selected) {
-                      onChange(value.filter((v: number) => v !== species))
+                      onChange(value.filter((v: number) => v !== species));
                     } else {
-                      onChange([...value, species].sort())
+                      onChange([...value, species].sort());
                     }
                   }}
                   className={cn(
@@ -55,11 +55,11 @@ export function SitterPetSpeciesSection() {
                   <Icon className="text-3xl" />
                   <span className="font-inter font-semibold text-sm">{label}</span>
                 </button>
-              )
+              );
             })}
           </div>
         )}
       />
     </div>
-  )
+  );
 }
