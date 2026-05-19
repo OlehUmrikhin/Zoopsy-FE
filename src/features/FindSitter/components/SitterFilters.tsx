@@ -17,6 +17,7 @@ const PET_SPECIES = [
 
 const HOUSING_TYPES = [
   { value: 'apartment', label: 'Квартира' },
+  { value: 'studio', label: 'Студія' },
   { value: 'house', label: 'Власний будинок' },
 ]
 
@@ -26,6 +27,7 @@ const GENDERS = [
 ]
 
 const EXPERIENCE_OPTIONS = [
+  { value: 0, label: 'Будь-який' },
   { value: 1, label: '1+ рік' },
   { value: 3, label: '3+ роки' },
   { value: 5, label: '5+ років' },
@@ -51,6 +53,7 @@ export type FilterFormValues = {
 
 type Props = {
   onChange: (params: SitterSearchParams) => void
+  initialValues?: SitterSearchParams
 }
 
 function RadioOption<T extends string | number>({
@@ -94,18 +97,18 @@ function FilterGroup({ title, children }: { title: string; children: React.React
   )
 }
 
-export function SitterFilters({ onChange }: Props) {
+export function SitterFilters({ onChange, initialValues }: Props) {
   const { register, control, watch, handleSubmit } = useForm<FilterFormValues>({
     defaultValues: {
-      minPrice: '',
-      maxPrice: '',
-      serviceType: 0,
-      petSpecies: 0,
-      housingType: null,
-      minExperienceYears: null,
-      gender: null,
-      dogWeightCategory: 0,
-      city: '',
+      minPrice: initialValues?.minPrice?.toString() ?? '',
+      maxPrice: initialValues?.maxPrice?.toString() ?? '',
+      serviceType: initialValues?.serviceType ?? null,
+      petSpecies: initialValues?.petSpecies ?? null,
+      housingType: initialValues?.housingType ?? null,
+      minExperienceYears: initialValues?.minExperienceYears ?? null,
+      gender: initialValues?.gender ?? null,
+      dogWeightCategory: initialValues?.dogWeightCategory ?? null,
+      city: initialValues?.city ?? '',
     },
   })
 
@@ -181,7 +184,6 @@ export function SitterFilters({ onChange }: Props) {
         />
       </FilterGroup>
 
-      {/* Dog weight — only show when dogs selected */}
       {petSpecies === 0 && (
         <FilterGroup title="Вага собак">
           <Controller
@@ -204,7 +206,6 @@ export function SitterFilters({ onChange }: Props) {
         </FilterGroup>
       )}
 
-      {/* Housing type */}
       <FilterGroup title="Тип житла">
         <Controller
           name="housingType"
@@ -225,7 +226,6 @@ export function SitterFilters({ onChange }: Props) {
         />
       </FilterGroup>
 
-      {/* Experience */}
       <FilterGroup title="Досвід">
         <Controller
           name="minExperienceYears"
@@ -246,7 +246,6 @@ export function SitterFilters({ onChange }: Props) {
         />
       </FilterGroup>
 
-      {/* Gender */}
       <FilterGroup title="Стать">
         <Controller
           name="gender"

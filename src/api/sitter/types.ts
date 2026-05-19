@@ -16,6 +16,7 @@ export type SitterProfile = {
   email: string;
   gender: string;
   city: string;
+  address: string;
   phoneNumber: string;
   experienceYears: number;
   housingType: string;
@@ -24,6 +25,8 @@ export type SitterProfile = {
   workSchedules: WorkSchedule[];
   services: SitterService[];
   dogWeightPreferences: number[];
+  latitude?: number;
+  longitude?: number;
 };
 
 export type SitterSearchParams = {
@@ -43,7 +46,7 @@ export type SitterSearchParams = {
 
 export type SitterSearchResult = Pick<
   SitterProfile,
-  'userId' | 'fullName' | 'gender' | 'city' | 'experienceYears' | 'housingType' | 'description' | 'rating' | 'services' | 'dogWeightPreferences'
+  'userId' | 'fullName' | 'gender' | 'city' | 'experienceYears' | 'housingType' | 'description' | 'rating' | 'services' | 'dogWeightPreferences' | 'latitude' | 'longitude'
 >;
 
 export type PaginatedResponse<T> = {

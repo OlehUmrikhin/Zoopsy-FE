@@ -3,6 +3,7 @@ import { Show, UserButton, useUser } from '@clerk/react';
 import { ToastContainer } from 'react-toastify';
 import { Header, Footer } from '../components';
 import { getAuthRedirectPath } from '../utils';
+import { MdSettings } from 'react-icons/md';
 
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -37,7 +38,16 @@ function RootComponent() {
                   </Link>
                 </nav>
               )}
-              <UserButton />
+              {/* <UserButton /> */}
+              <UserButton>
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Профіль"
+                  href="/profile"
+                  labelIcon={<MdSettings />} 
+                />
+              </UserButton.MenuItems>
+            </UserButton>
             </Show>
           </div>
         </Header>

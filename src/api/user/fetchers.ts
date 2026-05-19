@@ -8,6 +8,7 @@ export type UpdateOwnerProfilePayload = {
   gender: string;
   city: string;
   phoneNumber: string;
+  email?: string;
   pets: {
     id?: string;
     name: string;

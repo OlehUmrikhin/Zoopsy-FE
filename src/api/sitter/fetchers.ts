@@ -16,13 +16,17 @@ export type UpdateSitterProfilePayload = {
   fullName: string;
   gender: string;
   city: string;
+  address: string;
   phoneNumber: string;
+  email?: string;
   experienceYears: number;
   housingType: string;
   description: string;
   workSchedules: WorkSchedule[];
   services: SitterService[];
   dogWeightPreferences: number[];
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 export async function patchSitterProfile(payload: UpdateSitterProfilePayload) {

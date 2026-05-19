@@ -3,6 +3,7 @@ import { useSitters } from '@api'
 import type { SitterSearchParams } from '@api/sitter/types'
 import { SitterFilters } from './components/SitterFilters'
 import { SitterCard } from './components/SitterCard'
+import { SittersMap } from './components/SittersMap'
 import { MapStub } from './components/MapStub'
 
 type Props = {
@@ -11,20 +12,25 @@ type Props = {
 
 export function FindSitterPage({ initialParams }: Props = {}) {
   const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {})
+  const [highlightedSitterId, setHighlightedSitterId] = useState<string | null>(null)
   const { data: sitters, isLoading } = useSitters(params)
 
   return (
     <div className="min-h-screen bg-zoopsy-mint flex">
       {/* Filters sidebar */}
       <aside className="w-64 flex-shrink-0 bg-white border-r border-zoopsy-light-gray/40 p-5 overflow-y-auto">
-        <SitterFilters onChange={setParams} />
+        <SitterFilters onChange={setParams} initialValues={initialParams} />
       </aside>
 
-      {/* Map + results */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Map */}
         <div className="flex-1 p-4">
-          <MapStub />
+          <SittersMap
+            sitters={sitters?.items ?? []}
+            highlightedSitterId={highlightedSitterId}
+            onSitterClick={setHighlightedSitterId}
+          />
+          {/* <MapStub />  */}
+          {/* stub */}
         </div>
 
         {/* Results panel */}
@@ -58,7 +64,13 @@ export function FindSitterPage({ initialParams }: Props = {}) {
 
             {!isLoading &&
               sitters?.items.map((sitter) => (
-                <SitterCard key={sitter.userId} sitter={sitter} />
+                <div
+                  key={sitter.userId}
+                  onMouseEnter={() => setHighlightedSitterId(sitter.userId)}
+                  onMouseLeave={() => setHighlightedSitterId(null)}
+                >
+                  <SitterCard sitter={sitter} />
+                </div>
               ))}
           </div>
         </div>
