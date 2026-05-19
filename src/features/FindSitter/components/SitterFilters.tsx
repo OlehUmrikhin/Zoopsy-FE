@@ -1,7 +1,10 @@
 import { useForm, Controller } from 'react-hook-form';
 import cn from 'classnames';
+import { Button, Spinner } from '@heroui/react';
+import { CitySelect } from '@components';
 import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput';
 import type { SitterSearchParams } from '@api/sitter/types';
+import { DateRangeFilter } from './DateRangeFilter';
 
 const SERVICE_TYPES = [
   { value: 0, label: 'Перетримка' },
@@ -49,11 +52,14 @@ export type FilterFormValues = {
   gender: string | null;
   dogWeightCategory: number | null;
   city: string;
+  startDate: string;
+  endDate: string;
 };
 
 type Props = {
   onChange: (params: SitterSearchParams) => void;
   initialValues?: SitterSearchParams;
+  isLoading?: boolean;
 };
 
 function RadioOption<T extends string | number>({
@@ -97,8 +103,8 @@ function FilterGroup({ title, children }: { title: string; children: React.React
   );
 }
 
-export function SitterFilters({ onChange, initialValues }: Props) {
-  const { register, control, watch, handleSubmit } = useForm<FilterFormValues>({
+export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
+  const { register, control, watch, handleSubmit, setValue } = useForm<FilterFormValues>({
     defaultValues: {
       minPrice: initialValues?.minPrice?.toString() ?? '',
       maxPrice: initialValues?.maxPrice?.toString() ?? '',
@@ -109,6 +115,8 @@ export function SitterFilters({ onChange, initialValues }: Props) {
       gender: initialValues?.gender ?? null,
       dogWeightCategory: initialValues?.dogWeightCategory ?? null,
       city: initialValues?.city ?? '',
+      startDate: initialValues?.startDate ?? '',
+      endDate: initialValues?.endDate ?? '',
     },
   });
 
@@ -123,16 +131,50 @@ export function SitterFilters({ onChange, initialValues }: Props) {
     if (values.gender) params.gender = values.gender;
     if (values.dogWeightCategory !== null) params.dogWeightCategory = values.dogWeightCategory;
     if (values.city) params.city = values.city;
+    if (values.startDate) params.startDate = values.startDate;
+    if (values.endDate) params.endDate = values.endDate;
     onChange(params);
   });
 
   const petSpecies = watch('petSpecies');
+  const city = watch('city');
+  const serviceType = watch('serviceType');
+  const isBoarding = serviceType === 0;
+
+  const isSubmitDisabled = !city || serviceType === null;
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <h2 className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-lg">Фільтри</h2>
 
-      <ZoopsyInput label="МІСТО" placeholder="Введіть місто" {...register('city')} />
+      <Controller
+        name="city"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <FilterGroup title="МІСТО">
+            <CitySelect
+              value={value}
+              onChange={onChange}
+              className="w-full"
+              triggerClassName="bg-zoopsy-mint rounded-xl h-12 px-3 w-full flex items-center justify-between gap-2 text-zoopsy-dark-gray font-inter text-sm outline-none data-[hovered]:bg-zoopsy-mint/80 data-[pressed]:bg-zoopsy-mint/80"
+            />
+          </FilterGroup>
+        )}
+      />
+
+      <FilterGroup title="Дата">
+        <DateRangeFilter
+          key={String(serviceType)}
+          isBoarding={isBoarding}
+          isDisabled={serviceType === null}
+          startDate={initialValues?.startDate}
+          endDate={initialValues?.endDate}
+          onChange={(s, e) => {
+            setValue('startDate', s ?? '');
+            setValue('endDate', e ?? '');
+          }}
+        />
+      </FilterGroup>
 
       {/* Price */}
       <FilterGroup title="Ціна (грн/год)">
@@ -167,7 +209,11 @@ export function SitterFilters({ onChange, initialValues }: Props) {
                   label={opt.label}
                   value={opt.value}
                   selected={value === opt.value}
-                  onSelect={onChange}
+                  onSelect={(v) => {
+                    onChange(v);
+                    setValue('startDate', '');
+                    setValue('endDate', '');
+                  }}
                 />
               ))}
             </>
@@ -278,12 +324,19 @@ export function SitterFilters({ onChange, initialValues }: Props) {
         />
       </FilterGroup>
 
-      <button
+      <Button
         type="submit"
-        className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-inter font-semibold text-sm hover:bg-zoopsy-green-700 transition-colors"
+        isPending={isLoading}
+        isDisabled={isSubmitDisabled}
+        className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-inter font-semibold text-sm hover:bg-zoopsy-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Застосувати
-      </button>
+        {({ isPending }) => (
+          <>
+            {isPending ? <Spinner color="current" size="sm" /> : null}
+            Застосувати
+          </>
+        )}
+      </Button>
     </form>
   );
 }

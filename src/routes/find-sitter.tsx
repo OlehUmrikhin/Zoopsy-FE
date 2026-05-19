@@ -8,9 +8,16 @@ export const Route = createFileRoute('/find-sitter')({
     petSpecies: search.petSpecies !== undefined ? Number(search.petSpecies) : undefined,
     dogWeightCategory:
       search.dogWeightCategory !== undefined ? Number(search.dogWeightCategory) : undefined,
+    startDate: typeof search.startDate === 'string' ? search.startDate : undefined,
+    endDate: typeof search.endDate === 'string' ? search.endDate : undefined,
   }),
   component: function FindSitterRoute() {
-    const { city, serviceType, petSpecies, dogWeightCategory } = Route.useSearch();
-    return <FindSitterPage initialParams={{ city, serviceType, petSpecies, dogWeightCategory }} />;
+    const { city, serviceType, petSpecies, dogWeightCategory, startDate, endDate } =
+      Route.useSearch();
+    return (
+      <FindSitterPage
+        initialParams={{ city, serviceType, petSpecies, dogWeightCategory, startDate, endDate }}
+      />
+    );
   },
 });

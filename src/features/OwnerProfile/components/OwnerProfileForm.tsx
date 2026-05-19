@@ -6,6 +6,7 @@ import { useUpdateOwnerProfile } from '@api/user/mutations';
 import type { UpdateOwnerProfilePayload } from '@api/user/fetchers';
 import { useOwnerProfile } from '@api';
 import { SPECIES_MAP, SPECIES_REVERSE_MAP } from '@api/owner/types';
+import { toast } from 'react-toastify';
 
 export type OwnerProfileFormValues = {
   fullName: string;
@@ -44,9 +45,9 @@ export function OwnerProfileForm() {
       : undefined,
   });
 
-  const { mutate: updateOwnerProfile } = useUpdateOwnerProfile();
+  const { mutateAsync: updateOwnerProfile } = useUpdateOwnerProfile();
 
-  const onSubmit = methods.handleSubmit((values) => {
+  const onSubmit = methods.handleSubmit(async (values) => {
     const payload: UpdateOwnerProfilePayload = {
       fullName: values.fullName,
       gender: values.gender,
@@ -65,7 +66,12 @@ export function OwnerProfileForm() {
 
     if (values.email) payload.email = values.email;
 
-    updateOwnerProfile(payload);
+    try {
+      await updateOwnerProfile(payload);
+      toast.success('Профіль успішно оновлено!');
+    } catch {
+      toast.error('Помилка при оновленні профілю. Спробуйте ще раз.');
+    }
   });
 
   return (

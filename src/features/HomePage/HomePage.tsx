@@ -1,13 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from '@tanstack/react-router';
 import { useOwnerProfile } from '@api';
-import { RangeCalendar, Calendar } from '@heroui/react';
-import { today, getLocalTimeZone } from '@internationalized/date';
-import type { CalendarDate } from '@internationalized/date';
-import { format } from 'date-fns';
-import { uk } from 'date-fns/locale';
+import { Button, Select, ListBox } from '@heroui/react';
 import cn from 'classnames';
-import { MdSearch, MdKeyboardArrowDown, MdCalendarToday } from 'react-icons/md';
+import { MdSearch } from 'react-icons/md';
+import { CitySelect } from '@components';
+import { DateRangeFilter } from '@features/FindSitter/components/DateRangeFilter';
 
 const SERVICE_TYPES = [
   { value: 0, label: 'Перетримка' },
@@ -16,28 +14,6 @@ const SERVICE_TYPES = [
   { value: 3, label: 'Ветеринарство' },
 ];
 
-const CITY_OPTIONS = [
-  { value: 'kyiv', label: 'Київ' },
-  { value: 'lviv', label: 'Львів' },
-  { value: 'kharkiv', label: 'Харків' },
-  { value: 'odesa', label: 'Одеса' },
-  { value: 'dnipro', label: 'Дніпро' },
-];
-
-type DateRange = { start: CalendarDate; end: CalendarDate };
-
-function calendarDateToJsDate(cd: CalendarDate): Date {
-  return new Date(cd.year, cd.month - 1, cd.day);
-}
-
-function formatDateRange(range: DateRange | null, singleDay = false): string {
-  if (!range) return singleDay ? 'Виберіть дату' : 'Виберіть дати';
-  const start = format(calendarDateToJsDate(range.start), 'd MMM', { locale: uk });
-  if (singleDay) return start;
-  const end = format(calendarDateToJsDate(range.end), 'd MMM', { locale: uk });
-  return `${start} – ${end}`;
-}
-
 export function HomePage() {
   const navigate = useNavigate();
   const { data: ownerProfile, isLoading: isProfileLoading } = useOwnerProfile();
@@ -45,14 +21,8 @@ export function HomePage() {
   const [selectedService, setSelectedService] = useState<number | null>(null);
   const [selectedPetId, setSelectedPetId] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
-  const [dateRange, setDateRange] = useState<DateRange | null>(null);
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
-  const datePickerRef = useRef<HTMLDivElement>(null);
-  const dateTriggerRef = useRef<HTMLButtonElement>(null);
-
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const isBoarding = selectedService === 0;
 
   const pets = ownerProfile?.pets ?? [];
@@ -63,24 +33,8 @@ export function HomePage() {
     selectedService !== null &&
     selectedPetId !== '' &&
     selectedCity !== '' &&
-    dateRange !== null &&
-    startTime !== '' &&
-    endTime !== '';
-
-  useEffect(() => {
-    function onClickOutside(e: MouseEvent) {
-      if (
-        datePickerRef.current &&
-        !datePickerRef.current.contains(e.target as Node) &&
-        dateTriggerRef.current &&
-        !dateTriggerRef.current.contains(e.target as Node)
-      ) {
-        setShowDatePicker(false);
-      }
-    }
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
-  }, []);
+    startDate !== '' &&
+    endDate !== '';
 
   function handleSearch() {
     if (!canSearch) return;
@@ -95,17 +49,11 @@ export function HomePage() {
         serviceType: selectedService!,
         petSpecies: selectedPet?.species,
         dogWeightCategory,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
       },
     });
   }
-
-  const dateLabel = dateRange
-    ? `${formatDateRange(dateRange, !isBoarding)}${startTime && endTime ? `  ${startTime}–${endTime}` : ''}`
-    : selectedService === null
-      ? 'Оберіть послугу'
-      : isBoarding
-        ? 'Виберіть дати'
-        : 'Виберіть дату';
 
   return (
     <div className="flex flex-col w-full">
@@ -148,23 +96,25 @@ export function HomePage() {
           {/* Service tabs */}
           <div className="flex gap-2 flex-wrap justify-center">
             {SERVICE_TYPES.map((s) => (
-              <button
+              <Button
                 key={s.value}
-                type="button"
-                onClick={() => {
+                onPress={() => {
                   const next = selectedService === s.value ? null : s.value;
-                  if (next !== selectedService) setDateRange(null);
+                  if (next !== selectedService) {
+                    setStartDate('');
+                    setEndDate('');
+                  }
                   setSelectedService(next);
                 }}
                 className={cn(
-                  'px-5 py-2.5 rounded-full font-inter font-semibold text-sm transition-all duration-150',
+                  'px-5 py-2.5 font-inter font-semibold text-sm transition-all duration-150',
                   selectedService === s.value
                     ? 'bg-zoopsy-green-900 text-white shadow-lg'
                     : 'bg-white/90 text-zoopsy-dark-gray hover:bg-white shadow-sm',
                 )}
               >
                 {s.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -185,26 +135,27 @@ export function HomePage() {
                       Додайте тварину у профілі
                     </Link>
                   ) : (
-                    <>
-                      <select
-                        value={selectedPetId}
-                        onChange={(e) => setSelectedPetId(e.target.value)}
-                        className={cn(
-                          'w-full bg-transparent font-inter text-sm outline-none appearance-none pr-5 cursor-pointer text-left',
-                          selectedPetId === '' ? 'text-zoopsy-gray' : 'text-zoopsy-dark-gray',
-                        )}
-                      >
-                        <option value="" disabled hidden>
-                          Оберіть тварину
-                        </option>
-                        {pets.map((pet) => (
-                          <option key={pet.id} value={pet.id}>
-                            {pet.name}
-                          </option>
-                        ))}
-                      </select>
-                      <MdKeyboardArrowDown className="absolute right-0 top-1/2 -translate-y-1/2 text-zoopsy-gray pointer-events-none" />
-                    </>
+                    <Select
+                      aria-label="Оберіть тварину"
+                      placeholder="Оберіть тварину"
+                      value={selectedPetId}
+                      onChange={(key) => setSelectedPetId(key as string)}
+                    >
+                      <Select.Trigger>
+                        <Select.Value />
+                        <Select.Indicator />
+                      </Select.Trigger>
+                      <Select.Popover>
+                        <ListBox>
+                          {pets.map((pet) => (
+                            <ListBox.Item key={pet.id} id={pet.id} textValue={pet.name}>
+                              {pet.name}
+                              <ListBox.ItemIndicator />
+                            </ListBox.Item>
+                          ))}
+                        </ListBox>
+                      </Select.Popover>
+                    </Select>
                   )}
                 </div>
               </div>
@@ -215,24 +166,7 @@ export function HomePage() {
                   Локація
                 </p>
                 <div className="relative">
-                  <select
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                    className={cn(
-                      'w-full bg-transparent font-inter text-sm outline-none appearance-none pr-5 cursor-pointer',
-                      selectedCity === '' ? 'text-zoopsy-gray' : 'text-zoopsy-dark-gray',
-                    )}
-                  >
-                    <option value="" disabled hidden>
-                      Введіть місто
-                    </option>
-                    {CITY_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                  <MdKeyboardArrowDown className="absolute right-0 top-1/2 -translate-y-1/2 text-zoopsy-gray pointer-events-none" />
+                  <CitySelect value={selectedCity} onChange={setSelectedCity} />
                 </div>
               </div>
 
@@ -241,128 +175,28 @@ export function HomePage() {
                 <p className="text-[10px] uppercase tracking-widest font-inter font-semibold text-zoopsy-gray mb-1.5 text-left">
                   Дата
                 </p>
-                <button
-                  ref={dateTriggerRef}
-                  type="button"
-                  onClick={() => selectedService !== null && setShowDatePicker((v) => !v)}
-                  disabled={selectedService === null}
-                  className={cn(
-                    'flex items-center gap-1.5 w-full text-left',
+                <DateRangeFilter
+                  key={String(selectedService)}
+                  isBoarding={isBoarding}
+                  isDisabled={selectedService === null}
+                  triggerClassName={cn(
+                    'bg-transparent p-0 min-w-0 min-h-0 h-auto flex items-center justify-between w-full text-left data-[hover=true]:bg-transparent font-inter text-sm',
                     selectedService === null && 'cursor-not-allowed opacity-50',
                   )}
-                >
-                  <span
-                    className={cn(
-                      'font-inter text-sm flex-1',
-                      dateRange ? 'text-zoopsy-dark-gray' : 'text-zoopsy-gray',
-                    )}
-                  >
-                    {dateLabel}
-                  </span>
-                  <MdCalendarToday className="text-zoopsy-gray text-sm flex-shrink-0" />
-                </button>
-
-                {/* Date picker popover */}
-                {showDatePicker && (
-                  <div
-                    ref={datePickerRef}
-                    className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-zoopsy-light-gray/30 p-4 z-50 w-[336px]"
-                  >
-                    {/* Time range inputs */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="font-inter text-sm text-zoopsy-gray whitespace-nowrap">
-                        від
-                      </span>
-                      <input
-                        type="time"
-                        value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
-                        className="flex-1 border border-zoopsy-light-gray/60 rounded-lg px-2.5 py-1.5 font-inter text-sm text-zoopsy-dark-gray outline-none focus:border-zoopsy-green-500 transition-colors"
-                      />
-                      <span className="font-inter text-sm text-zoopsy-gray whitespace-nowrap">
-                        до
-                      </span>
-                      <input
-                        type="time"
-                        value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
-                        className="flex-1 border border-zoopsy-light-gray/60 rounded-lg px-2.5 py-1.5 font-inter text-sm text-zoopsy-dark-gray outline-none focus:border-zoopsy-green-500 transition-colors"
-                      />
-                      <span className="font-inter text-xs text-zoopsy-gray whitespace-nowrap">
-                        (ГОД)
-                      </span>
-                    </div>
-
-                    {/* Range calendar (Перетримка) or single-day Calendar */}
-                    <div className="flex justify-center">
-                      {isBoarding ? (
-                        <RangeCalendar
-                          aria-label="Trip dates"
-                          value={dateRange}
-                          onChange={(range) => {
-                            if (range) {
-                              setDateRange({
-                                start: range.start as CalendarDate,
-                                end: range.end as CalendarDate,
-                              });
-                            }
-                          }}
-                          minValue={today(getLocalTimeZone())}
-                        >
-                          <RangeCalendar.Header>
-                            <RangeCalendar.Heading />
-                            <RangeCalendar.NavButton slot="previous" />
-                            <RangeCalendar.NavButton slot="next" />
-                          </RangeCalendar.Header>
-                          <RangeCalendar.Grid>
-                            <RangeCalendar.GridHeader>
-                              {(day) => <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>}
-                            </RangeCalendar.GridHeader>
-                            <RangeCalendar.GridBody>
-                              {(date) => <RangeCalendar.Cell date={date} />}
-                            </RangeCalendar.GridBody>
-                          </RangeCalendar.Grid>
-                        </RangeCalendar>
-                      ) : (
-                        <Calendar
-                          aria-label="Service date"
-                          value={dateRange?.start ?? null}
-                          onChange={(date) => {
-                            if (date) {
-                              const cd = date as CalendarDate;
-                              setDateRange({ start: cd, end: cd });
-                            }
-                          }}
-                          minValue={today(getLocalTimeZone())}
-                        >
-                          <Calendar.Header>
-                            <Calendar.Heading />
-                            <Calendar.NavButton slot="previous" />
-                            <Calendar.NavButton slot="next" />
-                          </Calendar.Header>
-                          <Calendar.Grid>
-                            <Calendar.GridHeader>
-                              {(day) => <Calendar.HeaderCell>{day}</Calendar.HeaderCell>}
-                            </Calendar.GridHeader>
-                            <Calendar.GridBody>
-                              {(date) => <Calendar.Cell date={date} />}
-                            </Calendar.GridBody>
-                          </Calendar.Grid>
-                        </Calendar>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  onChange={(s, e) => {
+                    setStartDate(s ?? '');
+                    setEndDate(e ?? '');
+                  }}
+                />
               </div>
 
               {/* Search button */}
               <div className="p-2 flex items-center flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={handleSearch}
-                  disabled={!canSearch}
+                <Button
+                  onPress={handleSearch}
+                  isDisabled={!canSearch}
                   className={cn(
-                    'flex items-center gap-2 px-6 py-3 rounded-xl font-inter font-semibold text-sm transition-all duration-150',
+                    'flex items-center gap-2 px-6 py-3 h-auto rounded-xl font-inter font-semibold text-sm transition-all duration-150',
                     canSearch
                       ? 'bg-zoopsy-green-900 text-white hover:bg-zoopsy-green-700 shadow-md cursor-pointer'
                       : 'bg-zoopsy-light-gray/40 text-zoopsy-gray cursor-not-allowed',
@@ -370,7 +204,7 @@ export function HomePage() {
                 >
                   <MdSearch className="text-lg" />
                   Пошук
-                </button>
+                </Button>
               </div>
             </div>
           </div>

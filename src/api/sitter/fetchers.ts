@@ -9,6 +9,11 @@ import type {
   SitterService,
 } from './types';
 
+export async function fetchSitterById(userId: string) {
+  const { data } = await axiosInstance.get<SitterProfile>(SITTER_PATHS.byId(userId));
+  return data;
+}
+
 export async function fetchSitterProfile() {
   const { data } = await axiosInstance.get<SitterProfile>(SITTER_PATHS.me);
   return data;

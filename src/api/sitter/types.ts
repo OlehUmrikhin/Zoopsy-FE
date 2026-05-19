@@ -40,6 +40,8 @@ export type SitterSearchParams = {
   gender?: string;
   dogWeightCategory?: number;
   minRating?: number;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   pageSize?: number;
 };
