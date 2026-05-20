@@ -1,8 +1,8 @@
-import { MdStar } from 'react-icons/md'
-import { useSitterProfile } from '@api'
+import { MdStar } from 'react-icons/md';
+import { useSitterProfile } from '@api';
 
 export function SitterRatingCard() {
-  const { data: sitterProfile } = useSitterProfile()
+  const { data: sitterProfile } = useSitterProfile();
 
   return (
     <div className="bg-white rounded-2xl p-5 text-left flex-1">
@@ -17,5 +17,5 @@ export function SitterRatingCard() {
       </div>
       <p className="text-zoopsy-gray font-inter text-xs mt-2">На основі відгуків</p>
     </div>
-  )
+  );
 }

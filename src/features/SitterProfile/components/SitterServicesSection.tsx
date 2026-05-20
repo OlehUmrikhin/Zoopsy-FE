@@ -1,24 +1,28 @@
-import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { MdOutlineHandshake } from 'react-icons/md'
-import { FaCheck } from 'react-icons/fa'
-import cn from 'classnames'
-import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput'
-import { DOG_SERVICE_DEFS, CAT_SERVICE_DEFS, type SitterProfileFormValues, type ServiceFormEntry } from './SitterProfileForm'
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { MdOutlineHandshake } from 'react-icons/md';
+import { FaCheck } from 'react-icons/fa';
+import cn from 'classnames';
+import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput';
+import {
+  DOG_SERVICE_DEFS,
+  CAT_SERVICE_DEFS,
+  type SitterProfileFormValues,
+  type ServiceFormEntry,
+} from './SitterProfileForm';
 
 type ServiceRowsProps = {
-  fieldName: 'dogServices' | 'catServices'
-  defs: typeof DOG_SERVICE_DEFS
-}
+  fieldName: 'dogServices' | 'catServices';
+  defs: typeof DOG_SERVICE_DEFS;
+};
 
 function ServiceRows({ fieldName, defs }: ServiceRowsProps) {
-  const { control, register, watch } = useFormContext<SitterProfileFormValues>()
-  const entries = watch(fieldName) as ServiceFormEntry[]
-
+  const { control, register, watch } = useFormContext<SitterProfileFormValues>();
+  const entries = watch(fieldName) as ServiceFormEntry[];
 
   return (
     <div className="grid grid-cols-2 gap-3">
       {defs.map((def, idx) => {
-        const enabled = entries?.[idx]?.enabled ?? false
+        const enabled = entries?.[idx]?.enabled ?? false;
 
         return (
           <div
@@ -47,7 +51,9 @@ function ServiceRows({ fieldName, defs }: ServiceRowsProps) {
               )}
             />
             <div className="flex-1 min-w-0">
-              <p className="font-inter text-sm font-medium text-zoopsy-dark-gray truncate">{def.label}</p>
+              <p className="font-inter text-sm font-medium text-zoopsy-dark-gray truncate">
+                {def.label}
+              </p>
             </div>
             <ZoopsyInput
               placeholder="0"
@@ -60,19 +66,18 @@ function ServiceRows({ fieldName, defs }: ServiceRowsProps) {
             {/* hidden field to carry serviceType */}
             <input type="hidden" {...register(`${fieldName}.${idx}.serviceType` as const)} />
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
 export function SitterServicesSection() {
-  const { watch } = useFormContext<SitterProfileFormValues>()
-  const petSpecies = useWatch<SitterProfileFormValues, 'petSpecies'>({ name: 'petSpecies' })
-  const hasDogs = petSpecies.includes(0)
-  const hasCats = petSpecies.includes(1)
+  const petSpecies = useWatch<SitterProfileFormValues, 'petSpecies'>({ name: 'petSpecies' });
+  const hasDogs = petSpecies.includes(0);
+  const hasCats = petSpecies.includes(1);
 
-  if (!hasDogs && !hasCats) return null
+  if (!hasDogs && !hasCats) return null;
 
   return (
     <div className="bg-white rounded-2xl p-6">
@@ -103,5 +108,5 @@ export function SitterServicesSection() {
         )}
       </div>
     </div>
-  )
+  );
 }

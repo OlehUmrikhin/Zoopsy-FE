@@ -1,72 +1,72 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useJsApiLoader } from '@react-google-maps/api'
-import { debounce } from 'lodash-es'
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useJsApiLoader } from '@react-google-maps/api';
+import { debounce } from 'lodash-es';
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 // Must be defined outside component to keep stable reference and avoid repeated reloads
-const LIBRARIES: ('places')[] = ['places']
-const DEBOUNCE_MS = 1000
+const LIBRARIES: 'places'[] = ['places'];
+const DEBOUNCE_MS = 1000;
 
 // Maps Google's locality name (lowercase) to the app's city key
 const CITY_MAP: Record<string, string> = {
-  'kyiv': 'kyiv',
-  'київ': 'kyiv',
-  'lviv': 'lviv',
-  'львів': 'lviv',
-  'kharkiv': 'kharkiv',
-  'харків': 'kharkiv',
-  'odessa': 'odesa',
-  'odesa': 'odesa',
-  'одеса': 'odesa',
-  'dnipro': 'dnipro',
-  'дніпро': 'dnipro',
-  'dnipropetrovsk': 'dnipro',
-}
+  kyiv: 'kyiv',
+  київ: 'kyiv',
+  lviv: 'lviv',
+  львів: 'lviv',
+  kharkiv: 'kharkiv',
+  харків: 'kharkiv',
+  odessa: 'odesa',
+  odesa: 'odesa',
+  одеса: 'odesa',
+  dnipro: 'dnipro',
+  дніпро: 'dnipro',
+  dnipropetrovsk: 'dnipro',
+};
 
 function extractCityKey(place: google.maps.places.PlaceResult): string | null {
   for (const component of place.address_components ?? []) {
     if (component.types.includes('locality')) {
-      return CITY_MAP[component.long_name.toLowerCase()] ?? null
+      return CITY_MAP[component.long_name.toLowerCase()] ?? null;
     }
   }
-  return null
+  return null;
 }
 
 type Props = {
-  value: string
-  onChange: (value: string) => void
-  onCoordinatesChange: (lat: number, lng: number) => void
-  onCityChange?: (cityKey: string) => void
-}
+  value: string;
+  onChange: (value: string) => void;
+  onCoordinatesChange: (lat: number, lng: number) => void;
+  onCityChange?: (cityKey: string) => void;
+};
 
 export function AddressAutocomplete({ value, onChange, onCoordinatesChange, onCityChange }: Props) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: API_KEY,
     libraries: LIBRARIES,
-  })
+  });
 
-  const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([])
-  const [open, setOpen] = useState(false)
-  const [cityError, setCityError] = useState(false)
+  const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
+  const [open, setOpen] = useState(false);
+  const [cityError, setCityError] = useState(false);
 
   // Session token groups autocomplete requests + one getDetails into a single billing session
-  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null)
+  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
   // PlacesService requires a DOM node for attribution rendering (we hide it)
-  const attributionRef = useRef<HTMLDivElement>(null)
+  const attributionRef = useRef<HTMLDivElement>(null);
 
   function getSessionToken() {
     if (!sessionTokenRef.current && isLoaded) {
-      sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken()
+      sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
     }
-    return sessionTokenRef.current ?? undefined
+    return sessionTokenRef.current ?? undefined;
   }
 
   const fetchPredictions = useMemo(
     () =>
       debounce((input: string) => {
-        if (!input || !isLoaded) return
-        const service = new google.maps.places.AutocompleteService()
+        if (!input || !isLoaded) return;
+        const service = new google.maps.places.AutocompleteService();
         service.getPlacePredictions(
           {
             input,
@@ -76,41 +76,41 @@ export function AddressAutocomplete({ value, onChange, onCoordinatesChange, onCi
           },
           (preds, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && preds) {
-              setPredictions(preds)
-              setOpen(true)
+              setPredictions(preds);
+              setOpen(true);
             } else {
-              setPredictions([])
+              setPredictions([]);
             }
           },
-        )
+        );
       }, DEBOUNCE_MS),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isLoaded],
-  )
+  );
 
   useEffect(() => {
-    return () => fetchPredictions.cancel()
-  }, [fetchPredictions])
+    return () => fetchPredictions.cancel();
+  }, [fetchPredictions]);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = e.target.value
-    onChange(val)
-    setCityError(false)
+    const val = e.target.value;
+    onChange(val);
+    setCityError(false);
     if (val.length > 2) {
-      fetchPredictions(val)
+      fetchPredictions(val);
     } else {
-      fetchPredictions.cancel()
-      setPredictions([])
-      setOpen(false)
+      fetchPredictions.cancel();
+      setPredictions([]);
+      setOpen(false);
     }
   }
 
   function handleSelect(prediction: google.maps.places.AutocompletePrediction) {
-    setOpen(false)
-    setPredictions([])
+    setOpen(false);
+    setPredictions([]);
 
-    if (!attributionRef.current) return
-    const placesService = new google.maps.places.PlacesService(attributionRef.current)
+    if (!attributionRef.current) return;
+    const placesService = new google.maps.places.PlacesService(attributionRef.current);
 
     placesService.getDetails(
       {
@@ -122,32 +122,29 @@ export function AddressAutocomplete({ value, onChange, onCoordinatesChange, onCi
       },
       (place, status) => {
         // Reset token — next autocomplete interaction starts a new session
-        sessionTokenRef.current = null
+        sessionTokenRef.current = null;
 
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !place) return
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !place) return;
 
-        const cityKey = extractCityKey(place)
+        const cityKey = extractCityKey(place);
         if (!cityKey) {
-          setCityError(true)
-          onChange('')
-          return
+          setCityError(true);
+          onChange('');
+          return;
         }
 
-        setCityError(false)
-        if (place.formatted_address) onChange(place.formatted_address)
+        setCityError(false);
+        if (place.formatted_address) onChange(place.formatted_address);
         if (place.geometry?.location) {
-          onCoordinatesChange(
-            place.geometry.location.lat(),
-            place.geometry.location.lng(),
-          )
+          onCoordinatesChange(place.geometry.location.lat(), place.geometry.location.lng());
         }
-        onCityChange?.(cityKey)
+        onCityChange?.(cityKey);
       },
-    )
+    );
   }
 
   const inputClass =
-    'bg-zoopsy-mint rounded-xl h-12 px-3 text-zoopsy-dark-gray font-inter text-sm w-full outline-none border-none focus:outline-none placeholder:text-zinc-400'
+    'bg-zoopsy-mint rounded-xl h-12 px-3 text-zoopsy-dark-gray font-inter text-sm w-full outline-none border-none focus:outline-none placeholder:text-zinc-400';
 
   return (
     <div className="flex flex-col gap-1 relative">
@@ -200,5 +197,5 @@ export function AddressAutocomplete({ value, onChange, onCoordinatesChange, onCi
         />
       )}
     </div>
-  )
+  );
 }

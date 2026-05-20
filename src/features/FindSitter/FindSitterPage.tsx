@@ -1,25 +1,25 @@
-import { useState } from 'react'
-import { useSitters } from '@api'
-import type { SitterSearchParams } from '@api/sitter/types'
-import { SitterFilters } from './components/SitterFilters'
-import { SitterCard } from './components/SitterCard'
-import { SittersMap } from './components/SittersMap'
-import { MapStub } from './components/MapStub'
+import { useState } from 'react';
+import { Link } from '@tanstack/react-router';
+import { useSitters } from '@api';
+import type { SitterSearchParams } from '@api/sitter/types';
+import { SitterFilters } from './components/SitterFilters';
+import { SitterCard } from './components/SitterCard';
+import { SittersMap } from './components/SittersMap';
 
 type Props = {
-  initialParams?: SitterSearchParams
-}
+  initialParams?: SitterSearchParams;
+};
 
 export function FindSitterPage({ initialParams }: Props = {}) {
-  const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {})
-  const [highlightedSitterId, setHighlightedSitterId] = useState<string | null>(null)
-  const { data: sitters, isLoading } = useSitters(params)
+  const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {});
+  const [highlightedSitterId, setHighlightedSitterId] = useState<string | null>(null);
+  const { data: sitters, isLoading } = useSitters(params);
 
   return (
     <div className="min-h-screen bg-zoopsy-mint flex">
       {/* Filters sidebar */}
       <aside className="w-64 flex-shrink-0 bg-white border-r border-zoopsy-light-gray/40 p-5 overflow-y-auto">
-        <SitterFilters onChange={setParams} initialValues={initialParams} />
+        <SitterFilters onChange={setParams} initialValues={initialParams} isLoading={isLoading} />
       </aside>
 
       <div className="flex flex-1 overflow-hidden">
@@ -69,12 +69,14 @@ export function FindSitterPage({ initialParams }: Props = {}) {
                   onMouseEnter={() => setHighlightedSitterId(sitter.userId)}
                   onMouseLeave={() => setHighlightedSitterId(null)}
                 >
-                  <SitterCard sitter={sitter} />
+                  <Link to="/sitter/$userId" params={{ userId: sitter.userId }} className="block">
+                    <SitterCard sitter={sitter} />
+                  </Link>
                 </div>
               ))}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

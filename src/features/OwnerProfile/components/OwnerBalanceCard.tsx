@@ -1,4 +1,4 @@
-import { Button } from '@heroui/react'
+import { Button } from '@heroui/react';
 
 export function OwnerBalanceCard() {
   return (
@@ -16,5 +16,5 @@ export function OwnerBalanceCard() {
         Поповнити баланс
       </Button>
     </div>
-  )
+  );
 }

@@ -16,9 +16,7 @@ function RootComponent() {
 
   const hideNav = isSignPage || isRoleSelectorPage || isSitter;
 
-  const logoHref = isSignedIn
-    ? getAuthRedirectPath(user?.publicMetadata?.role)
-    : undefined;
+  const logoHref = isSignedIn ? getAuthRedirectPath(user?.publicMetadata?.role) : undefined;
 
   if (isAdmin) {
     return <Outlet />;
@@ -40,14 +38,10 @@ function RootComponent() {
               )}
               {/* <UserButton /> */}
               <UserButton>
-              <UserButton.MenuItems>
-                <UserButton.Link
-                  label="Профіль"
-                  href="/profile"
-                  labelIcon={<MdSettings />} 
-                />
-              </UserButton.MenuItems>
-            </UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Link label="Профіль" href="/profile" labelIcon={<MdSettings />} />
+                </UserButton.MenuItems>
+              </UserButton>
             </Show>
           </div>
         </Header>

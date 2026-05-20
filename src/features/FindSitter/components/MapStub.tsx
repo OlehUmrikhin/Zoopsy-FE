@@ -1,4 +1,4 @@
-import { MdMyLocation } from 'react-icons/md'
+import { MdMyLocation } from 'react-icons/md';
 
 export function MapStub() {
   return (
@@ -15,7 +15,12 @@ export function MapStub() {
       {/* Curved "roads" */}
       <svg className="absolute inset-0 w-full h-full opacity-15" xmlns="http://www.w3.org/2000/svg">
         <path d="M0,200 Q200,150 400,220 T800,180" stroke="#2C694E" strokeWidth="8" fill="none" />
-        <path d="M0,350 Q150,300 300,370 T600,340 T900,360" stroke="#2C694E" strokeWidth="5" fill="none" />
+        <path
+          d="M0,350 Q150,300 300,370 T600,340 T900,360"
+          stroke="#2C694E"
+          strokeWidth="5"
+          fill="none"
+        />
         <path d="M200,0 Q220,200 180,400 T210,600" stroke="#2C694E" strokeWidth="6" fill="none" />
         <path d="M500,0 Q480,150 520,350 T490,600" stroke="#2C694E" strokeWidth="4" fill="none" />
       </svg>
@@ -30,5 +35,5 @@ export function MapStub() {
         </span>
       </div>
     </div>
-  )
+  );
 }

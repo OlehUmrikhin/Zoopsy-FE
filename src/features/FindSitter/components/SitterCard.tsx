@@ -1,31 +1,31 @@
-import { MdStar } from 'react-icons/md'
-import cn from 'classnames'
-import type { SitterSearchResult } from '@api/sitter/types'
+import { MdStar } from 'react-icons/md';
+import cn from 'classnames';
+import type { SitterSearchResult } from '@api/sitter/types';
 
 const SERVICE_TYPE_LABELS: Record<number, string> = {
   0: 'Перетримка',
   1: 'Прогулянка',
   2: 'Грумерство',
   3: 'Ветеринарство',
-}
+};
 
 const BADGE_COLORS: Record<number, string> = {
   0: 'bg-zoopsy-green-100 text-zoopsy-green-900',
   1: 'bg-blue-100 text-blue-700',
   2: 'bg-purple-100 text-purple-700',
   3: 'bg-orange-100 text-orange-700',
-}
+};
 
 type SitterCardProps = {
-  sitter: SitterSearchResult
-}
+  sitter: SitterSearchResult;
+};
 
 export function SitterCard({ sitter }: SitterCardProps) {
   const minPrice = sitter.services.length
     ? Math.min(...sitter.services.map((s) => s.pricePerUnit))
-    : null
+    : null;
 
-  const uniqueServiceTypes = [...new Set(sitter.services.map((s) => s.serviceType))]
+  const uniqueServiceTypes = [...new Set(sitter.services.map((s) => s.serviceType))];
 
   return (
     <div className="bg-white rounded-2xl p-4 flex gap-4 hover:shadow-md transition-shadow">
@@ -88,5 +88,5 @@ export function SitterCard({ sitter }: SitterCardProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

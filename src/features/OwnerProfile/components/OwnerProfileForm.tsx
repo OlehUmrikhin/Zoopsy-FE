@@ -1,28 +1,30 @@
-import { FormProvider, useForm } from 'react-hook-form'
-import { Button } from '@heroui/react'
-import { PersonalDataSection } from './PersonalDataSection'
-import { PetsSection } from './PetsSection'
-import { useUpdateOwnerProfile } from '@api/user/mutations'
-import { useOwnerProfile } from '@api'
-import { SPECIES_MAP, SPECIES_REVERSE_MAP } from '@api/owner/types'
+import { FormProvider, useForm } from 'react-hook-form';
+import { Button } from '@heroui/react';
+import { PersonalDataSection } from './PersonalDataSection';
+import { PetsSection } from './PetsSection';
+import { useUpdateOwnerProfile } from '@api/user/mutations';
+import type { UpdateOwnerProfilePayload } from '@api/user/fetchers';
+import { useOwnerProfile } from '@api';
+import { SPECIES_MAP, SPECIES_REVERSE_MAP } from '@api/owner/types';
+import { toast } from 'react-toastify';
 
 export type OwnerProfileFormValues = {
-  fullName: string
-  gender: string
-  city: string
-  phoneNumber: string
-  email: string
+  fullName: string;
+  gender: string;
+  city: string;
+  phoneNumber: string;
+  email: string;
   pets: {
-    id?: string
-    species: string
-    name: string
-    breed: string
-    weight: string
-  }[]
-}
+    id?: string;
+    species: string;
+    name: string;
+    breed: string;
+    weight: string;
+  }[];
+};
 
 export function OwnerProfileForm() {
-  const { data: currentUser } = useOwnerProfile()
+  const { data: currentUser } = useOwnerProfile();
 
   const methods = useForm<OwnerProfileFormValues>({
     values: currentUser
@@ -41,12 +43,12 @@ export function OwnerProfileForm() {
           })),
         }
       : undefined,
-  })
+  });
 
-  const { mutate: updateOwnerProfile } = useUpdateOwnerProfile()
+  const { mutateAsync: updateOwnerProfile } = useUpdateOwnerProfile();
 
-  const onSubmit = methods.handleSubmit((values) => {
-    const payload: any = {
+  const onSubmit = methods.handleSubmit(async (values) => {
+    const payload: UpdateOwnerProfilePayload = {
       fullName: values.fullName,
       gender: values.gender,
       city: values.city,
@@ -60,12 +62,17 @@ export function OwnerProfileForm() {
         gender: '',
         age: 0,
       })),
+    };
+
+    if (values.email) payload.email = values.email;
+
+    try {
+      await updateOwnerProfile(payload);
+      toast.success('Профіль успішно оновлено!');
+    } catch {
+      toast.error('Помилка при оновленні профілю. Спробуйте ще раз.');
     }
-
-    if (values.email) payload.email = values.email
-
-    updateOwnerProfile(payload)
-  })
+  });
 
   return (
     <FormProvider {...methods}>
@@ -81,5 +88,5 @@ export function OwnerProfileForm() {
         </Button>
       </form>
     </FormProvider>
-  )
+  );
 }

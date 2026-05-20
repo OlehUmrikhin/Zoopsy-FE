@@ -1,6 +1,6 @@
-import { Navigate, Outlet, useRouterState, Link } from '@tanstack/react-router'
-import { useUser, UserButton } from '@clerk/react'
-import React from 'react'
+import { Navigate, Outlet, useRouterState, Link } from '@tanstack/react-router';
+import { useUser, UserButton } from '@clerk/react';
+import React from 'react';
 import {
   MdDashboard,
   MdAttachMoney,
@@ -9,14 +9,14 @@ import {
   MdPeople,
   MdArticle,
   MdNotifications,
-} from 'react-icons/md'
+} from 'react-icons/md';
 
 type NavItem = {
-  to: string
-  label: string
-  icon: React.ElementType
-  exact?: boolean
-}
+  to: string;
+  label: string;
+  icon: React.ElementType;
+  exact?: boolean;
+};
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/admin', label: 'Головна', icon: MdDashboard, exact: true },
@@ -25,18 +25,18 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/admin/complaints', label: 'Скарги', icon: MdReport },
   { to: '/admin/users', label: 'Користувачі', icon: MdPeople },
   { to: '/admin/content', label: 'Контент', icon: MdArticle },
-]
+];
 
 export function AdminLayout() {
-  const { isLoaded, isSignedIn, user } = useUser()
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const { isLoaded, isSignedIn, user } = useUser();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  if (!isLoaded) return null
+  if (!isLoaded) return null;
 
-  if (!isSignedIn) return <Navigate to="/sign" />
+  if (!isSignedIn) return <Navigate to="/sign" />;
 
-  const role = user?.publicMetadata?.role
-  if (role !== 'admin') return <Navigate to="/bookings" />
+  const role = user?.publicMetadata?.role;
+  if (role !== 'admin') return <Navigate to="/bookings" />;
 
   return (
     <div className="flex min-h-screen bg-zoopsy-bg">
@@ -52,7 +52,9 @@ export function AdminLayout() {
         </div>
         <nav className="flex flex-col gap-1 flex-1">
           {NAV_ITEMS.map(({ to, label, icon: Icon, exact }) => {
-            const isActive = exact ? pathname === to : pathname.startsWith(to + '/') || pathname === to
+            const isActive = exact
+              ? pathname === to
+              : pathname.startsWith(to + '/') || pathname === to;
             return (
               <Link
                 key={to}
@@ -69,7 +71,7 @@ export function AdminLayout() {
                 </span>
                 {label}
               </Link>
-            )
+            );
           })}
         </nav>
       </aside>
@@ -90,5 +92,5 @@ export function AdminLayout() {
         </main>
       </div>
     </div>
-  )
+  );
 }

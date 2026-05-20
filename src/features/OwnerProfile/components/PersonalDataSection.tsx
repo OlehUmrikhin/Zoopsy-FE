@@ -1,14 +1,14 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { MdOutlineEdit } from 'react-icons/md'
-import { ZoopsyInput } from './ZoopsyInput'
-import { ZoopsySelect, ZoopsySelectItem } from './ZoopsySelect'
-import { PhoneInput } from './PhoneInput'
-import type { OwnerProfileFormValues } from './OwnerProfileForm'
+import { Controller, useFormContext } from 'react-hook-form';
+import { MdOutlineEdit } from 'react-icons/md';
+import { ZoopsyInput } from './ZoopsyInput';
+import { ZoopsySelect, ZoopsySelectItem } from './ZoopsySelect';
+import { PhoneInput } from './PhoneInput';
+import type { OwnerProfileFormValues } from './OwnerProfileForm';
 
 const GENDER_OPTIONS = [
   { value: 'male', label: 'Чоловіча' },
   { value: 'female', label: 'Жіноча' },
-]
+];
 
 const CITY_OPTIONS = [
   { value: 'kyiv', label: 'Київ' },
@@ -16,10 +16,10 @@ const CITY_OPTIONS = [
   { value: 'kharkiv', label: 'Харків' },
   { value: 'odesa', label: 'Одеса' },
   { value: 'dnipro', label: 'Дніпро' },
-]
+];
 
 export function PersonalDataSection() {
-  const { register, control } = useFormContext<OwnerProfileFormValues>()
+  const { register, control } = useFormContext<OwnerProfileFormValues>();
 
   return (
     <div className="bg-white rounded-2xl p-6">
@@ -32,14 +32,18 @@ export function PersonalDataSection() {
 
       <div className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-4">
-          <ZoopsyInput label="ПОВНЕ ІМ'Я" placeholder="Введіть повне ім'я" {...register('fullName')} />
+          <ZoopsyInput
+            label="ПОВНЕ ІМ'Я"
+            placeholder="Введіть повне ім'я"
+            {...register('fullName')}
+          />
           <Controller
             name="gender"
             control={control}
             render={({ field: { onChange, value } }) => (
               <ZoopsySelect
                 label="СТАТЬ"
-                placeholder='Виберіть стать'
+                placeholder="Виберіть стать"
                 selectedKey={value || null}
                 onSelectionChange={(key) => onChange(key as string)}
               >
@@ -60,7 +64,7 @@ export function PersonalDataSection() {
             render={({ field: { onChange, value } }) => (
               <ZoopsySelect
                 label="МІСТО"
-                placeholder='Виберіть місто'
+                placeholder="Виберіть місто"
                 selectedKey={value || null}
                 onSelectionChange={(key) => onChange(key as string)}
               >
@@ -89,5 +93,5 @@ export function PersonalDataSection() {
         />
       </div>
     </div>
-  )
+  );
 }

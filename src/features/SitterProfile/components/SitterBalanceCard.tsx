@@ -1,4 +1,4 @@
-import { Button } from '@heroui/react'
+import { Button } from '@heroui/react';
 
 export function SitterBalanceCard() {
   return (
@@ -16,5 +16,5 @@ export function SitterBalanceCard() {
         Вивести
       </Button>
     </div>
-  )
+  );
 }

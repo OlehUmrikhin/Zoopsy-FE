@@ -23,6 +23,7 @@ import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as SitterUserIdRouteImport } from './routes/sitter.$userId'
 
 const TopRoute = TopRouteImport.update({
   id: '/top',
@@ -94,6 +95,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const SitterUserIdRoute = SitterUserIdRouteImport.update({
+  id: '/sitter/$userId',
+  path: '/sitter/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/sitter/$userId': typeof SitterUserIdRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/sitter/$userId'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/sitter/$userId'
     | '/admin'
   id:
     | '__root__'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/sitter/$userId'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   RoleSelectorRoute: typeof RoleSelectorRoute
   SignRoute: typeof SignRoute
   TopRoute: typeof TopRoute
+  SitterUserIdRoute: typeof SitterUserIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -309,6 +322,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/sitter/$userId': {
+      id: '/sitter/$userId'
+      path: '/sitter/$userId'
+      fullPath: '/sitter/$userId'
+      preLoaderRoute: typeof SitterUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -338,6 +358,7 @@ const rootRouteChildren: RootRouteChildren = {
   RoleSelectorRoute: RoleSelectorRoute,
   SignRoute: SignRoute,
   TopRoute: TopRoute,
+  SitterUserIdRoute: SitterUserIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
