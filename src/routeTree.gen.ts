@@ -24,6 +24,7 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SitterUserIdRouteImport } from './routes/sitter.$userId'
+import { Route as AdminFinancesRouteImport } from './routes/admin/finances'
 
 const TopRoute = TopRouteImport.update({
   id: '/top',
@@ -100,6 +101,11 @@ const SitterUserIdRoute = SitterUserIdRouteImport.update({
   path: '/sitter/$userId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFinancesRoute = AdminFinancesRouteImport.update({
+  id: '/finances',
+  path: '/finances',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/admin/finances': typeof AdminFinancesRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/admin/finances': typeof AdminFinancesRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin': typeof AdminIndexRoute
 }
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/admin/finances': typeof AdminFinancesRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/admin/finances'
     | '/sitter/$userId'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/admin/finances'
     | '/sitter/$userId'
     | '/admin'
   id:
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/admin/finances'
     | '/sitter/$userId'
     | '/admin/'
   fileRoutesById: FileRoutesById
@@ -329,14 +341,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitterUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/finances': {
+      id: '/admin/finances'
+      path: '/finances'
+      fullPath: '/admin/finances'
+      preLoaderRoute: typeof AdminFinancesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
 interface AdminRouteRouteChildren {
+  AdminFinancesRoute: typeof AdminFinancesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminFinancesRoute: AdminFinancesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
