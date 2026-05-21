@@ -1,25 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useSitters } from '@api';
 import type { SitterSearchParams } from '@api/sitter/types';
+import { useBookingFiltersStore } from '@stores';
 import { SitterFilters } from './components/SitterFilters';
 import { SitterCard } from './components/SitterCard';
 import { SittersMap } from './components/SittersMap';
 
 type Props = {
   initialParams?: SitterSearchParams;
+  initialPetId?: string;
 };
 
-export function FindSitterPage({ initialParams }: Props = {}) {
+export function FindSitterPage({ initialParams, initialPetId }: Props = {}) {
   const [params, setParams] = useState<SitterSearchParams>(initialParams ?? {});
   const [highlightedSitterId, setHighlightedSitterId] = useState<string | null>(null);
+  const setFilters = useBookingFiltersStore((s) => s.setFilters);
   const { data: sitters, isLoading } = useSitters(params);
+
+  useEffect(() => {
+    if (initialParams) {
+      setFilters({
+        serviceType: initialParams.serviceType,
+        startDate: initialParams.startDate,
+        endDate: initialParams.endDate,
+        petId: initialPetId,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-zoopsy-mint flex">
       {/* Filters sidebar */}
       <aside className="w-64 flex-shrink-0 bg-white border-r border-zoopsy-light-gray/40 p-5 overflow-y-auto">
-        <SitterFilters onChange={setParams} initialValues={initialParams} isLoading={isLoading} />
+        <SitterFilters
+          onChange={(searchParams, petId) => {
+            setParams(searchParams);
+            setFilters({
+              serviceType: searchParams.serviceType,
+              startDate: searchParams.startDate,
+              endDate: searchParams.endDate,
+              petId,
+            });
+          }}
+          initialValues={initialParams}
+          initialPetId={initialPetId}
+          isLoading={isLoading}
+        />
       </aside>
 
       <div className="flex flex-1 overflow-hidden">

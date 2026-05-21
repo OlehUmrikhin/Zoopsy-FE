@@ -10,6 +10,7 @@ import {
   toZoned,
 } from '@internationalized/date';
 import type { TimeValue } from 'react-aria-components';
+import { I18nProvider } from 'react-aria-components';
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
 import cn from 'classnames';
@@ -170,7 +171,7 @@ export function DateRangeFilter({
   );
 
   const calendarPopoverContent = isBoarding ? (
-    <>
+    <I18nProvider locale="uk-UA">
       {timeFieldsJSX}
       <div className="flex justify-center">
         <RangeCalendar aria-label="Trip dates">
@@ -189,9 +190,9 @@ export function DateRangeFilter({
           </RangeCalendar.Grid>
         </RangeCalendar>
       </div>
-    </>
+    </I18nProvider>
   ) : (
-    <>
+    <I18nProvider locale="uk-UA">
       {timeFieldsJSX}
       <div className="flex justify-center">
         <Calendar aria-label="Service date">
@@ -208,7 +209,7 @@ export function DateRangeFilter({
           </Calendar.Grid>
         </Calendar>
       </div>
-    </>
+    </I18nProvider>
   );
 
   if (isBoarding) {

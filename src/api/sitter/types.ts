@@ -35,9 +35,9 @@ export type SitterSearchParams = {
   maxPrice?: number;
   serviceType?: number;
   petSpecies?: number;
-  housingType?: string;
+  housingType?: string[];
   minExperienceYears?: number;
-  gender?: string;
+  gender?: string[];
   dogWeightCategory?: number;
   minRating?: number;
   startDate?: string;
