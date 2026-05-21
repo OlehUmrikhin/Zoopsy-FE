@@ -1,21 +1,17 @@
-import { useForm, Controller } from 'react-hook-form';
+﻿import { useForm, Controller } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Spinner } from '@heroui/react';
+import { Button, Spinner, Select, ListBox } from '@heroui/react';
 import { CitySelect } from '@components';
 import { ZoopsyInput } from '@features/OwnerProfile/components/ZoopsyInput';
 import type { SitterSearchParams } from '@api/sitter/types';
 import { DateRangeFilter } from './DateRangeFilter';
+import { useOwnerProfile } from '@api/owner/queries';
 
 const SERVICE_TYPES = [
   { value: 0, label: 'Перетримка' },
   { value: 1, label: 'Прогулянка' },
   { value: 2, label: 'Грумерство' },
   { value: 3, label: 'Ветеринарство' },
-];
-
-const PET_SPECIES = [
-  { value: 0, label: 'Собаки' },
-  { value: 1, label: 'Коти' },
 ];
 
 const HOUSING_TYPES = [
@@ -36,29 +32,23 @@ const EXPERIENCE_OPTIONS = [
   { value: 5, label: '5+ років' },
 ];
 
-const DOG_WEIGHT_CATEGORIES = [
-  { value: 0, label: 'Малі (до 10 кг)' },
-  { value: 1, label: 'Середні (10–25 кг)' },
-  { value: 2, label: 'Великі (понад 25 кг)' },
-];
-
 export type FilterFormValues = {
   minPrice: string;
   maxPrice: string;
   serviceType: number | null;
-  petSpecies: number | null;
-  housingType: string | null;
+  petId: string;
+  housingType: string[];
   minExperienceYears: number | null;
-  gender: string | null;
-  dogWeightCategory: number | null;
+  gender: string[];
   city: string;
   startDate: string;
   endDate: string;
 };
 
 type Props = {
-  onChange: (params: SitterSearchParams) => void;
+  onChange: (params: SitterSearchParams, petId?: string) => void;
   initialValues?: SitterSearchParams;
+  initialPetId?: string;
   isLoading?: boolean;
 };
 
@@ -92,6 +82,46 @@ function RadioOption<T extends string | number>({
   );
 }
 
+function CheckboxOption({
+  label,
+  value,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  value: string;
+  checked: boolean;
+  onToggle: (value: string, checked: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 cursor-pointer group">
+      <button
+        type="button"
+        onClick={() => onToggle(value, !checked)}
+        className={cn(
+          'w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-colors',
+          checked
+            ? 'border-zoopsy-green-900 bg-zoopsy-green-900'
+            : 'bg-white border-zoopsy-gray group-hover:border-zoopsy-green-500',
+        )}
+      >
+        {checked && (
+          <svg viewBox="0 0 10 8" fill="none" className="w-3 h-3">
+            <path
+              d="M1 4L3.5 6.5L9 1"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </button>
+      <span className="font-inter text-sm text-zoopsy-dark-gray">{label}</span>
+    </label>
+  );
+}
+
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2.5">
@@ -103,17 +133,19 @@ function FilterGroup({ title, children }: { title: string; children: React.React
   );
 }
 
-export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
+export function SitterFilters({ onChange, initialValues, initialPetId, isLoading }: Props) {
+  const { data: ownerProfile } = useOwnerProfile();
+  const pets = ownerProfile?.pets ?? [];
+
   const { register, control, watch, handleSubmit, setValue } = useForm<FilterFormValues>({
     defaultValues: {
       minPrice: initialValues?.minPrice?.toString() ?? '',
       maxPrice: initialValues?.maxPrice?.toString() ?? '',
       serviceType: initialValues?.serviceType ?? null,
-      petSpecies: initialValues?.petSpecies ?? null,
-      housingType: initialValues?.housingType ?? null,
-      minExperienceYears: initialValues?.minExperienceYears ?? null,
-      gender: initialValues?.gender ?? null,
-      dogWeightCategory: initialValues?.dogWeightCategory ?? null,
+      petId: initialPetId ?? '',
+      housingType: initialValues?.housingType ?? [],
+      minExperienceYears: initialValues?.minExperienceYears ?? 0,
+      gender: initialValues?.gender ?? [],
       city: initialValues?.city ?? '',
       startDate: initialValues?.startDate ?? '',
       endDate: initialValues?.endDate ?? '',
@@ -125,22 +157,28 @@ export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
     if (values.minPrice) params.minPrice = Number(values.minPrice);
     if (values.maxPrice) params.maxPrice = Number(values.maxPrice);
     if (values.serviceType !== null) params.serviceType = values.serviceType;
-    if (values.petSpecies !== null) params.petSpecies = values.petSpecies;
-    if (values.housingType) params.housingType = values.housingType;
+    if (values.housingType.length > 0) params.housingType = values.housingType;
     if (values.minExperienceYears !== null) params.minExperienceYears = values.minExperienceYears;
-    if (values.gender) params.gender = values.gender;
-    if (values.dogWeightCategory !== null) params.dogWeightCategory = values.dogWeightCategory;
+    if (values.gender.length > 0) params.gender = values.gender;
     if (values.city) params.city = values.city;
     if (values.startDate) params.startDate = values.startDate;
     if (values.endDate) params.endDate = values.endDate;
-    onChange(params);
+
+    // Derive petSpecies and dogWeightCategory from the selected pet
+    const pet = pets.find((p) => p.id === values.petId);
+    if (pet) {
+      params.petSpecies = pet.species;
+      if (pet.species === 0 && pet.weight != null) {
+        params.dogWeightCategory = pet.weight < 10 ? 0 : pet.weight <= 25 ? 1 : 2;
+      }
+    }
+
+    onChange(params, values.petId || undefined);
   });
 
-  const petSpecies = watch('petSpecies');
   const city = watch('city');
   const serviceType = watch('serviceType');
   const isBoarding = serviceType === 0;
-
   const isSubmitDisabled = !city || serviceType === null;
 
   return (
@@ -221,49 +259,38 @@ export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
         />
       </FilterGroup>
 
-      {/* Pet species */}
-      <FilterGroup title="Тип тварини">
+      {/* Pet selector from owner profile */}
+      <FilterGroup title="Тварина">
         <Controller
-          name="petSpecies"
+          name="petId"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <>
-              {PET_SPECIES.map((opt) => (
-                <RadioOption
-                  key={opt.value}
-                  label={opt.label}
-                  value={opt.value}
-                  selected={value === opt.value}
-                  onSelect={onChange}
-                />
-              ))}
-            </>
+            <Select
+              aria-label="Оберіть тварину"
+              placeholder="Всі тварини"
+              value={value}
+              onChange={(val) => onChange(val as string)}
+            >
+              <Select.Trigger className="bg-zoopsy-mint rounded-xl h-10 px-3 w-full flex items-center justify-between gap-2 text-zoopsy-dark-gray font-inter text-sm outline-none data-[hovered]:bg-zoopsy-mint/80 data-[pressed]:bg-zoopsy-mint/80">
+                <Select.Value />
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover>
+                <ListBox>
+                  {pets.map((pet) => (
+                    <ListBox.Item key={pet.id} id={pet.id} textValue={pet.name}>
+                      {pet.name}
+                      <ListBox.ItemIndicator />
+                    </ListBox.Item>
+                  ))}
+                </ListBox>
+              </Select.Popover>
+            </Select>
           )}
         />
       </FilterGroup>
 
-      {petSpecies === 0 && (
-        <FilterGroup title="Вага собак">
-          <Controller
-            name="dogWeightCategory"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <>
-                {DOG_WEIGHT_CATEGORIES.map((opt) => (
-                  <RadioOption
-                    key={opt.value}
-                    label={opt.label}
-                    value={opt.value}
-                    selected={value === opt.value}
-                    onSelect={onChange}
-                  />
-                ))}
-              </>
-            )}
-          />
-        </FilterGroup>
-      )}
-
+      {/* Housing type — checkboxes */}
       <FilterGroup title="Тип житла">
         <Controller
           name="housingType"
@@ -271,12 +298,15 @@ export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
           render={({ field: { value, onChange } }) => (
             <>
               {HOUSING_TYPES.map((opt) => (
-                <RadioOption
+                <CheckboxOption
                   key={opt.value}
                   label={opt.label}
                   value={opt.value}
-                  selected={value === opt.value}
-                  onSelect={onChange}
+                  checked={value.includes(opt.value)}
+                  onToggle={(v, isChecked) => {
+                    //const current = getValues('housingType');
+                    onChange(isChecked ? [...value, v] : value.filter((x) => x !== v));
+                  }}
                 />
               ))}
             </>
@@ -284,6 +314,7 @@ export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
         />
       </FilterGroup>
 
+      {/* Experience */}
       <FilterGroup title="Досвід">
         <Controller
           name="minExperienceYears"
@@ -304,6 +335,7 @@ export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
         />
       </FilterGroup>
 
+      {/* Gender — checkboxes */}
       <FilterGroup title="Стать">
         <Controller
           name="gender"
@@ -311,12 +343,15 @@ export function SitterFilters({ onChange, initialValues, isLoading }: Props) {
           render={({ field: { value, onChange } }) => (
             <>
               {GENDERS.map((opt) => (
-                <RadioOption
+                <CheckboxOption
                   key={opt.value}
                   label={opt.label}
                   value={opt.value}
-                  selected={value === opt.value}
-                  onSelect={onChange}
+                  checked={value.includes(opt.value)}
+                  onToggle={(v, isChecked) => {
+                    //const current = getValues('gender');
+                    onChange(isChecked ? [...value, v] : value.filter((x) => x !== v));
+                  }}
                 />
               ))}
             </>
