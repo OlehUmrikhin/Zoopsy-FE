@@ -1,13 +1,7 @@
 import { MdStar } from 'react-icons/md';
 import cn from 'classnames';
 import type { SitterSearchResult } from '@api/sitter/types';
-
-const SERVICE_TYPE_LABELS: Record<number, string> = {
-  0: 'Перетримка',
-  1: 'Прогулянка',
-  2: 'Грумерство',
-  3: 'Ветеринарство',
-};
+import { SERVICE_TYPE_LABELS } from '@constants/serviceTypes';
 
 const BADGE_COLORS: Record<number, string> = {
   0: 'bg-zoopsy-green-100 text-zoopsy-green-900',

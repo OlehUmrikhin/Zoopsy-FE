@@ -1,5 +1,7 @@
 import { Navigate } from '@tanstack/react-router';
 import { useUser } from '@clerk/react';
+import { SitterBookingsView } from './components/SitterBookingsView';
+import { OwnerBookingsView } from './components/OwnerBookingsView';
 
 export function BookingsPage() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -17,8 +19,10 @@ export function BookingsPage() {
   if (role === 'admin') return <Navigate to="/admin" />;
 
   return (
-    <div className="p-2">
-      <h3>Bookings</h3>
+    <div className="max-w-6xl mx-auto px-4 py-6 flex flex-col gap-6">
+      <h1 className="font-plus-jakarta font-bold text-2xl text-zoopsy-dark-gray">Мої бронювання</h1>
+      {role === 'sitter' && <SitterBookingsView />}
+      {role === 'owner' && <OwnerBookingsView />}
     </div>
   );
 }

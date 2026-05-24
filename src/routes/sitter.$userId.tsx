@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { SitterInfoPage } from '../features/SitterInfo';
+import { BookSitterPage } from '../features/BookSitter';
 
 export const Route = createFileRoute('/sitter/$userId')({
   component: function SitterInfoRoute() {
     const { userId } = Route.useParams();
-    return <SitterInfoPage userId={userId} />;
+    return <BookSitterPage userId={userId} />;
   },
 });
