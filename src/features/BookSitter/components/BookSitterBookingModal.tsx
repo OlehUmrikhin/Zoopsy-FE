@@ -130,9 +130,9 @@ export function BookSitterBookingModal({
               <Button
                 className="bg-zoopsy-green-900 text-white font-plus-jakarta font-bold rounded-xl"
                 onPress={handleConfirm}
-                isLoading={isPending}
+                isDisabled={isPending}
               >
-                Підтвердити
+                {isPending ? 'Завантаження...' : 'Підтвердити'}
               </Button>
             </ModalFooter>
           </ModalDialog>
