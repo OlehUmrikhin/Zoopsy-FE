@@ -5,7 +5,12 @@ import { PetsSection } from './PetsSection';
 import { useUpdateOwnerProfile } from '@api/user/mutations';
 import type { UpdateOwnerProfilePayload } from '@api/user/fetchers';
 import { useOwnerProfile } from '@api';
-import { SPECIES_MAP, SPECIES_REVERSE_MAP } from '@api/owner/types';
+import {
+  SPECIES_MAP,
+  SPECIES_REVERSE_MAP,
+  PET_GENDER_MAP,
+  PET_GENDER_REVERSE_MAP,
+} from '@api/owner/types';
 import { toast } from 'react-toastify';
 
 export type OwnerProfileFormValues = {
@@ -18,6 +23,7 @@ export type OwnerProfileFormValues = {
     id?: string;
     species: string;
     name: string;
+    gender: string;
     breed: string;
     weight: string;
   }[];
@@ -38,6 +44,7 @@ export function OwnerProfileForm() {
             id: pet.id,
             species: SPECIES_REVERSE_MAP[pet.species] ?? 'dog',
             name: pet.name,
+            gender: PET_GENDER_REVERSE_MAP[pet.gender] ?? 'Male',
             breed: pet.breed,
             weight: String(pet.weight),
           })),
@@ -56,11 +63,10 @@ export function OwnerProfileForm() {
       pets: values.pets.map((pet) => ({
         id: pet.id,
         name: pet.name,
+        gender: PET_GENDER_MAP[pet.gender] ?? 0,
         breed: pet.breed,
         weight: Number(pet.weight),
         species: SPECIES_MAP[pet.species] ?? 0,
-        gender: '',
-        age: 0,
       })),
     };
 

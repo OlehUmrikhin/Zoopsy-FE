@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
-import { GoogleMap, useJsApiLoader, Circle, OverlayView } from '@react-google-maps/api';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api';
 import type { SitterSearchResult } from '@api/sitter/types';
 import { MapStub } from './MapStub';
 
@@ -44,7 +44,8 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
     libraries: LIBRARIES,
   });
 
-  const [, setMap] = useState<google.maps.Map | null>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const circlesRef = useRef<google.maps.Circle[]>([]);
 
   const onLoad = useCallback((mapInstance: google.maps.Map) => {
     setMap(mapInstance);
@@ -64,6 +65,46 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
         })),
     [sitters],
   );
+
+  // Imperatively manage circles to avoid @react-google-maps/api cleanup bug
+  useEffect(() => {
+    if (!map) return;
+
+    circlesRef.current.forEach((c) => c.setMap(null));
+    circlesRef.current = markers.map(
+      ({ approxPos }) =>
+        new google.maps.Circle({
+          map,
+          center: approxPos,
+          radius: 1000,
+          strokeColor: '#2C694E',
+          strokeOpacity: 0.5,
+          strokeWeight: 1.5,
+          fillColor: '#2C694E',
+          fillOpacity: 0.07,
+          clickable: false,
+        }),
+    );
+
+    return () => {
+      circlesRef.current.forEach((c) => c.setMap(null));
+      circlesRef.current = [];
+    };
+  }, [map, markers]);
+
+  // Update highlight state without recreating circles
+  useEffect(() => {
+    markers.forEach(({ sitter }, i) => {
+      const circle = circlesRef.current[i];
+      if (!circle) return;
+      const isHighlighted = sitter.userId === highlightedSitterId;
+      circle.setOptions({
+        strokeOpacity: isHighlighted ? 0.9 : 0.5,
+        strokeWeight: isHighlighted ? 2.5 : 1.5,
+        fillOpacity: isHighlighted ? 0.15 : 0.07,
+      });
+    });
+  }, [highlightedSitterId, markers]);
 
   if (loadError || !isLoaded) {
     return <MapStub />;
@@ -91,52 +132,42 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
         const isHighlighted = sitter.userId === highlightedSitterId;
 
         return (
-          <div key={sitter.userId}>
-            <Circle
-              center={approxPos}
-              radius={1000}
-              options={{
-                strokeColor: '#2C694E',
-                strokeOpacity: isHighlighted ? 0.9 : 0.5,
-                strokeWeight: isHighlighted ? 2.5 : 1.5,
-                fillColor: '#2C694E',
-                fillOpacity: isHighlighted ? 0.15 : 0.07,
-                clickable: false,
+          <OverlayView
+            key={sitter.userId}
+            position={approxPos}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+          >
+            <button
+              type="button"
+              onClick={() => onSitterClick?.(sitter.userId)}
+              style={{
+                transform: 'translate(-50%, -50%)',
+                padding: 0,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'block',
+                outline: 'none',
               }}
-            />
-            <OverlayView position={approxPos} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
-              <button
-                type="button"
-                onClick={() => onSitterClick?.(sitter.userId)}
+            >
+              <img
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${sitter.userId}`}
+                alt={sitter.fullName}
                 style={{
-                  transform: 'translate(-50%, -50%)',
-                  padding: 0,
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'block',
-                  outline: 'none',
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  border: isHighlighted ? '2.5px solid #2C694E' : '2px solid white',
+                  boxShadow: isHighlighted
+                    ? '0 0 0 2px #2C694E, 0 2px 8px rgba(0,0,0,0.25)'
+                    : '0 2px 6px rgba(0,0,0,0.2)',
+                  transform: isHighlighted ? 'scale(1.15)' : 'scale(1)',
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                  background: '#E8F5EF',
                 }}
-              >
-                <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${sitter.userId}`}
-                  alt={sitter.fullName}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '50%',
-                    border: isHighlighted ? '2.5px solid #2C694E' : '2px solid white',
-                    boxShadow: isHighlighted
-                      ? '0 0 0 2px #2C694E, 0 2px 8px rgba(0,0,0,0.25)'
-                      : '0 2px 6px rgba(0,0,0,0.2)',
-                    transform: isHighlighted ? 'scale(1.15)' : 'scale(1)',
-                    transition: 'transform 0.15s, box-shadow 0.15s',
-                    background: '#E8F5EF',
-                  }}
-                />
-              </button>
-            </OverlayView>
-          </div>
+              />
+            </button>
+          </OverlayView>
         );
       })}
     </GoogleMap>

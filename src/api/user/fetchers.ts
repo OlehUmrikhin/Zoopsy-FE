@@ -12,11 +12,10 @@ export type UpdateOwnerProfilePayload = {
   pets: {
     id?: string;
     name: string;
-    gender: string;
+    gender: number;
     breed: string;
     weight: number;
     species: number;
-    age: number;
   }[];
 };
 

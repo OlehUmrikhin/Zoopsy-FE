@@ -19,6 +19,7 @@ export function useSitters(params: SitterSearchParams) {
   return useQuery({
     queryKey: sitterQueryKeys.search(params),
     queryFn: () => fetchSitters(params),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

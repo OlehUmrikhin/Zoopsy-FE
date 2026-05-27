@@ -14,6 +14,11 @@ const PET_TYPES = [
   { value: 'cat', label: 'Кішка' },
 ];
 
+const PET_GENDERS = [
+  { value: 'Male', label: 'Хлопчик' },
+  { value: 'Female', label: 'Дівчинка' },
+];
+
 type PetRowProps = {
   index: number;
   control: Control<OwnerProfileFormValues>;
@@ -31,7 +36,7 @@ function PetRow({ index, control, register, onRemove }: PetRowProps) {
         <img src="https://placedog.net/200/200" alt="Pet" className="w-full h-full object-cover" />
       </div>
       <div
-        className={`flex-1 grid gap-3 ${isDog ? 'grid-cols-[230px_1fr_1fr_1fr]' : 'grid-cols-[120px_1fr_1fr]'}`}
+        className={`flex-1 grid gap-3 ${isDog ? 'grid-cols-[150px_1fr_1fr_120px_100px]' : 'grid-cols-[120px_1fr_120px_100px]'}`}
       >
         <Controller
           name={`pets.${index}.species`}
@@ -72,6 +77,24 @@ function PetRow({ index, control, register, onRemove }: PetRowProps) {
             )}
           />
         )}
+        <Controller
+          name={`pets.${index}.gender`}
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <ZoopsySelect
+              label="СТАТЬ"
+              placeholder="Виберіть стать"
+              selectedKey={value || null}
+              onSelectionChange={(key) => onChange(key as string)}
+            >
+              {PET_GENDERS.map((opt) => (
+                <ZoopsySelectItem key={opt.value} id={opt.value}>
+                  {opt.label}
+                </ZoopsySelectItem>
+              ))}
+            </ZoopsySelect>
+          )}
+        />
         <ZoopsyInput
           label="ВАГА"
           placeholder="0"
@@ -117,7 +140,7 @@ export function PetsSection() {
         </div>
         <button
           type="button"
-          onClick={() => append({ species: '', name: '', breed: '', weight: '' })}
+          onClick={() => append({ species: '', name: '', breed: '', gender: '', weight: '' })}
           className="flex items-center gap-1 text-zoopsy-green-500 font-inter text-sm hover:text-zoopsy-green-700 transition-colors"
         >
           <IoAdd className="text-lg" />

@@ -12,9 +12,9 @@ function RootComponent() {
 
   const isSignPage = pathname.startsWith('/sign');
   const isRoleSelectorPage = pathname.startsWith('/role-selector');
-  const isSitter = user?.publicMetadata?.role === 'sitter';
+  //const isSitter = user?.publicMetadata?.role === 'sitter';
 
-  const hideNav = isSignPage || isRoleSelectorPage || isSitter;
+  const hideNav = isSignPage || isRoleSelectorPage;
 
   const logoHref = isSignedIn ? getAuthRedirectPath(user?.publicMetadata?.role) : undefined;
 
@@ -32,7 +32,7 @@ function RootComponent() {
               {!hideNav && (
                 <nav className="flex flex-1 gap-4 text-[#2C694E]">
                   <Link to="/bookings" className="[&.active]:font-bold">
-                    Bookings
+                    Бронювання
                   </Link>
                 </nav>
               )}
