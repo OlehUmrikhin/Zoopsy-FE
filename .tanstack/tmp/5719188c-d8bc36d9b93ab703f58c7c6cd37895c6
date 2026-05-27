@@ -24,9 +24,7 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SitterUserIdRouteImport } from './routes/sitter.$userId'
-import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminFinancesRouteImport } from './routes/admin/finances'
-import { Route as AdminContentModerationRouteImport } from './routes/admin/content-moderation'
 import { Route as AdminComplaintsRouteImport } from './routes/admin/complaints'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
 import { Route as AdminOrdersOrderIdRouteImport } from './routes/admin/orders/$orderId'
@@ -106,19 +104,9 @@ const SitterUserIdRoute = SitterUserIdRouteImport.update({
   path: '/sitter/$userId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUsersRoute = AdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AdminRouteRoute,
-} as any)
 const AdminFinancesRoute = AdminFinancesRouteImport.update({
   id: '/finances',
   path: '/finances',
-  getParentRoute: () => AdminRouteRoute,
-} as any)
-const AdminContentModerationRoute = AdminContentModerationRouteImport.update({
-  id: '/content-moderation',
-  path: '/content-moderation',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminComplaintsRoute = AdminComplaintsRouteImport.update({
@@ -152,9 +140,7 @@ export interface FileRoutesByFullPath {
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
   '/admin/complaints': typeof AdminComplaintsRoute
-  '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
-  '/admin/users': typeof AdminUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
@@ -174,9 +160,7 @@ export interface FileRoutesByTo {
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
   '/admin/complaints': typeof AdminComplaintsRoute
-  '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
-  '/admin/users': typeof AdminUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin': typeof AdminIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
@@ -198,9 +182,7 @@ export interface FileRoutesById {
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
   '/admin/complaints': typeof AdminComplaintsRoute
-  '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
-  '/admin/users': typeof AdminUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
@@ -223,9 +205,7 @@ export interface FileRouteTypes {
     | '/sign'
     | '/top'
     | '/admin/complaints'
-    | '/admin/content-moderation'
     | '/admin/finances'
-    | '/admin/users'
     | '/sitter/$userId'
     | '/admin/'
     | '/admin/orders/$orderId'
@@ -245,9 +225,7 @@ export interface FileRouteTypes {
     | '/sign'
     | '/top'
     | '/admin/complaints'
-    | '/admin/content-moderation'
     | '/admin/finances'
-    | '/admin/users'
     | '/sitter/$userId'
     | '/admin'
     | '/admin/orders/$orderId'
@@ -268,9 +246,7 @@ export interface FileRouteTypes {
     | '/sign'
     | '/top'
     | '/admin/complaints'
-    | '/admin/content-moderation'
     | '/admin/finances'
-    | '/admin/users'
     | '/sitter/$userId'
     | '/admin/'
     | '/admin/orders/$orderId'
@@ -401,25 +377,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitterUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/users': {
-      id: '/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AdminUsersRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
     '/admin/finances': {
       id: '/admin/finances'
       path: '/finances'
       fullPath: '/admin/finances'
       preLoaderRoute: typeof AdminFinancesRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
-    '/admin/content-moderation': {
-      id: '/admin/content-moderation'
-      path: '/content-moderation'
-      fullPath: '/admin/content-moderation'
-      preLoaderRoute: typeof AdminContentModerationRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/complaints': {
@@ -448,9 +410,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminComplaintsRoute: typeof AdminComplaintsRoute
-  AdminContentModerationRoute: typeof AdminContentModerationRoute
   AdminFinancesRoute: typeof AdminFinancesRoute
-  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminOrdersOrderIdRoute: typeof AdminOrdersOrderIdRoute
   AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
@@ -458,9 +418,7 @@ interface AdminRouteRouteChildren {
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminComplaintsRoute: AdminComplaintsRoute,
-  AdminContentModerationRoute: AdminContentModerationRoute,
   AdminFinancesRoute: AdminFinancesRoute,
-  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminOrdersOrderIdRoute: AdminOrdersOrderIdRoute,
   AdminOrdersIndexRoute: AdminOrdersIndexRoute,

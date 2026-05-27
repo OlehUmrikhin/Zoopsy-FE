@@ -35,6 +35,58 @@ export interface AdminOrder {
   status: OrderStatus;
 }
 
+export interface ComplaintUser {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  role: 'owner' | 'sitter';
+  description: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  text: string;
+  timestamp: string;
+}
+
+export interface Evidence {
+  photoUrl: string | null;
+  lat: number;
+  lng: number;
+  distanceStatus: 'ok' | 'violation';
+  distanceMeters: number;
+  integrityStatus: string;
+}
+
+export interface AdminComplaint {
+  id: string;
+  ticketId: string;
+  title: string;
+  shortDesc: string;
+  createdAt: string;
+  status: 'active' | 'resolved';
+  owner: ComplaintUser;
+  sitter: ComplaintUser;
+  chatMessages: ChatMessage[];
+  evidence: Evidence;
+}
+
+export interface AdminComplaintsPaginatedResponse {
+  items: AdminComplaint[];
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+}
+
+export interface AdminComplaintsParams {
+  page: number;
+  limit: number;
+  status?: 'active' | 'resolved' | 'all';
+  search?: string;
+}
+
 export interface AdminOrdersPaginatedResponse {
   items: AdminOrder[];
   totalItems: number;
@@ -47,4 +99,49 @@ export interface AdminOrdersParams {
   limit: number;
   status: string;
   search: string;
+}
+
+export interface ClientDetails extends UserSnippet {
+  phone: string;
+  address: string;
+}
+
+export interface SitterDetails extends UserSnippet {
+  rating: number;
+  reviewsCount: number;
+}
+
+export interface ServiceDetailedInfo {
+  name: string;
+  duration: string;
+  petName: string;
+  petBreed: string;
+  date: string;
+  time: string;
+  totalAmount: number;
+}
+
+export interface TimelineItem {
+  id: string;
+  title: string;
+  date: string;
+  comment?: string;
+  isLatest: boolean;
+}
+
+export interface DetailedAdminOrder {
+  id: string;
+  displayId: string;
+  status: OrderStatus;
+  client: ClientDetails;
+  sitter: SitterDetails;
+  serviceDetails: ServiceDetailedInfo;
+  timeline: TimelineItem[];
+}
+
+export interface RefundPayload {
+  orderId: string;
+  type: 'full' | 'partial';
+  amount?: number;
+  comment: string;
 }
