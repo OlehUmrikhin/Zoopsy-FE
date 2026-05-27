@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { LuSearch, LuEye, LuChevronLeft, LuChevronRight, LuCheck, LuX } from 'react-icons/lu';
+import { LuSearch, LuChevronLeft, LuChevronRight, LuCheck, LuX } from 'react-icons/lu';
 import { MdOutlinePets, MdDirectionsWalk, MdHome, MdPets, MdWarning } from 'react-icons/md';
 import classNames from 'classnames';
 import { useDebounce } from '@uidotdev/usehooks';
 import { toast } from 'react-toastify';
+import { useNavigate } from '@tanstack/react-router';
 import { useAdminOrders, useUpdateAdminOrderStatusMutation } from '../../../api/admin';
 import type { AdminOrder, OrderStatus, UserSnippet } from '../../../api/admin/types';
 
@@ -16,6 +17,7 @@ const TABS = [
 ];
 
 export function OrdersPage() {
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput, 500);
   
@@ -122,7 +124,11 @@ export function OrdersPage() {
                 ))
               ) : orders.length > 0 ? (
                 orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition-colors group">
+                  <tr 
+                    key={order.id} 
+                    className="hover:bg-gray-50 transition-colors group cursor-pointer"
+                    onClick={() => navigate({ to: '/admin/orders/$orderId', params: { orderId: order.id } })}
+                  >
                     {/* ID */}
                     <td className="px-6 py-4 font-bold text-[#2C694E] whitespace-nowrap">
                       {order.displayId}

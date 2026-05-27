@@ -1,5 +1,14 @@
 export const ADMIN_PATHS = {
   dashboard: '/api/admin/dashboard',
   orders: '/api/admin/orders',
+  orderDetail: (id: string) => `/api/admin/orders/${id}`,
   orderStatus: (id: string) => `/api/admin/orders/${id}/status`,
+  orderRefund: (id: string) => `/api/admin/orders/${id}/refund`,
+  complaints: '/api/admin/complaints',
+  complaintStatus: (id: string) => `/api/admin/complaints/${id}/status`,
+  users: '/api/admin/users',
+  userStatus: (id: string) => `/api/admin/users/${id}/status`,
+  contentModeration: '/api/admin/content-moderation',
+  approveContent: '/api/admin/content-moderation/approve',
+  rejectContent: '/api/admin/content-moderation/reject',
 };

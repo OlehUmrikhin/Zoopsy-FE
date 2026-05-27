@@ -24,8 +24,12 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SitterUserIdRouteImport } from './routes/sitter.$userId'
-import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminFinancesRouteImport } from './routes/admin/finances'
+import { Route as AdminContentModerationRouteImport } from './routes/admin/content-moderation'
+import { Route as AdminComplaintsRouteImport } from './routes/admin/complaints'
+import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
+import { Route as AdminOrdersOrderIdRouteImport } from './routes/admin/orders/$orderId'
 
 const TopRoute = TopRouteImport.update({
   id: '/top',
@@ -102,14 +106,34 @@ const SitterUserIdRoute = SitterUserIdRouteImport.update({
   path: '/sitter/$userId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminOrdersRoute = AdminOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminFinancesRoute = AdminFinancesRouteImport.update({
   id: '/finances',
   path: '/finances',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminContentModerationRoute = AdminContentModerationRouteImport.update({
+  id: '/content-moderation',
+  path: '/content-moderation',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminComplaintsRoute = AdminComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminOrdersOrderIdRoute = AdminOrdersOrderIdRouteImport.update({
+  id: '/orders/$orderId',
+  path: '/orders/$orderId',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 
@@ -127,10 +151,14 @@ export interface FileRoutesByFullPath {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/admin/complaints': typeof AdminComplaintsRoute
+  '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
-  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
+  '/admin/orders/': typeof AdminOrdersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -145,10 +173,14 @@ export interface FileRoutesByTo {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/admin/complaints': typeof AdminComplaintsRoute
+  '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
-  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
+  '/admin/orders': typeof AdminOrdersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -165,10 +197,14 @@ export interface FileRoutesById {
   '/role-selector': typeof RoleSelectorRoute
   '/sign': typeof SignRoute
   '/top': typeof TopRoute
+  '/admin/complaints': typeof AdminComplaintsRoute
+  '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
-  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
+  '/admin/orders/': typeof AdminOrdersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -186,10 +222,14 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/admin/complaints'
+    | '/admin/content-moderation'
     | '/admin/finances'
-    | '/admin/orders'
+    | '/admin/users'
     | '/sitter/$userId'
     | '/admin/'
+    | '/admin/orders/$orderId'
+    | '/admin/orders/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -204,10 +244,14 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/admin/complaints'
+    | '/admin/content-moderation'
     | '/admin/finances'
-    | '/admin/orders'
+    | '/admin/users'
     | '/sitter/$userId'
     | '/admin'
+    | '/admin/orders/$orderId'
+    | '/admin/orders'
   id:
     | '__root__'
     | '/'
@@ -223,10 +267,14 @@ export interface FileRouteTypes {
     | '/role-selector'
     | '/sign'
     | '/top'
+    | '/admin/complaints'
+    | '/admin/content-moderation'
     | '/admin/finances'
-    | '/admin/orders'
+    | '/admin/users'
     | '/sitter/$userId'
     | '/admin/'
+    | '/admin/orders/$orderId'
+    | '/admin/orders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,11 +401,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitterUserIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/orders': {
-      id: '/admin/orders'
-      path: '/orders'
-      fullPath: '/admin/orders'
-      preLoaderRoute: typeof AdminOrdersRouteImport
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/finances': {
@@ -367,19 +415,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFinancesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/content-moderation': {
+      id: '/admin/content-moderation'
+      path: '/content-moderation'
+      fullPath: '/admin/content-moderation'
+      preLoaderRoute: typeof AdminContentModerationRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/complaints': {
+      id: '/admin/complaints'
+      path: '/complaints'
+      fullPath: '/admin/complaints'
+      preLoaderRoute: typeof AdminComplaintsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/orders/': {
+      id: '/admin/orders/'
+      path: '/orders'
+      fullPath: '/admin/orders/'
+      preLoaderRoute: typeof AdminOrdersIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/orders/$orderId': {
+      id: '/admin/orders/$orderId'
+      path: '/orders/$orderId'
+      fullPath: '/admin/orders/$orderId'
+      preLoaderRoute: typeof AdminOrdersOrderIdRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
 interface AdminRouteRouteChildren {
+  AdminComplaintsRoute: typeof AdminComplaintsRoute
+  AdminContentModerationRoute: typeof AdminContentModerationRoute
   AdminFinancesRoute: typeof AdminFinancesRoute
-  AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminOrdersOrderIdRoute: typeof AdminOrdersOrderIdRoute
+  AdminOrdersIndexRoute: typeof AdminOrdersIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminComplaintsRoute: AdminComplaintsRoute,
+  AdminContentModerationRoute: AdminContentModerationRoute,
   AdminFinancesRoute: AdminFinancesRoute,
-  AdminOrdersRoute: AdminOrdersRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminOrdersOrderIdRoute: AdminOrdersOrderIdRoute,
+  AdminOrdersIndexRoute: AdminOrdersIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
