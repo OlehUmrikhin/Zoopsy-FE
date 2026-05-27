@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Search, Shield, ShieldCheck, Ban } from 'lucide-react';
+import { FiSearch, FiShield } from 'react-icons/fi';
+import { FaBan, FaShieldAlt } from 'react-icons/fa';
 import {
   useAdminUsers,
   useUpdateAdminUserMutation,
@@ -124,7 +125,7 @@ export function UsersPage() {
       {/* Filters */}
       <div className="flex gap-4 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
         <div className="flex-1 relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <FiSearch size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             placeholder="Пошук по імені, email..."
@@ -328,7 +329,7 @@ export function UsersPage() {
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
                             title="Редагувати"
                           >
-                            <Shield size={18} />
+                            <FiShield size={18} />
                           </button>
                           <button
                             type="button"
@@ -336,7 +337,7 @@ export function UsersPage() {
                             className="p-2 rounded-lg transition-colors text-gray-600 hover:text-rose-600 hover:bg-rose-100"
                             title={user.status === 'blocked' ? 'Розблокувати' : 'Заблокувати'}
                           >
-                            {user.status === 'blocked' ? <ShieldCheck size={18} /> : <Ban size={18} />}
+                            {user.status === 'blocked' ? <FaShieldAlt size={18} /> : <FaBan size={18} />}
                           </button>
                         </div>
                       </td>
