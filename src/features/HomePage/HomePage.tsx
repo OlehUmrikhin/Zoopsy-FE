@@ -37,6 +37,13 @@ export function HomePage() {
 
   function handleSearch() {
     if (!canSearch) return;
+
+    const pet = pets.find((p) => p.id === selectedPetId);
+    let dogWeightCategory;
+    if (pet && pet.species === 0 && pet.weight != null) {
+      dogWeightCategory = pet.weight < 10 ? 0 : pet.weight <= 25 ? 1 : 2;
+    }
+
     navigate({
       to: '/find-sitter',
       search: {
@@ -45,6 +52,8 @@ export function HomePage() {
         petId: selectedPetId,
         startDate: startDate || undefined,
         endDate: endDate || undefined,
+        petSpecies: pet?.species,
+        dogWeightCategory,
       },
     });
   }

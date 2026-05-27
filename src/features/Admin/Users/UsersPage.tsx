@@ -36,8 +36,12 @@ export function UsersPage() {
     role: 'owner',
     status: 'active',
   });
-  const [roleFilter, setRoleFilter] = useState<'all' | 'owner' | 'sitter' | 'moderator' | 'admin'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive' | 'blocked' | 'pending'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'owner' | 'sitter' | 'moderator' | 'admin'>(
+    'all',
+  );
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'active' | 'inactive' | 'blocked' | 'pending'
+  >('all');
   const [currentPage, setCurrentPage] = useState(1);
 
   const editMutation = useUpdateAdminUserMutation();
@@ -118,7 +122,9 @@ export function UsersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Управління користувачами</h1>
-          <p className="text-sm text-gray-500 mt-1">Керування користувачами та регуляціями експоненти спільноти Zoopsy</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Керування користувачами та регуляціями експоненти спільноти Zoopsy
+          </p>
         </div>
       </div>
 
@@ -217,7 +223,9 @@ export function UsersPage() {
                   <span className="text-sm text-gray-700">Роль</span>
                   <select
                     value={editForm.role}
-                    onChange={(e) => setEditForm((prev) => ({ ...prev, role: e.target.value as any }))}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({ ...prev, role: e.target.value as any }))
+                    }
                     className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm focus:outline-none focus:border-zoopsy-green-500"
                   >
                     <option value="owner">Власник</option>
@@ -230,7 +238,9 @@ export function UsersPage() {
                   <span className="text-sm text-gray-700">Статус</span>
                   <select
                     value={editForm.status}
-                    onChange={(e) => setEditForm((prev) => ({ ...prev, status: e.target.value as any }))}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({ ...prev, status: e.target.value as any }))
+                    }
                     className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm focus:outline-none focus:border-zoopsy-green-500"
                   >
                     <option value="active">Активний</option>
@@ -257,7 +267,9 @@ export function UsersPage() {
               </button>
             </div>
             {editMutation.isError && (
-              <p className="mt-3 text-sm text-rose-600">Не вдалось зберегти зміни. Спробуйте ще раз.</p>
+              <p className="mt-3 text-sm text-rose-600">
+                Не вдалось зберегти зміни. Спробуйте ще раз.
+              </p>
             )}
           </div>
         </div>
@@ -268,12 +280,24 @@ export function UsersPage() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Користувач</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Роль</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Статус</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Рейтинг</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Остання активність</th>
-                <th className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Дії</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Користувач
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Роль
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Статус
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Рейтинг
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Остання активність
+                </th>
+                <th className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">
+                  Дії
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -285,8 +309,15 @@ export function UsersPage() {
                 </tr>
               ) : (
                 users.map((user) => {
-                  const roleConfig = roleLabels[user.role?.toLowerCase()] ?? { label: user.role || 'Невідомо', color: 'bg-gray-100 text-gray-700' };
-                  const statusConfig = statusLabels[user.status?.toLowerCase()] ?? { label: user.status || 'Невідомо', color: 'text-gray-600', badge: 'bg-gray-100' };
+                  const roleConfig = roleLabels[user.role?.toLowerCase()] ?? {
+                    label: user.role || 'Невідомо',
+                    color: 'bg-gray-100 text-gray-700',
+                  };
+                  const statusConfig = statusLabels[user.status?.toLowerCase()] ?? {
+                    label: user.status || 'Невідомо',
+                    color: 'text-gray-600',
+                    badge: 'bg-gray-100',
+                  };
                   return (
                     <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
@@ -303,18 +334,24 @@ export function UsersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${roleConfig.color}`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${roleConfig.color}`}
+                        >
                           {roleConfig.label}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusConfig.badge} ${statusConfig.color}`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-bold ${statusConfig.badge} ${statusConfig.color}`}
+                        >
                           {statusConfig.label}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1">
-                          <span className="font-bold text-gray-900">★ {(user.rating ?? 0).toFixed(1)}</span>
+                          <span className="font-bold text-gray-900">
+                            ★ {(user.rating ?? 0).toFixed(1)}
+                          </span>
                           <span className="text-xs text-gray-500">({user.totalBookings ?? 0})</span>
                         </div>
                       </td>
@@ -337,7 +374,11 @@ export function UsersPage() {
                             className="p-2 rounded-lg transition-colors text-gray-600 hover:text-rose-600 hover:bg-rose-100"
                             title={user.status === 'blocked' ? 'Розблокувати' : 'Заблокувати'}
                           >
-                            {user.status === 'blocked' ? <FaShieldAlt size={18} /> : <FaBan size={18} />}
+                            {user.status === 'blocked' ? (
+                              <FaShieldAlt size={18} />
+                            ) : (
+                              <FaBan size={18} />
+                            )}
                           </button>
                         </div>
                       </td>

@@ -158,13 +158,12 @@ export function SitterFilters({ onChange, initialValues, initialPetId, isLoading
     if (values.maxPrice) params.maxPrice = Number(values.maxPrice);
     if (values.serviceType !== null) params.serviceType = values.serviceType;
     if (values.housingType.length > 0) params.housingType = values.housingType;
-    if (values.minExperienceYears !== null) params.minExperienceYears = values.minExperienceYears;
+    if (values.minExperienceYears) params.minExperienceYears = values.minExperienceYears;
     if (values.gender.length > 0) params.gender = values.gender;
     if (values.city) params.city = values.city;
     if (values.startDate) params.startDate = values.startDate;
     if (values.endDate) params.endDate = values.endDate;
 
-    // Derive petSpecies and dogWeightCategory from the selected pet
     const pet = pets.find((p) => p.id === values.petId);
     if (pet) {
       params.petSpecies = pet.species;
@@ -248,6 +247,7 @@ export function SitterFilters({ onChange, initialValues, initialPetId, isLoading
                   value={opt.value}
                   selected={value === opt.value}
                   onSelect={(v) => {
+                    if (v === null) return;
                     onChange(v);
                     setValue('startDate', '');
                     setValue('endDate', '');
@@ -327,7 +327,10 @@ export function SitterFilters({ onChange, initialValues, initialPetId, isLoading
                   label={opt.label}
                   value={opt.value}
                   selected={value === opt.value}
-                  onSelect={onChange}
+                  onSelect={(v) => {
+                    if (v === null) return;
+                    onChange(v);
+                  }}
                 />
               ))}
             </>
