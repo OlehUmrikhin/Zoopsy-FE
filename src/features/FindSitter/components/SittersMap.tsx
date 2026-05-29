@@ -4,16 +4,19 @@ import type { SitterSearchResult } from '@api/sitter/types';
 import { MapStub } from './MapStub';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
-// Must match the libraries used in AddressAutocomplete to share the same loader instance
 const LIBRARIES: 'places'[] = ['places'];
 
 const DEFAULT_CENTER = { lat: 49.9935, lng: 36.2304 }; // Kharkiv
 const DEFAULT_ZOOM = 12;
 
-/**
- * Generates a deterministic random offset from real coordinates to protect sitter privacy.
- * The same sitter always gets the same jitter (based on their userId as a seed).
- */
+const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
+  kyiv: { lat: 50.4501, lng: 30.5234 },
+  lviv: { lat: 49.8397, lng: 24.0297 },
+  kharkiv: { lat: 49.9935, lng: 36.2304 },
+  odesa: { lat: 46.4825, lng: 30.7233 },
+  dnipro: { lat: 48.4647, lng: 35.0462 },
+};
+
 function getApproximateLocation(
   lat: number,
   lng: number,
@@ -24,7 +27,7 @@ function getApproximateLocation(
   for (let i = 0; i < seed.length; i++) {
     hash = (((hash << 5) + hash) ^ seed.charCodeAt(i)) >>> 0;
   }
-  const angle = (hash % 6284) / 1000; // 0..2π range
+  const angle = (hash % 6284) / 1000; // 0..2pi range
   const distance = (((hash >> 5) & 0xfff) / 0xfff) * jitterRadiusMeters;
   const dLat = (distance / 111320) * Math.cos(angle);
   const dLng = (distance / (111320 * Math.cos((lat * Math.PI) / 180))) * Math.sin(angle);
@@ -35,9 +38,10 @@ type Props = {
   sitters: SitterSearchResult[];
   highlightedSitterId?: string | null;
   onSitterClick?: (userId: string) => void;
+  city?: string;
 };
 
-export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Props) {
+export function SittersMap({ sitters, highlightedSitterId, onSitterClick, city }: Props) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: API_KEY,
@@ -55,6 +59,15 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
     setMap(null);
   }, []);
 
+  useEffect(() => {
+    if (!map) return;
+    const center = city ? CITY_CENTERS[city] : undefined;
+    if (center) {
+      map.panTo(center);
+      map.setZoom(DEFAULT_ZOOM);
+    }
+  }, [map, city]);
+
   const markers = useMemo(
     () =>
       sitters
@@ -66,7 +79,6 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
     [sitters],
   );
 
-  // Imperatively manage circles to avoid @react-google-maps/api cleanup bug
   useEffect(() => {
     if (!map) return;
 
@@ -92,7 +104,6 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
     };
   }, [map, markers]);
 
-  // Update highlight state without recreating circles
   useEffect(() => {
     markers.forEach(({ sitter }, i) => {
       const circle = circlesRef.current[i];
@@ -117,7 +128,7 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick }: Prop
         height: '100%',
         minHeight: '500px',
       }}
-      center={DEFAULT_CENTER}
+      center={(city ? CITY_CENTERS[city] : undefined) ?? DEFAULT_CENTER}
       zoom={DEFAULT_ZOOM}
       onLoad={onLoad}
       onUnmount={onUnmount}

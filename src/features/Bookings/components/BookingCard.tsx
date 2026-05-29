@@ -75,6 +75,8 @@ export function BookingCard({
       <BookingCardActions
         status={booking.status}
         mode={mode}
+        sitterName={mode === 'owner' ? booking.contact.fullName : undefined}
+        sitterProfileId={mode === 'owner' ? booking.sitterProfileId : undefined}
         onApprove={onApprove}
         onCancel={onCancel}
         onCancelByOwner={onCancelByOwner}

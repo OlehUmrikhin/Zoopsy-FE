@@ -1,13 +1,7 @@
 import { MdStar, MdStarOutline } from 'react-icons/md';
 import { format, parseISO } from 'date-fns';
 import { uk } from 'date-fns/locale';
-
-export type SitterReview = {
-  author: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-};
+import type { Review } from '@api/review';
 
 function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   return (
@@ -24,7 +18,7 @@ function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
 }
 
 type Props = {
-  reviews: SitterReview[];
+  reviews: Review[];
 };
 
 export function BookSitterReviews({ reviews }: Props) {
@@ -51,14 +45,14 @@ export function BookSitterReviews({ reviews }: Props) {
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                 <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${review.author}`}
-                  alt={review.author}
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${review.authorUserId}`}
+                  alt={review.authorFullName ?? review.authorUserId}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex-1">
                 <p className="font-inter font-semibold text-zoopsy-dark-gray text-sm">
-                  {review.author}
+                  {review.authorFullName ?? review.authorUserId}
                 </p>
                 <p className="font-inter text-xs text-zoopsy-gray">
                   {format(parseISO(review.createdAt), 'd MMMM, yyyy', { locale: uk })}

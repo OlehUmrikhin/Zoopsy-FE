@@ -5,11 +5,15 @@ import {
   cancelBooking,
   cancelBookingByOwner,
   completeBooking,
+  createBookingReview,
+  updateReview,
 } from './fetchers';
 import type {
   BookingActionPayload,
   BookingOwnerActionPayload,
   CreateBookingPayload,
+  CreateReviewPayload,
+  UpdateReviewPayload,
 } from './types';
 import { bookingQueryKeys } from './queries';
 
@@ -68,6 +72,22 @@ export function useCompleteBooking(callbacks?: ActionCallbacks) {
       queryClient.invalidateQueries({ queryKey: bookingQueryKeys.myAsSitter });
       callbacks?.onSuccess?.();
     },
+    onError: () => callbacks?.onError?.(),
+  });
+}
+
+export function useCreateBookingReview(callbacks?: ActionCallbacks) {
+  return useMutation({
+    mutationFn: (payload: CreateReviewPayload) => createBookingReview(payload),
+    onSuccess: () => callbacks?.onSuccess?.(),
+    onError: () => callbacks?.onError?.(),
+  });
+}
+
+export function useUpdateReview(callbacks?: ActionCallbacks) {
+  return useMutation({
+    mutationFn: (payload: UpdateReviewPayload) => updateReview(payload),
+    onSuccess: () => callbacks?.onSuccess?.(),
     onError: () => callbacks?.onError?.(),
   });
 }

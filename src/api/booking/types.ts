@@ -16,6 +16,7 @@ export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus];
 
 export type BookingAsOwner = {
   id: string;
+  sitterProfileId: number;
   petId: string;
   serviceType: number;
   startDate: string;

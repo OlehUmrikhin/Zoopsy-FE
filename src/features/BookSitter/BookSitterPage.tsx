@@ -1,11 +1,11 @@
 import { Spinner } from '@heroui/react';
 import { useSitterById } from '@api/sitter/queries';
+import { useReviewsBySitter } from '@api/review/queries';
 import { BookSitterHeader } from './components/BookSitterHeader';
 import { BookSitterAbout } from './components/BookSitterAbout';
 import { BookSitterServices } from './components/BookSitterServices';
 import { BookSitterBookingWidget } from './components/BookSitterBookingWidget';
 import { BookSitterReviews } from './components/BookSitterReviews';
-import type { SitterReview } from './components/BookSitterReviews';
 
 type Props = {
   userId: string;
@@ -13,9 +13,7 @@ type Props = {
 
 export function BookSitterPage({ userId }: Props) {
   const { data: sitter, isLoading } = useSitterById(userId);
-
-  // TODO: replace with real API data when reviews endpoint is available
-  const reviews: SitterReview[] = [];
+  const { data: reviews = [] } = useReviewsBySitter(sitter?.id);
 
   if (isLoading) {
     return (

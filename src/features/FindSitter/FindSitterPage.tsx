@@ -51,11 +51,12 @@ export function FindSitterPage({ initialParams, initialPetId }: Props = {}) {
       </aside>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 p-4">
+        <div className="flex-1">
           <SittersMap
             sitters={sitters?.items ?? []}
             highlightedSitterId={highlightedSitterId}
             onSitterClick={setHighlightedSitterId}
+            city={params.city}
           />
           {/* <MapStub />  */}
           {/* stub */}
