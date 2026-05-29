@@ -22,9 +22,19 @@ export async function fetchSitterProfile() {
 export async function fetchSitters(
   params: SitterSearchParams,
 ): Promise<PaginatedResponse<SitterSearchResult>> {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => searchParams.append(key, String(v)));
+    } else if (value !== undefined && value !== null) {
+      searchParams.append(key, String(value));
+    }
+  });
+
   const { data } = await axiosInstance.get<PaginatedResponse<SitterSearchResult>>(
     SITTER_PATHS.list,
-    { params },
+    { params: searchParams },
   );
   return data;
 }

@@ -16,13 +16,22 @@ export async function fetchAdminDashboardStats(): Promise<AdminDashboardStats> {
   return data;
 }
 
-export async function fetchAdminOrders(params: AdminOrdersParams): Promise<AdminOrdersPaginatedResponse> {
-  const { data } = await axiosInstance.get<AdminOrdersPaginatedResponse>(ADMIN_PATHS.orders, { params });
+export async function fetchAdminOrders(
+  params: AdminOrdersParams,
+): Promise<AdminOrdersPaginatedResponse> {
+  const { data } = await axiosInstance.get<AdminOrdersPaginatedResponse>(ADMIN_PATHS.orders, {
+    params,
+  });
   return data;
 }
 
-export async function fetchAdminComplaints(params: AdminComplaintsParams): Promise<AdminComplaintsPaginatedResponse> {
-  const { data } = await axiosInstance.get<AdminComplaintsPaginatedResponse>(ADMIN_PATHS.complaints, { params });
+export async function fetchAdminComplaints(
+  params: AdminComplaintsParams,
+): Promise<AdminComplaintsPaginatedResponse> {
+  const { data } = await axiosInstance.get<AdminComplaintsPaginatedResponse>(
+    ADMIN_PATHS.complaints,
+    { params },
+  );
   return data;
 }
 
@@ -31,7 +40,10 @@ export async function fetchAdminOrderById(id: string): Promise<DetailedAdminOrde
   return data;
 }
 
-export async function updateAdminComplaintStatus(id: string, status: 'active' | 'resolved'): Promise<void> {
+export async function updateAdminComplaintStatus(
+  id: string,
+  status: 'active' | 'resolved',
+): Promise<void> {
   await axiosInstance.patch(ADMIN_PATHS.complaintStatus(id), { status });
 }
 

@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { BookingStatus } from '@api/booking';
 import type { BookingStatus as BookingStatusType } from '@api/booking';
+import { useMyReview } from '@api/booking/queries';
 import { Button } from '@heroui/react';
 import type { BookingActionType } from './BookingActionModal';
 import { BookingActionModal } from './BookingActionModal';
+import { ReviewModal } from './ReviewModal';
 
 type Props = {
   status: BookingStatusType;
   mode: 'sitter' | 'owner';
+  sitterName?: string;
+  sitterProfileId?: number;
   onApprove?: (comment?: string) => void;
   onCancel?: (comment?: string) => void;
   onCancelByOwner?: (comment?: string) => void;
@@ -18,6 +22,8 @@ type Props = {
 export function BookingCardActions({
   status,
   mode,
+  sitterName,
+  sitterProfileId,
   onApprove,
   onCancel,
   onCancelByOwner,
@@ -25,6 +31,11 @@ export function BookingCardActions({
   isActioning = false,
 }: Props) {
   const [modalAction, setModalAction] = useState<BookingActionType | null>(null);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+
+  const isReviewable =
+    mode === 'owner' && status === BookingStatus.Completed && sitterProfileId != null;
+  const { data: existingReview } = useMyReview(isReviewable ? sitterProfileId : undefined);
 
   const showSitterRequested =
     mode === 'sitter' && status === BookingStatus.Requested && (onApprove || onCancel);
@@ -34,8 +45,11 @@ export function BookingCardActions({
     mode === 'owner' &&
     (status === BookingStatus.Requested || status === BookingStatus.Active) &&
     onCancelByOwner;
+  const showOwnerReview =
+    mode === 'owner' && status === BookingStatus.Completed && sitterProfileId != null;
 
-  if (!showSitterRequested && !showSitterActive && !showOwnerCancel) return null;
+  if (!showSitterRequested && !showSitterActive && !showOwnerCancel && !showOwnerReview)
+    return null;
 
   const handleConfirm = (comment?: string) => {
     if (modalAction === 'approve') onApprove?.(comment);
@@ -109,6 +123,19 @@ export function BookingCardActions({
         </div>
       )}
 
+      {showOwnerReview && (
+        <div className="pt-1">
+          <Button
+            size="sm"
+            className="w-full bg-zoopsy-green-900 text-white font-plus-jakarta font-bold rounded-xl"
+            onPress={() => setIsReviewOpen(true)}
+            isDisabled={isActioning}
+          >
+            {existingReview ? 'Редагувати відгук' : 'Залишити відгук'}
+          </Button>
+        </div>
+      )}
+
       {modalAction && (
         <BookingActionModal
           isOpen
@@ -116,6 +143,15 @@ export function BookingCardActions({
           isPending={isActioning}
           onConfirm={handleConfirm}
           onClose={() => setModalAction(null)}
+        />
+      )}
+
+      {isReviewOpen && sitterProfileId != null && (
+        <ReviewModal
+          isOpen
+          sitterName={sitterName ?? 'сіттера'}
+          sitterProfileId={sitterProfileId}
+          onClose={() => setIsReviewOpen(false)}
         />
       )}
     </>

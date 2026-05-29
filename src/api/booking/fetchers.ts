@@ -6,6 +6,9 @@ import type {
   BookingActionPayload,
   BookingOwnerActionPayload,
   CreateBookingPayload,
+  CreateReviewPayload,
+  UpdateReviewPayload,
+  Review,
 } from './types';
 
 export async function createBooking(payload: CreateBookingPayload) {
@@ -40,5 +43,35 @@ export async function cancelBookingByOwner({ id, ownerComment }: BookingOwnerAct
 
 export async function completeBooking({ id, sitterComment }: BookingActionPayload) {
   const { data } = await axiosInstance.patch(BOOKING_PATHS.complete(id), { sitterComment });
+  return data;
+}
+
+export async function createBookingReview({
+  sitterProfileId,
+  rating,
+  comment,
+}: CreateReviewPayload) {
+  const { data } = await axiosInstance.post(BOOKING_PATHS.review, {
+    sitterProfileId,
+    rating,
+    comment,
+  });
+  return data;
+}
+
+export async function getMyReview(sitterProfileId: number): Promise<Review | null> {
+  try {
+    const { data } = await axiosInstance.get<Review>(BOOKING_PATHS.myReview(sitterProfileId));
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateReview({ id, rating, comment }: UpdateReviewPayload): Promise<Review> {
+  const { data } = await axiosInstance.patch<Review>(BOOKING_PATHS.updateReview(id), {
+    rating,
+    comment,
+  });
   return data;
 }

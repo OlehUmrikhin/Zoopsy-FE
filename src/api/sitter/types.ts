@@ -11,6 +11,7 @@ export type SitterService = {
 };
 
 export type SitterProfile = {
+  id: number;
   userId: string;
   fullName: string;
   email: string;
