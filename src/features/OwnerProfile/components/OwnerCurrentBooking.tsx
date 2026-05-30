@@ -1,13 +1,51 @@
 import { MdAccessTime, MdChat } from 'react-icons/md';
+import { useCurrentBooking } from '@api/booking';
+import { format, parseISO } from 'date-fns';
+import { uk } from 'date-fns/locale';
 
-const SERVICE_DETAILS = [
-  { label: 'Послуга:', value: 'Перетримка' },
-  { label: 'Термін:', value: '15.03 - 20.03 (5 діб)' },
-  { label: 'Ціна:', value: '2500 грн' },
-  { label: 'Пет-сіттер:', value: 'Олена К.' },
-];
+const SERVICE_TYPE_LABELS: Record<string, string> = {
+  Boarding: 'Перетримка',
+  Walking: 'Вигул',
+  DayCare: 'Денний догляд',
+};
 
 export function OwnerCurrentBooking() {
+  const { data: booking, isLoading } = useCurrentBooking();
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-2xl p-5 text-left flex flex-col gap-4 animate-pulse">
+        <p className="text-[10px] uppercase tracking-widest text-zoopsy-gray font-inter font-semibold">
+          Поточне бронювання
+        </p>
+        <div className="h-20 bg-zoopsy-bg rounded-xl" />
+        <div className="h-24 bg-zoopsy-bg rounded-xl" />
+      </div>
+    );
+  }
+
+  if (!booking) {
+    return (
+      <div className="bg-white rounded-2xl p-5 text-left flex flex-col gap-4">
+        <p className="text-[10px] uppercase tracking-widest text-zoopsy-gray font-inter font-semibold">
+          Поточне бронювання
+        </p>
+        <p className="font-inter text-sm text-zoopsy-gray">Немає активних бронювань.</p>
+      </div>
+    );
+  }
+
+  const startFmt = format(parseISO(booking.startDate), 'd.MM', { locale: uk });
+  const endFmt = format(parseISO(booking.endDate), 'd.MM', { locale: uk });
+  const dateLabel = `${startFmt} – ${endFmt} (${booking.durationDays} діб)`;
+
+  const details = [
+    { label: 'Послуга:', value: SERVICE_TYPE_LABELS[booking.serviceType] ?? booking.serviceType },
+    { label: 'Термін:', value: dateLabel },
+    { label: 'Ціна:', value: `${booking.cost} грн` },
+    { label: 'Пет-сіттер:', value: booking.contactName },
+  ];
+
   return (
     <div className="bg-white rounded-2xl p-5 text-left flex flex-col gap-4">
       <p className="text-[10px] uppercase tracking-widest text-zoopsy-gray font-inter font-semibold">
@@ -17,17 +55,25 @@ export function OwnerCurrentBooking() {
       {/* Pet card */}
       <div className="bg-zoopsy-bg rounded-xl p-3 flex items-center gap-3">
         <div className="w-14 h-14 rounded-xl bg-zoopsy-mint flex-shrink-0 overflow-hidden">
-          <img
-            src="https://placedog.net/200/200"
-            alt="Макс"
-            className="w-full h-full object-cover"
-          />
+          {booking.petPhotoUrl ? (
+            <img
+              src={booking.petPhotoUrl}
+              alt={booking.petName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <img
+              src="https://placedog.net/200/200"
+              alt={booking.petName}
+              className="w-full h-full object-cover"
+            />
+          )}
         </div>
         <div>
           <p className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-base leading-tight">
-            Макс
+            {booking.petName}
           </p>
-          <p className="text-zoopsy-gray font-inter text-xs mt-0.5">12 КГ</p>
+          <p className="text-zoopsy-gray font-inter text-xs mt-0.5">{booking.petWeight} КГ</p>
           <div className="flex items-center gap-1 mt-1">
             <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
             <span className="text-green-600 font-inter text-[10px] font-semibold uppercase tracking-wide">
@@ -39,7 +85,7 @@ export function OwnerCurrentBooking() {
 
       {/* Service details */}
       <div className="flex flex-col gap-2">
-        {SERVICE_DETAILS.map(({ label, value }) => (
+        {details.map(({ label, value }) => (
           <div key={label} className="flex justify-between items-center">
             <span className="text-zoopsy-gray font-inter text-sm">{label}</span>
             <span className="text-zoopsy-dark-gray font-inter text-sm font-medium">{value}</span>

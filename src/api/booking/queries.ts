@@ -1,9 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { getMyBookingsAsOwner, getMyBookingsAsSitter, getMyReview } from './fetchers';
+import {
+  getMyBookingsAsOwner,
+  getMyBookingsAsSitter,
+  getMyReview,
+  getCurrentBooking,
+} from './fetchers';
 
 export const bookingQueryKeys = {
   myAsOwner: ['booking', 'my', 'as-owner'] as const,
   myAsSitter: ['booking', 'my', 'as-sitter'] as const,
+  myCurrent: ['booking', 'my', 'current'] as const,
   myReview: (sitterProfileId: number) => ['review', 'my', sitterProfileId] as const,
 };
 
@@ -26,5 +32,12 @@ export function useMyReview(sitterProfileId: number | undefined) {
     queryKey: bookingQueryKeys.myReview(sitterProfileId!),
     queryFn: () => getMyReview(sitterProfileId!),
     enabled: sitterProfileId != null,
+  });
+}
+
+export function useCurrentBooking() {
+  return useQuery({
+    queryKey: bookingQueryKeys.myCurrent,
+    queryFn: getCurrentBooking,
   });
 }

@@ -29,6 +29,9 @@ import { Route as AdminFinancesRouteImport } from './routes/admin/finances'
 import { Route as AdminContentModerationRouteImport } from './routes/admin/content-moderation'
 import { Route as AdminComplaintsRouteImport } from './routes/admin/complaints'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin/orders/index'
+import { Route as SitterStripeRefreshRouteImport } from './routes/sitter.stripe.refresh'
+import { Route as SitterStripeCompleteRouteImport } from './routes/sitter.stripe.complete'
+import { Route as BookingsBookingIdPaymentResultRouteImport } from './routes/bookings_.$bookingId.payment-result'
 import { Route as AdminOrdersOrderIdRouteImport } from './routes/admin/orders/$orderId'
 
 const TopRoute = TopRouteImport.update({
@@ -131,6 +134,22 @@ const AdminOrdersIndexRoute = AdminOrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const SitterStripeRefreshRoute = SitterStripeRefreshRouteImport.update({
+  id: '/sitter/stripe/refresh',
+  path: '/sitter/stripe/refresh',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitterStripeCompleteRoute = SitterStripeCompleteRouteImport.update({
+  id: '/sitter/stripe/complete',
+  path: '/sitter/stripe/complete',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingsBookingIdPaymentResultRoute =
+  BookingsBookingIdPaymentResultRouteImport.update({
+    id: '/bookings_/$bookingId/payment-result',
+    path: '/bookings/$bookingId/payment-result',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminOrdersOrderIdRoute = AdminOrdersOrderIdRouteImport.update({
   id: '/orders/$orderId',
   path: '/orders/$orderId',
@@ -158,6 +177,9 @@ export interface FileRoutesByFullPath {
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
+  '/bookings/$bookingId/payment-result': typeof BookingsBookingIdPaymentResultRoute
+  '/sitter/stripe/complete': typeof SitterStripeCompleteRoute
+  '/sitter/stripe/refresh': typeof SitterStripeRefreshRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -180,6 +202,9 @@ export interface FileRoutesByTo {
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin': typeof AdminIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
+  '/bookings/$bookingId/payment-result': typeof BookingsBookingIdPaymentResultRoute
+  '/sitter/stripe/complete': typeof SitterStripeCompleteRoute
+  '/sitter/stripe/refresh': typeof SitterStripeRefreshRoute
   '/admin/orders': typeof AdminOrdersIndexRoute
 }
 export interface FileRoutesById {
@@ -204,6 +229,9 @@ export interface FileRoutesById {
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
+  '/bookings_/$bookingId/payment-result': typeof BookingsBookingIdPaymentResultRoute
+  '/sitter/stripe/complete': typeof SitterStripeCompleteRoute
+  '/sitter/stripe/refresh': typeof SitterStripeRefreshRoute
   '/admin/orders/': typeof AdminOrdersIndexRoute
 }
 export interface FileRouteTypes {
@@ -229,6 +257,9 @@ export interface FileRouteTypes {
     | '/sitter/$userId'
     | '/admin/'
     | '/admin/orders/$orderId'
+    | '/bookings/$bookingId/payment-result'
+    | '/sitter/stripe/complete'
+    | '/sitter/stripe/refresh'
     | '/admin/orders/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -251,6 +282,9 @@ export interface FileRouteTypes {
     | '/sitter/$userId'
     | '/admin'
     | '/admin/orders/$orderId'
+    | '/bookings/$bookingId/payment-result'
+    | '/sitter/stripe/complete'
+    | '/sitter/stripe/refresh'
     | '/admin/orders'
   id:
     | '__root__'
@@ -274,6 +308,9 @@ export interface FileRouteTypes {
     | '/sitter/$userId'
     | '/admin/'
     | '/admin/orders/$orderId'
+    | '/bookings_/$bookingId/payment-result'
+    | '/sitter/stripe/complete'
+    | '/sitter/stripe/refresh'
     | '/admin/orders/'
   fileRoutesById: FileRoutesById
 }
@@ -292,6 +329,9 @@ export interface RootRouteChildren {
   SignRoute: typeof SignRoute
   TopRoute: typeof TopRoute
   SitterUserIdRoute: typeof SitterUserIdRoute
+  BookingsBookingIdPaymentResultRoute: typeof BookingsBookingIdPaymentResultRoute
+  SitterStripeCompleteRoute: typeof SitterStripeCompleteRoute
+  SitterStripeRefreshRoute: typeof SitterStripeRefreshRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -436,6 +476,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/sitter/stripe/refresh': {
+      id: '/sitter/stripe/refresh'
+      path: '/sitter/stripe/refresh'
+      fullPath: '/sitter/stripe/refresh'
+      preLoaderRoute: typeof SitterStripeRefreshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitter/stripe/complete': {
+      id: '/sitter/stripe/complete'
+      path: '/sitter/stripe/complete'
+      fullPath: '/sitter/stripe/complete'
+      preLoaderRoute: typeof SitterStripeCompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookings_/$bookingId/payment-result': {
+      id: '/bookings_/$bookingId/payment-result'
+      path: '/bookings/$bookingId/payment-result'
+      fullPath: '/bookings/$bookingId/payment-result'
+      preLoaderRoute: typeof BookingsBookingIdPaymentResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/orders/$orderId': {
       id: '/admin/orders/$orderId'
       path: '/orders/$orderId'
@@ -485,6 +546,9 @@ const rootRouteChildren: RootRouteChildren = {
   SignRoute: SignRoute,
   TopRoute: TopRoute,
   SitterUserIdRoute: SitterUserIdRoute,
+  BookingsBookingIdPaymentResultRoute: BookingsBookingIdPaymentResultRoute,
+  SitterStripeCompleteRoute: SitterStripeCompleteRoute,
+  SitterStripeRefreshRoute: SitterStripeRefreshRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

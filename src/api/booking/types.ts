@@ -28,6 +28,8 @@ export type BookingAsOwner = {
   ownerComment: string;
   sitterComment: string;
   contact: BookingContact;
+  /** Present only on initial POST /api/Booking response — use immediately to confirm card. */
+  clientSecret?: string;
 };
 
 export type BookingAsSitter = BookingAsOwner;
@@ -49,4 +51,18 @@ export type CreateBookingPayload = {
   startDate: string;
   endDate: string;
   ownerComment?: string;
+};
+
+export type CurrentBooking = {
+  id: string;
+  petName: string;
+  petWeight: number;
+  petPhotoUrl: string | null;
+  status: string;
+  serviceType: string;
+  startDate: string;
+  endDate: string;
+  durationDays: number;
+  cost: number;
+  contactName: string;
 };

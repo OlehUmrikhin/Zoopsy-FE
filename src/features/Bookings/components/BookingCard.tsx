@@ -3,6 +3,7 @@ import { BookingStatus } from '@api/booking';
 import { BookingCardActions } from './BookingCardActions';
 import { BookingCardHeader } from './BookingCardHeader';
 import { BookingContactInfo } from './BookingContactInfo';
+import { PAYMENT_STATUS_COLORS, PAYMENT_STATUS_LABELS } from '@constants/bookingStatuses';
 
 type Props = {
   booking: BookingAsOwner;
@@ -71,6 +72,19 @@ export function BookingCard({
         <span className="font-inter text-xs text-zoopsy-gray">Вартість</span>
         <span className="font-plus-jakarta font-bold text-zoopsy-green-900">{booking.cost} ₴</span>
       </div>
+
+      {booking.paymentStatus && (
+        <div className="flex items-center justify-between">
+          <span className="font-inter text-xs text-zoopsy-gray">Статус оплати</span>
+          <span
+            className={`text-xs font-semibold font-inter px-2.5 py-1 rounded-full ${
+              PAYMENT_STATUS_COLORS[booking.paymentStatus] ?? 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            {PAYMENT_STATUS_LABELS[booking.paymentStatus] ?? booking.paymentStatus}
+          </span>
+        </div>
+      )}
 
       <BookingCardActions
         status={booking.status}

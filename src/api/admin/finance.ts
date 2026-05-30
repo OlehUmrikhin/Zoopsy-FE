@@ -39,11 +39,18 @@ export interface Commission {
 }
 
 export const financeApi = {
-  getMetrics: () => axiosInstance.get<Metric[]>('/api/admin/finance/metrics').then(res => res.data),
-  getChart: () => axiosInstance.get<ChartData[]>('/api/admin/finance/chart').then(res => res.data),
-  getTransactions: (page = 1, limit = 10) => 
-    axiosInstance.get<TransactionResponse>(`/api/admin/finance/transactions?page=${page}&limit=${limit}`).then(res => res.data),
-  getCommission: () => axiosInstance.get<Commission>('/api/admin/finance/commission').then(res => res.data),
-  updateCommission: (rate: number) => 
-    axiosInstance.put<Commission>('/api/admin/finance/commission', { rate }).then(res => res.data),
+  getMetrics: () =>
+    axiosInstance.get<Metric[]>('/api/admin/finance/metrics').then((res) => res.data),
+  getChart: () =>
+    axiosInstance.get<ChartData[]>('/api/admin/finance/chart').then((res) => res.data),
+  getTransactions: (page = 1, limit = 10) =>
+    axiosInstance
+      .get<TransactionResponse>(`/api/admin/finance/transactions?page=${page}&limit=${limit}`)
+      .then((res) => res.data),
+  getCommission: () =>
+    axiosInstance.get<Commission>('/api/admin/finance/commission').then((res) => res.data),
+  updateCommission: (rate: number) =>
+    axiosInstance
+      .put<Commission>('/api/admin/finance/commission', { rate })
+      .then((res) => res.data),
 };

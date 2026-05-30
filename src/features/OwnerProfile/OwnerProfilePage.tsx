@@ -15,13 +15,11 @@ export function OwnerProfilePage() {
       </div>
 
       <div className="flex gap-6 items-start">
-        {/* Left column */}
         <div className="w-[360px] flex-shrink-0 flex flex-col gap-5">
           <OwnerBalanceCard />
           <OwnerCurrentBooking />
         </div>
 
-        {/* Right column */}
         <div className="flex-1">
           <OwnerProfileForm />
         </div>
