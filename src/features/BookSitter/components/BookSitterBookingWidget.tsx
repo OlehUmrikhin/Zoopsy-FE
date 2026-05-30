@@ -1,10 +1,13 @@
-import { Button, useOverlayState } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { format, parseISO } from 'date-fns';
 import { uk } from 'date-fns/locale';
+import { toast } from 'react-toastify';
+import { useNavigate } from '@tanstack/react-router';
 import type { SitterService } from '@api/sitter/types';
 import { useBookingFiltersStore } from '@stores';
 import { useOwnerProfile } from '@api/owner/queries';
-import { BookSitterBookingModal } from './BookSitterBookingModal';
+import { useBalance, useDeductBalance } from '@api/payments';
+import { useCreateBooking } from '@api/booking/mutations';
 import { SERVICE_TYPE_LABELS } from '@constants/serviceTypes';
 
 function InfoRow({ label, value }: { label: string; value: string }) {
@@ -30,7 +33,10 @@ type Props = {
 export function BookSitterBookingWidget({ sitterId, services }: Props) {
   const { serviceType, startDate, endDate, petId } = useBookingFiltersStore();
   const { data: ownerProfile } = useOwnerProfile();
-  const state = useOverlayState();
+  const { data: balanceData } = useBalance();
+  const { mutateAsync: createBooking, isPending: isBooking } = useCreateBooking();
+  const { mutateAsync: deductBalance, isPending: isDeducting } = useDeductBalance();
+  const navigate = useNavigate();
 
   if (services.length === 0) return null;
 
@@ -59,6 +65,36 @@ export function BookSitterBookingWidget({ sitterId, services }: Props) {
 
   const isBookingReady = !!(petId && startDate && (isBoarding ? endDate : true));
 
+  async function handleBookingPress() {
+    if (totalPrice !== null && (balanceData?.balance ?? 0) < totalPrice) {
+      toast.error('Недостатньо коштів на балансі. Поповніть баланс і спробуйте ще раз.');
+      return;
+    }
+
+    if (!startDate || !petId || serviceType === undefined) return;
+
+    try {
+      const booking = await createBooking({
+        sitterProfileId: sitterId,
+        petId,
+        serviceType,
+        startDate,
+        endDate: endDate || startDate,
+      });
+
+      if (totalPrice) {
+        await deductBalance({ amount: totalPrice, bookingId: booking.id });
+      }
+
+      toast.success('Бронювання успішно створено та оплачено!');
+      navigate({ to: '/bookings' });
+    } catch {
+      toast.error('Не вдалося створити бронювання. Спробуйте ще раз.');
+    }
+  }
+
+  const isLoading = isBooking || isDeducting;
+
   return (
     <>
       <div className="w-80 flex-shrink-0 bg-white rounded-2xl p-6 flex flex-col gap-4 sticky top-24">
@@ -85,8 +121,8 @@ export function BookSitterBookingWidget({ sitterId, services }: Props) {
         </div>
 
         <Button
-          onPress={state.open}
-          isDisabled={!isBookingReady}
+          onPress={handleBookingPress}
+          isDisabled={!isBookingReady || isLoading}
           className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-plus-jakarta font-bold transition-colors hover:bg-zoopsy-green-700"
         >
           {isBookingReady ? 'Забронювати' : 'Оберіть деталі'}
@@ -107,20 +143,6 @@ export function BookSitterBookingWidget({ sitterId, services }: Props) {
           </div>
         )}
       </div>
-
-      <BookSitterBookingModal
-        isOpen={state.isOpen}
-        onClose={state.close}
-        sitterId={sitterId}
-        serviceType={effectiveService?.serviceType}
-        startDate={startDate}
-        endDate={endDate}
-        petId={petId}
-        petName={pet?.name}
-        dateDisplay={dateDisplay}
-        totalPrice={totalPrice}
-        isBoarding={isBoarding}
-      />
     </>
   );
 }

@@ -22,7 +22,8 @@ export function SitterBookingsView() {
     isPending: isCancelling,
     variables: cancelVars,
   } = useCancelBooking({
-    onSuccess: () => toast.success('Бронювання успішно відхилено.'),
+    onSuccess: () => toast.success('Бронювання скасовано. Кошти повернуто власнику.'),
+
     onError: () => toast.error('Не вдалося відхилити бронювання. Спробуйте ще раз.'),
   });
   const {

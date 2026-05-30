@@ -27,7 +27,7 @@ function getApproximateLocation(
   for (let i = 0; i < seed.length; i++) {
     hash = (((hash << 5) + hash) ^ seed.charCodeAt(i)) >>> 0;
   }
-  const angle = (hash % 6284) / 1000; // 0..2pi range
+  const angle = (hash % 6284) / 1000;
   const distance = (((hash >> 5) & 0xfff) / 0xfff) * jitterRadiusMeters;
   const dLat = (distance / 111320) * Math.cos(angle);
   const dLng = (distance / (111320 * Math.cos((lat * Math.PI) / 180))) * Math.sin(angle);

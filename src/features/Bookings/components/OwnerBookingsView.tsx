@@ -9,7 +9,8 @@ export function OwnerBookingsView() {
     isPending: isCancelling,
     variables: cancelVars,
   } = useCancelBookingByOwner({
-    onSuccess: () => toast.success('Бронювання успішно скасовано.'),
+    onSuccess: () => toast.success('Бронювання скасовано. Кошти повернуто на ваш баланс.'),
+
     onError: () => toast.error('Не вдалося скасувати бронювання. Спробуйте ще раз.'),
   });
 

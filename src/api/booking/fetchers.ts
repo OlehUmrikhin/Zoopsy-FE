@@ -9,6 +9,7 @@ import type {
   CreateReviewPayload,
   UpdateReviewPayload,
   Review,
+  CurrentBooking,
 } from './types';
 
 export async function createBooking(payload: CreateBookingPayload) {
@@ -24,6 +25,15 @@ export async function getMyBookingsAsOwner(): Promise<BookingAsOwner[]> {
 export async function getMyBookingsAsSitter(): Promise<BookingAsSitter[]> {
   const { data } = await axiosInstance.get<BookingAsSitter[]>(BOOKING_PATHS.myAsSitter);
   return data;
+}
+
+export async function getCurrentBooking(): Promise<CurrentBooking | null> {
+  try {
+    const { data } = await axiosInstance.get<CurrentBooking>(BOOKING_PATHS.myCurrent);
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 export async function approveBooking({ id, sitterComment }: BookingActionPayload) {

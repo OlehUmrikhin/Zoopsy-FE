@@ -12,10 +12,14 @@ import {
   Label,
   TextArea,
 } from '@heroui/react';
+import { Elements } from '@stripe/react-stripe-js';
 import { useCreateBooking } from '@api/booking/mutations';
+import { useDeductBalance } from '@api/payments';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'react-toastify';
 import { SERVICE_TYPE_LABELS } from '@constants/serviceTypes';
+import { BookingPaymentForm } from '@components';
+import { useStripeInit } from '../../../providers/StripeProvider';
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -56,14 +60,18 @@ export function BookSitterBookingModal({
   isBoarding,
 }: Props) {
   const { mutateAsync: createBooking, isPending } = useCreateBooking();
+  const { mutateAsync: deductBalance } = useDeductBalance();
   const [comment, setComment] = useState('');
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
   const navigate = useNavigate();
+  const stripePromise = useStripeInit(isOpen);
 
   const handleConfirm = async () => {
     if (!startDate || !petId || serviceType === undefined) return;
 
     try {
-      await createBooking({
+      const booking = await createBooking({
         sitterProfileId: sitterId,
         petId,
         serviceType,
@@ -71,13 +79,32 @@ export function BookSitterBookingModal({
         endDate: endDate || startDate,
         ownerComment: comment.trim() || undefined,
       });
-      toast.success('Бронювання успішно створено!');
-      onClose();
-      navigate({ to: '/bookings' });
+      setBookingId(booking.id);
+      if (booking.clientSecret) {
+        setClientSecret(booking.clientSecret);
+      } else {
+        if (totalPrice) {
+          await deductBalance({ amount: totalPrice, bookingId: booking.id });
+        }
+        toast.success('Бронювання успішно створено!');
+        onClose();
+        navigate({ to: '/bookings' });
+      }
     } catch {
       toast.error('Не вдалося створити бронювання. Спробуйте ще раз.');
     }
   };
+
+  const handlePaymentSuccess = () => {
+    toast.success('Бронювання та оплату підтверджено!');
+    onClose();
+    navigate({ to: '/bookings' });
+  };
+  const handlePaymentError = (msg: string) => {
+    toast.error(msg);
+  };
+
+  const showPaymentStep = !!(clientSecret && bookingId);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -85,56 +112,68 @@ export function BookSitterBookingModal({
         <ModalContainer size="md">
           <ModalDialog>
             <ModalHeader className="flex flex-col gap-1 font-plus-jakarta pb-0">
-              Підтвердження бронювання
+              {showPaymentStep ? 'Оплата' : 'Підтвердження бронювання'}
             </ModalHeader>
             <ModalBody className="py-6">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3 p-4 bg-zoopsy-mint rounded-xl">
-                  <InfoRow
-                    label="Послуга"
-                    value={
-                      serviceType !== undefined
-                        ? (SERVICE_TYPE_LABELS[serviceType] ?? `Послуга ${serviceType}`)
-                        : '—'
-                    }
-                  />
-                  <InfoRow label={isBoarding ? 'Дати' : 'Дата'} value={dateDisplay} />
-                  {petName && <InfoRow label="Тварина" value={petName} />}
-                  {totalPrice !== null && <InfoRow label="Вартість" value={`${totalPrice}₴`} />}
-                </div>
+              {!showPaymentStep ? (
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3 p-4 bg-zoopsy-mint rounded-xl">
+                    <InfoRow
+                      label="Послуга"
+                      value={
+                        serviceType !== undefined
+                          ? (SERVICE_TYPE_LABELS[serviceType] ?? `Послуга ${serviceType}`)
+                          : '—'
+                      }
+                    />
+                    <InfoRow label={isBoarding ? 'Дати' : 'Дата'} value={dateDisplay} />
+                    {petName && <InfoRow label="Тварина" value={petName} />}
+                    {totalPrice !== null && <InfoRow label="Вартість" value={`${totalPrice}₴`} />}
+                  </div>
 
-                <TextField
-                  value={comment}
-                  onChange={setComment}
-                  className="font-inter flex flex-col gap-1"
-                >
-                  <Label className="text-xs font-semibold !text-zoopsy-dark-gray">
-                    Коментар до бронювання
-                  </Label>
-                  <TextArea
-                    placeholder="Напишіть щось важливе сіттеру (необов'язково)"
-                    className="border border-zoopsy-light-gray/40 rounded-xl px-3 py-2 text-zoopsy-dark-gray placeholder:text-zoopsy-gray/60 focus:outline-none focus:border-zoopsy-green-900 hover:border-zoopsy-gray/60 resize-none min-h-[80px]"
+                  <TextField
+                    value={comment}
+                    onChange={setComment}
+                    className="font-inter flex flex-col gap-1"
+                  >
+                    <Label className="text-xs font-semibold !text-zoopsy-dark-gray">
+                      Коментар до бронювання
+                    </Label>
+                    <TextArea
+                      placeholder="Напишіть щось важливе сіттеру (необов'язково)"
+                      className="border border-zoopsy-light-gray/40 rounded-xl px-3 py-2 text-zoopsy-dark-gray placeholder:text-zoopsy-gray/60 focus:outline-none focus:border-zoopsy-green-900 hover:border-zoopsy-gray/60 resize-none min-h-[80px]"
+                    />
+                  </TextField>
+                </div>
+              ) : (
+                <Elements stripe={stripePromise} options={{ clientSecret: clientSecret! }}>
+                  <BookingPaymentForm
+                    bookingId={bookingId!}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
                   />
-                </TextField>
-              </div>
+                </Elements>
+              )}
             </ModalBody>
-            <ModalFooter>
-              <Button
-                className="font-plus-jakarta font-bold rounded-xl"
-                variant="danger-soft"
-                onPress={onClose}
-                isDisabled={isPending}
-              >
-                Скасувати
-              </Button>
-              <Button
-                className="bg-zoopsy-green-900 text-white font-plus-jakarta font-bold rounded-xl"
-                onPress={handleConfirm}
-                isDisabled={isPending}
-              >
-                {isPending ? 'Завантаження...' : 'Підтвердити'}
-              </Button>
-            </ModalFooter>
+            {!showPaymentStep && (
+              <ModalFooter>
+                <Button
+                  className="font-plus-jakarta font-bold rounded-xl"
+                  variant="danger-soft"
+                  onPress={onClose}
+                  isDisabled={isPending}
+                >
+                  Скасувати
+                </Button>
+                <Button
+                  className="bg-zoopsy-green-900 text-white font-plus-jakarta font-bold rounded-xl"
+                  onPress={handleConfirm}
+                  isDisabled={isPending}
+                >
+                  {isPending ? 'Завантаження...' : 'Підтвердити'}
+                </Button>
+              </ModalFooter>
+            )}
           </ModalDialog>
         </ModalContainer>
       </ModalBackdrop>
