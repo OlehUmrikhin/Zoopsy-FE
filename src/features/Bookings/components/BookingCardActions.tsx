@@ -6,12 +6,14 @@ import { Button } from '@heroui/react';
 import type { BookingActionType } from './BookingActionModal';
 import { BookingActionModal } from './BookingActionModal';
 import { ReviewModal } from './ReviewModal';
+import { ComplaintModal } from './ComplaintModal';
 
 type Props = {
   status: BookingStatusType;
   mode: 'sitter' | 'owner';
   sitterName?: string;
   sitterProfileId?: number;
+  bookingId?: string;
   onApprove?: (comment?: string) => void;
   onCancel?: (comment?: string) => void;
   onCancelByOwner?: (comment?: string) => void;
@@ -24,6 +26,7 @@ export function BookingCardActions({
   mode,
   sitterName,
   sitterProfileId,
+  bookingId,
   onApprove,
   onCancel,
   onCancelByOwner,
@@ -32,6 +35,7 @@ export function BookingCardActions({
 }: Props) {
   const [modalAction, setModalAction] = useState<BookingActionType | null>(null);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [isComplaintOpen, setIsComplaintOpen] = useState(false);
 
   const isReviewable =
     mode === 'owner' && status === BookingStatus.Completed && sitterProfileId != null;
@@ -48,7 +52,12 @@ export function BookingCardActions({
   const showOwnerReview =
     mode === 'owner' && status === BookingStatus.Completed && sitterProfileId != null;
 
-  if (!showSitterRequested && !showSitterActive && !showOwnerCancel && !showOwnerReview)
+  const showOwnerComplaint =
+    mode === 'owner' &&
+    (status === BookingStatus.Completed || status === BookingStatus.Cancelled) &&
+    bookingId != null;
+
+  if (!showSitterRequested && !showSitterActive && !showOwnerCancel && !showOwnerReview && !showOwnerComplaint)
     return null;
 
   const handleConfirm = (comment?: string) => {
@@ -146,12 +155,34 @@ export function BookingCardActions({
         />
       )}
 
+      {showOwnerComplaint && (
+        <div className="pt-1">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="w-full font-plus-jakarta font-bold rounded-xl text-rose-700 border border-rose-200 hover:bg-rose-50"
+            onPress={() => setIsComplaintOpen(true)}
+            isDisabled={isActioning}
+          >
+            Поскаржитись на сіттера
+          </Button>
+        </div>
+      )}
+
       {isReviewOpen && sitterProfileId != null && (
         <ReviewModal
           isOpen
           sitterName={sitterName ?? 'сіттера'}
           sitterProfileId={sitterProfileId}
           onClose={() => setIsReviewOpen(false)}
+        />
+      )}
+
+      {isComplaintOpen && bookingId != null && (
+        <ComplaintModal
+          bookingId={bookingId}
+          sitterName={sitterName ?? 'сіттера'}
+          onClose={() => setIsComplaintOpen(false)}
         />
       )}
     </>

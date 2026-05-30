@@ -1,16 +1,15 @@
 export interface AdminUser {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
-  avatarUrl: string | null;
   role: 'owner' | 'sitter' | 'moderator' | 'admin';
   status: 'active' | 'inactive' | 'blocked' | 'pending';
-  rating: number;
-  totalBookings: number;
-  lastActivityAt: string;
   createdAt: string;
-  phoneNumber?: string;
-  city?: string;
+  totalBookings: number;
+  reviewsCount: number;
+  reportsCount: number;
+  isOwnerBlocked?: boolean | null;
+  blockedAt?: string | null;
 }
 
 export interface AdminUsersParams {
@@ -34,7 +33,7 @@ export interface UpdateUserStatusPayload {
 }
 
 export interface UpdateAdminUserPayload {
-  name?: string;
+  fullName?: string;
   email?: string;
   role?: 'owner' | 'sitter' | 'moderator' | 'admin';
   status?: 'active' | 'inactive' | 'blocked' | 'pending';

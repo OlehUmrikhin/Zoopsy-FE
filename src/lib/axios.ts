@@ -22,3 +22,13 @@ axiosInstance.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 403 && error.response?.data?.blocked === true) {
+      window.location.replace('/blocked');
+    }
+    return Promise.reject(error);
+  },
+);

@@ -41,6 +41,7 @@ export interface ComplaintUser {
   avatarUrl?: string;
   role: 'owner' | 'sitter';
   description: string;
+  isBlocked?: boolean;
 }
 
 export interface ChatMessage {
@@ -66,7 +67,7 @@ export interface AdminComplaint {
   title: string;
   shortDesc: string;
   createdAt: string;
-  status: 'active' | 'resolved';
+  status: 'active' | 'resolved' | 'rejected';
   owner: ComplaintUser;
   sitter: ComplaintUser;
   chatMessages: ChatMessage[];
@@ -137,6 +138,9 @@ export interface DetailedAdminOrder {
   sitter: SitterDetails;
   serviceDetails: ServiceDetailedInfo;
   timeline: TimelineItem[];
+  isRefunded: boolean;
+  refundAmount?: number | null;
+  refundComment?: string | null;
 }
 
 export interface RefundPayload {
