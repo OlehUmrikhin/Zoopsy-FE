@@ -1,6 +1,6 @@
 export interface UserReview {
   id: string;
-  contentType: 'review';
+  contentType: 'userReview';
   reviewText: string;
   rating: number;
   author: {
@@ -18,7 +18,7 @@ export interface UserReview {
 
 export interface UserPhoto {
   id: string;
-  contentType: 'photo';
+  contentType: 'userPhoto';
   photoUrl: string;
   description?: string;
   author: {
@@ -32,7 +32,7 @@ export interface UserPhoto {
 
 export interface ProfileTest {
   id: string;
-  contentType: 'profile_test';
+  contentType: 'profileTest';
   testName: string;
   testUrl: string;
   score: number;
@@ -52,7 +52,7 @@ export type ContentItem = UserReview | UserPhoto | ProfileTest;
 export interface ContentModerationParams {
   page: number;
   limit: number;
-  contentType?: 'review' | 'photo' | 'profile_test' | 'all';
+  contentType?: 'userReview' | 'userPhoto' | 'profileTest' | 'all';
   status?: 'pending' | 'approved' | 'rejected' | 'all';
   search?: string;
 }
@@ -65,11 +65,13 @@ export interface ContentModerationPaginatedResponse {
 }
 
 export interface ApproveContentPayload {
-  contentId: string;
+  itemId: number;
+  contentType: string;
   notes?: string;
 }
 
 export interface RejectContentPayload {
-  contentId: string;
+  itemId: number;
+  contentType: string;
   reason: string;
 }

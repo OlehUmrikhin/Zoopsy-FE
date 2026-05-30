@@ -225,70 +225,88 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId }) => {
               </div>
 
               {/* Панель системи повернення */}
-              <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
-                <h4 className="text-red-800 font-semibold mb-4 flex items-center gap-2">
+              <div className={`p-6 rounded-2xl border ${order.isRefunded ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
+                <h4 className={`font-semibold mb-4 flex items-center gap-2 ${order.isRefunded ? 'text-green-800' : 'text-red-800'}`}>
                   <MdInfoOutline className="text-xl" />
                   Система повернення коштів
                 </h4>
-                
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="refundType" 
-                        value="full"
-                        checked={refundType === 'full'}
-                        onChange={() => setRefundType('full')}
-                        className="w-4 h-4 text-teal-600 bg-white border-gray-300 focus:ring-teal-500" 
-                      />
-                      <span className="text-gray-800">Повне повернення ({order.serviceDetails.totalAmount} ₴)</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="radio" 
-                        name="refundType" 
-                        value="partial"
-                        checked={refundType === 'partial'}
-                        onChange={() => setRefundType('partial')}
-                        className="w-4 h-4 text-teal-600 bg-white border-gray-300 focus:ring-teal-500" 
-                      />
-                      <span className="text-gray-800">Часткове повернення</span>
-                    </label>
-                  </div>
 
-                  {refundType === 'partial' && (
-                    <div className="max-w-xs transition-all duration-300">
-                      <label className="block text-sm text-gray-700 mb-1">Сума повернення (₴)</label>
-                      <input 
-                        type="number"
-                        placeholder="Наприклад: 150"
-                        value={refundAmount}
-                        onChange={(e) => setRefundAmount(e.target.value)}
-                        className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-3 outline-none"
+                {order.isRefunded ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-green-700 font-medium">
+                      <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" />
+                      Кошти вже повернуто
+                    </div>
+                    <div className="text-sm text-green-800">
+                      <span className="font-semibold">Сума:</span>{' '}
+                      {order.refundAmount?.toLocaleString('uk-UA')} ₴
+                    </div>
+                    {order.refundComment && (
+                      <div className="text-sm text-green-800">
+                        <span className="font-semibold">Причина:</span> {order.refundComment}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="refundType"
+                          value="full"
+                          checked={refundType === 'full'}
+                          onChange={() => setRefundType('full')}
+                          className="w-4 h-4 text-teal-600 bg-white border-gray-300 focus:ring-teal-500"
+                        />
+                        <span className="text-gray-800">Повне повернення ({order.serviceDetails.totalAmount} ₴)</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="refundType"
+                          value="partial"
+                          checked={refundType === 'partial'}
+                          onChange={() => setRefundType('partial')}
+                          className="w-4 h-4 text-teal-600 bg-white border-gray-300 focus:ring-teal-500"
+                        />
+                        <span className="text-gray-800">Часткове повернення</span>
+                      </label>
+                    </div>
+
+                    {refundType === 'partial' && (
+                      <div className="max-w-xs transition-all duration-300">
+                        <label className="block text-sm text-gray-700 mb-1">Сума повернення (₴)</label>
+                        <input
+                          type="number"
+                          placeholder="Наприклад: 150"
+                          value={refundAmount}
+                          onChange={(e) => setRefundAmount(e.target.value)}
+                          className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-3 outline-none"
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1">Внутрішній коментар (причина)</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Опишіть причину повернення коштів..."
+                        value={refundComment}
+                        onChange={(e) => setRefundComment(e.target.value)}
+                        className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-3 outline-none resize-none"
                       />
                     </div>
-                  )}
 
-                  <div>
-                    <label className="block text-sm text-gray-700 mb-1">Внутрішній коментар (причина)</label>
-                    <textarea 
-                      rows={3}
-                      placeholder="Опишіть причину повернення коштів..."
-                      value={refundComment}
-                      onChange={(e) => setRefundComment(e.target.value)}
-                      className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-3 outline-none resize-none"
-                    />
+                    <button
+                      onClick={handleRefundSubmit}
+                      disabled={refundMutation.isPending}
+                      className="mt-2 bg-red-700 hover:bg-red-800 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {refundMutation.isPending ? 'Обробка...' : 'Повернути кошти'}
+                    </button>
                   </div>
-
-                  <button 
-                    onClick={handleRefundSubmit}
-                    disabled={refundMutation.isPending}
-                    className="mt-2 bg-red-700 hover:bg-red-800 text-white font-medium py-3 px-6 rounded-xl transition-colors duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {refundMutation.isPending ? 'Обробка...' : 'Повернути кошти'}
-                  </button>
-                </div>
+                )}
               </div>
             </div>
           </div>

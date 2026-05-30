@@ -5,7 +5,7 @@ import type { ContentItem } from '../../../api/admin/content-moderation/types';
 
 export function ContentModerationPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [contentTypeFilter, setContentTypeFilter] = useState<'all' | 'review' | 'photo' | 'profile_test'>('all');
+  const [contentTypeFilter, setContentTypeFilter] = useState<'all' | 'userReview' | 'userPhoto' | 'profileTest'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [rejectReason, setRejectReason] = useState<Record<string, string>>({});
   const [showRejectModal, setShowRejectModal] = useState<string | null>(null);
@@ -24,23 +24,23 @@ export function ContentModerationPage() {
   const content = data?.items ?? [];
   const totalPages = data?.totalPages ?? 1;
 
-  const handleApprove = (contentId: string) => {
-    approveMutation.mutate({ contentId });
+  const handleApprove = (id: string, contentType: string) => {
+    approveMutation.mutate({ itemId: parseInt(id), contentType });
   };
 
-  const handleReject = (contentId: string) => {
-    if (!rejectReason[contentId]) return;
-    rejectMutation.mutate({ contentId, reason: rejectReason[contentId] });
+  const handleReject = (id: string, contentType: string) => {
+    if (!rejectReason[id]) return;
+    rejectMutation.mutate({ itemId: parseInt(id), contentType, reason: rejectReason[id] });
     setShowRejectModal(null);
     setRejectReason((prev) => {
-      const newReason = { ...prev };
-      delete newReason[contentId];
-      return newReason;
+      const next = { ...prev };
+      delete next[id];
+      return next;
     });
   };
 
   const renderContentCard = (item: ContentItem & { id: string; moderationStatus: string }) => {
-    if (item.contentType === 'review') {
+    if (item.contentType === 'userReview') {
       return (
         <div key={item.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col h-full">
           <div className="flex gap-3 mb-4">
@@ -73,7 +73,7 @@ export function ContentModerationPage() {
 
           <div className="flex gap-2 mt-auto">
             <button
-              onClick={() => handleApprove(item.id)}
+              onClick={() => handleApprove(item.id, item.contentType)}
               disabled={approveMutation.isPending}
               className="flex-1 py-2 bg-zoopsy-green-700 hover:bg-zoopsy-green-800 disabled:opacity-50 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors"
             >
@@ -101,7 +101,7 @@ export function ContentModerationPage() {
               />
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleReject(item.id)}
+                  onClick={() => handleReject(item.id, item.contentType)}
                   disabled={!rejectReason[item.id]}
                   className="flex-1 py-1 bg-rose-700 hover:bg-rose-800 disabled:opacity-50 text-white rounded text-xs font-medium transition-colors"
                 >
@@ -120,7 +120,7 @@ export function ContentModerationPage() {
       );
     }
 
-    if (item.contentType === 'photo') {
+    if (item.contentType === 'userPhoto') {
       return (
         <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full">
           <div className="h-48 bg-gray-100 overflow-hidden relative">
@@ -150,7 +150,7 @@ export function ContentModerationPage() {
 
             <div className="flex gap-2 mt-auto">
               <button
-                onClick={() => handleApprove(item.id)}
+                onClick={() => handleApprove(item.id, item.contentType)}
                 disabled={approveMutation.isPending}
                 className="flex-1 py-2 bg-zoopsy-green-700 hover:bg-zoopsy-green-800 disabled:opacity-50 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors"
               >
@@ -178,7 +178,7 @@ export function ContentModerationPage() {
                 />
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleReject(item.id)}
+                    onClick={() => handleReject(item.id, item.contentType)}
                     disabled={!rejectReason[item.id]}
                     className="flex-1 py-1 bg-rose-700 hover:bg-rose-800 disabled:opacity-50 text-white rounded text-xs font-medium transition-colors"
                   >
@@ -198,7 +198,7 @@ export function ContentModerationPage() {
       );
     }
 
-    if (item.contentType === 'profile_test') {
+    if (item.contentType === 'profileTest') {
       const passPercentage = (item.score / item.maxScore) * 100;
       return (
         <div key={item.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col h-full">
@@ -257,7 +257,7 @@ export function ContentModerationPage() {
 
           <div className="flex gap-2 mt-auto">
             <button
-              onClick={() => handleApprove(item.id)}
+              onClick={() => handleApprove(item.id, item.contentType)}
               disabled={approveMutation.isPending}
               className="flex-1 py-2 bg-zoopsy-green-700 hover:bg-zoopsy-green-800 disabled:opacity-50 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition-colors"
             >
@@ -285,7 +285,7 @@ export function ContentModerationPage() {
               />
               <div className="flex gap-2">
                 <button
-                  onClick={() => handleReject(item.id)}
+                  onClick={() => handleReject(item.id, item.contentType)}
                   disabled={!rejectReason[item.id]}
                   className="flex-1 py-1 bg-rose-700 hover:bg-rose-800 disabled:opacity-50 text-white rounded text-xs font-medium transition-colors"
                 >
@@ -355,9 +355,9 @@ export function ContentModerationPage() {
           className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none"
         >
           <option value="all">Всі типи</option>
-          <option value="review">Відзиви</option>
-          <option value="photo">Фото</option>
-          <option value="profile_test">Тест профіля</option>
+          <option value="userReview">Відгуки</option>
+          <option value="userPhoto">Фото</option>
+          <option value="profileTest">Тест профіля</option>
         </select>
       </div>
 

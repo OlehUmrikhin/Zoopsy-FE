@@ -36,4 +36,5 @@ export type OwnerProfile = {
   city: string;
   phoneNumber: string;
   pets: OwnerPet[];
+  balance: number;
 };

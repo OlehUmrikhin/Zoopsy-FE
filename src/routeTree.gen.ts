@@ -19,6 +19,7 @@ import { Route as FindSitterRouteImport } from './routes/find-sitter'
 import { Route as DownloadApkRouteImport } from './routes/download-apk'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as BookingsRouteImport } from './routes/bookings'
+import { Route as BlockedRouteImport } from './routes/blocked'
 import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -81,6 +82,11 @@ const BookingsRoute = BookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlockedRoute = BlockedRouteImport.update({
+  id: '/blocked',
+  path: '/blocked',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiAssistantRoute = AiAssistantRouteImport.update({
   id: '/ai-assistant',
   path: '/ai-assistant',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/ai-assistant': typeof AiAssistantRoute
+  '/blocked': typeof BlockedRoute
   '/bookings': typeof BookingsRoute
   '/calendar': typeof CalendarRoute
   '/download-apk': typeof DownloadApkRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-assistant': typeof AiAssistantRoute
+  '/blocked': typeof BlockedRoute
   '/bookings': typeof BookingsRoute
   '/calendar': typeof CalendarRoute
   '/download-apk': typeof DownloadApkRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/ai-assistant': typeof AiAssistantRoute
+  '/blocked': typeof BlockedRoute
   '/bookings': typeof BookingsRoute
   '/calendar': typeof CalendarRoute
   '/download-apk': typeof DownloadApkRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/ai-assistant'
+    | '/blocked'
     | '/bookings'
     | '/calendar'
     | '/download-apk'
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai-assistant'
+    | '/blocked'
     | '/bookings'
     | '/calendar'
     | '/download-apk'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/ai-assistant'
+    | '/blocked'
     | '/bookings'
     | '/calendar'
     | '/download-apk'
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AiAssistantRoute: typeof AiAssistantRoute
+  BlockedRoute: typeof BlockedRoute
   BookingsRoute: typeof BookingsRoute
   CalendarRoute: typeof CalendarRoute
   DownloadApkRoute: typeof DownloadApkRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       path: '/bookings'
       fullPath: '/bookings'
       preLoaderRoute: typeof BookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blocked': {
+      id: '/blocked'
+      path: '/blocked'
+      fullPath: '/blocked'
+      preLoaderRoute: typeof BlockedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-assistant': {
@@ -474,6 +494,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AiAssistantRoute: AiAssistantRoute,
+  BlockedRoute: BlockedRoute,
   BookingsRoute: BookingsRoute,
   CalendarRoute: CalendarRoute,
   DownloadApkRoute: DownloadApkRoute,

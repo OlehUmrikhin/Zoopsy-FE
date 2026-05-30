@@ -26,16 +26,17 @@ export function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [editForm, setEditForm] = useState<{
-    name: string;
+    fullName: string;
     email: string;
     role: AdminUser['role'];
     status: AdminUser['status'];
   }>({
-    name: '',
+    fullName: '',
     email: '',
     role: 'owner',
     status: 'active',
   });
+  const [originalRole, setOriginalRole] = useState<AdminUser['role']>('owner');
   const [roleFilter, setRoleFilter] = useState<'all' | 'owner' | 'sitter' | 'moderator' | 'admin'>(
     'all',
   );
@@ -60,8 +61,9 @@ export function UsersPage() {
 
   const openEditModal = (user: AdminUser) => {
     setEditingUser(user);
+    setOriginalRole(user.role);
     setEditForm({
-      name: user.name ?? '',
+      fullName: user.fullName ?? '',
       email: user.email ?? '',
       role: user.role,
       status: user.status,
@@ -78,7 +80,7 @@ export function UsersPage() {
       {
         userId: editingUser.id,
         payload: {
-          name: editForm.name.trim(),
+          fullName: editForm.fullName.trim(),
           email: editForm.email.trim(),
           role: editForm.role,
           status: editForm.status,
@@ -173,7 +175,7 @@ export function UsersPage() {
         </select>
       </div>
 
-      {/* Table */}
+      {/* Table toolbar */}
       <div className="flex items-center justify-end gap-2">
         <button
           onClick={() => (data as any)?.refetch?.()}
@@ -183,13 +185,14 @@ export function UsersPage() {
         </button>
       </div>
 
+      {/* Edit modal */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
           <div className="w-full max-w-xl rounded-3xl bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">Редагувати користувача</h2>
-                <p className="text-sm text-gray-500">Змінити ім’я, email, роль або статус.</p>
+                <p className="text-sm text-gray-500">Змінити ім'я, email, роль або статус.</p>
               </div>
               <button
                 onClick={closeEditModal}
@@ -201,11 +204,11 @@ export function UsersPage() {
             </div>
             <div className="grid gap-4">
               <label className="block">
-                <span className="text-sm text-gray-700">Ім'я</span>
+                <span className="text-sm text-gray-700">Повне ім'я</span>
                 <input
                   type="text"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+                  value={editForm.fullName}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, fullName: e.target.value }))}
                   className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm focus:outline-none focus:border-zoopsy-green-500"
                 />
               </label>
@@ -233,6 +236,12 @@ export function UsersPage() {
                     <option value="moderator">Модератор</option>
                     <option value="admin">Адміністратор</option>
                   </select>
+                  {editForm.role !== originalRole && (
+                    <div className="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+                      <p className="font-semibold">Зміна ролі</p>
+                      <p>Дані профілю попередньої ролі збережуться. Юзеру потрібно перезайти в акаунт щоб зміни набули чинності.</p>
+                    </div>
+                  )}
                 </label>
                 <label className="block">
                   <span className="text-sm text-gray-700">Статус</span>
@@ -290,10 +299,10 @@ export function UsersPage() {
                   Статус
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                  Рейтинг
+                  Профіль власника
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
-                  Остання активність
+                  Зареєстровано
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">
                   Дії
@@ -321,16 +330,9 @@ export function UsersPage() {
                   return (
                     <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={user.avatarUrl ?? 'https://via.placeholder.com/40'}
-                            alt={user.name}
-                            className="w-10 h-10 rounded-full object-cover"
-                          />
-                          <div className="min-w-0">
-                            <p className="font-medium text-gray-900 truncate">{user.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                          </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900 truncate">{user.fullName || '—'}</p>
+                          <p className="text-xs text-gray-500 truncate">{user.email}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -348,15 +350,30 @@ export function UsersPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-1">
-                          <span className="font-bold text-gray-900">
-                            ★ {(user.rating ?? 0).toFixed(1)}
+                        {user.status === 'blocked' ? (
+                          <div className="flex flex-col gap-1">
+                            <span className="px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600 w-fit">
+                              Заблоковано
+                            </span>
+                            <span className="text-[10px] text-green-600 font-medium">
+                              ✓ Дані збережено
+                            </span>
+                            {user.blockedAt && (
+                              <span className="text-[10px] text-gray-400">
+                                з {new Date(user.blockedAt).toLocaleDateString('uk-UA')}
+                              </span>
+                            )}
+                          </div>
+                        ) : user.isOwnerBlocked === null || user.isOwnerBlocked === undefined ? (
+                          <span className="text-xs text-gray-400">—</span>
+                        ) : (
+                          <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-600">
+                            Активний
                           </span>
-                          <span className="text-xs text-gray-500">({user.totalBookings ?? 0})</span>
-                        </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {new Date(user.lastActivityAt).toLocaleDateString('uk-UA')}
+                        {new Date(user.createdAt).toLocaleDateString('uk-UA')}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
