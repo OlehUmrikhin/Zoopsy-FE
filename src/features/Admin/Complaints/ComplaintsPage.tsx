@@ -102,7 +102,11 @@ function ParticipantCard({ user, onBlock, isBlocking, onEdit }: ParticipantCardP
 
 // ─── Main page ───────────────────────────────────────────────────────────────
 
-export function ComplaintsPage() {
+interface ComplaintsPageProps {
+  usersPath?: string;
+}
+
+export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPageProps) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -147,9 +151,8 @@ export function ComplaintsPage() {
     );
   };
 
-  const handleEditProfile = (userId: string) => {
-    // Navigate to admin users and search for this user
-    navigate({ to: '/admin/users' });
+  const handleEditProfile = (_userId: string) => {
+    navigate({ to: usersPath as any });
     toast.info('Знайдіть користувача у списку користувачів');
   };
 

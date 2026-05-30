@@ -22,7 +22,11 @@ const statusLabels: Record<string, { label: string; color: string; badge: string
   pending: { label: 'На розгляді', color: 'text-yellow-600', badge: 'bg-yellow-100' },
 };
 
-export function UsersPage() {
+interface UsersPageProps {
+  restrictedRoles?: Array<AdminUser['role']>;
+}
+
+export function UsersPage({ restrictedRoles = [] }: UsersPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [editForm, setEditForm] = useState<{
@@ -231,10 +235,10 @@ export function UsersPage() {
                     }
                     className="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm focus:outline-none focus:border-zoopsy-green-500"
                   >
-                    <option value="owner">Власник</option>
-                    <option value="sitter">Сіттер</option>
-                    <option value="moderator">Модератор</option>
-                    <option value="admin">Адміністратор</option>
+                    {!restrictedRoles.includes('owner') && <option value="owner">Власник</option>}
+                    {!restrictedRoles.includes('sitter') && <option value="sitter">Сіттер</option>}
+                    {!restrictedRoles.includes('moderator') && <option value="moderator">Модератор</option>}
+                    {!restrictedRoles.includes('admin') && <option value="admin">Адміністратор</option>}
                   </select>
                   {editForm.role !== originalRole && (
                     <div className="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">

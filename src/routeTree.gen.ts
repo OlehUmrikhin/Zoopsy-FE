@@ -21,10 +21,15 @@ import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as BookingsRouteImport } from './routes/bookings'
 import { Route as BlockedRouteImport } from './routes/blocked'
 import { Route as AiAssistantRouteImport } from './routes/ai-assistant'
+import { Route as ModeratorRouteRouteImport } from './routes/moderator/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ModeratorIndexRouteImport } from './routes/moderator/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SitterUserIdRouteImport } from './routes/sitter.$userId'
+import { Route as ModeratorUsersRouteImport } from './routes/moderator/users'
+import { Route as ModeratorContentModerationRouteImport } from './routes/moderator/content-moderation'
+import { Route as ModeratorComplaintsRouteImport } from './routes/moderator/complaints'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminFinancesRouteImport } from './routes/admin/finances'
 import { Route as AdminContentModerationRouteImport } from './routes/admin/content-moderation'
@@ -95,6 +100,11 @@ const AiAssistantRoute = AiAssistantRouteImport.update({
   path: '/ai-assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModeratorRouteRoute = ModeratorRouteRouteImport.update({
+  id: '/moderator',
+  path: '/moderator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -105,6 +115,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModeratorIndexRoute = ModeratorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ModeratorRouteRoute,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -114,6 +129,22 @@ const SitterUserIdRoute = SitterUserIdRouteImport.update({
   id: '/sitter/$userId',
   path: '/sitter/$userId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ModeratorUsersRoute = ModeratorUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => ModeratorRouteRoute,
+} as any)
+const ModeratorContentModerationRoute =
+  ModeratorContentModerationRouteImport.update({
+    id: '/content-moderation',
+    path: '/content-moderation',
+    getParentRoute: () => ModeratorRouteRoute,
+  } as any)
+const ModeratorComplaintsRoute = ModeratorComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => ModeratorRouteRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
@@ -165,6 +196,7 @@ const AdminOrdersOrderIdRoute = AdminOrdersOrderIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/moderator': typeof ModeratorRouteRouteWithChildren
   '/ai-assistant': typeof AiAssistantRoute
   '/blocked': typeof BlockedRoute
   '/bookings': typeof BookingsRoute
@@ -181,8 +213,12 @@ export interface FileRoutesByFullPath {
   '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/moderator/complaints': typeof ModeratorComplaintsRoute
+  '/moderator/content-moderation': typeof ModeratorContentModerationRoute
+  '/moderator/users': typeof ModeratorUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/moderator/': typeof ModeratorIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
   '/bookings/$bookingId/payment-result': typeof BookingsBookingIdPaymentResultRoute
   '/sitter/stripe/complete': typeof SitterStripeCompleteRoute
@@ -207,8 +243,12 @@ export interface FileRoutesByTo {
   '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/moderator/complaints': typeof ModeratorComplaintsRoute
+  '/moderator/content-moderation': typeof ModeratorContentModerationRoute
+  '/moderator/users': typeof ModeratorUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin': typeof AdminIndexRoute
+  '/moderator': typeof ModeratorIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
   '/bookings/$bookingId/payment-result': typeof BookingsBookingIdPaymentResultRoute
   '/sitter/stripe/complete': typeof SitterStripeCompleteRoute
@@ -219,6 +259,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/moderator': typeof ModeratorRouteRouteWithChildren
   '/ai-assistant': typeof AiAssistantRoute
   '/blocked': typeof BlockedRoute
   '/bookings': typeof BookingsRoute
@@ -235,8 +276,12 @@ export interface FileRoutesById {
   '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
   '/admin/users': typeof AdminUsersRoute
+  '/moderator/complaints': typeof ModeratorComplaintsRoute
+  '/moderator/content-moderation': typeof ModeratorContentModerationRoute
+  '/moderator/users': typeof ModeratorUsersRoute
   '/sitter/$userId': typeof SitterUserIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/moderator/': typeof ModeratorIndexRoute
   '/admin/orders/$orderId': typeof AdminOrdersOrderIdRoute
   '/bookings_/$bookingId/payment-result': typeof BookingsBookingIdPaymentResultRoute
   '/sitter/stripe/complete': typeof SitterStripeCompleteRoute
@@ -248,6 +293,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/moderator'
     | '/ai-assistant'
     | '/blocked'
     | '/bookings'
@@ -264,8 +310,12 @@ export interface FileRouteTypes {
     | '/admin/content-moderation'
     | '/admin/finances'
     | '/admin/users'
+    | '/moderator/complaints'
+    | '/moderator/content-moderation'
+    | '/moderator/users'
     | '/sitter/$userId'
     | '/admin/'
+    | '/moderator/'
     | '/admin/orders/$orderId'
     | '/bookings/$bookingId/payment-result'
     | '/sitter/stripe/complete'
@@ -290,8 +340,12 @@ export interface FileRouteTypes {
     | '/admin/content-moderation'
     | '/admin/finances'
     | '/admin/users'
+    | '/moderator/complaints'
+    | '/moderator/content-moderation'
+    | '/moderator/users'
     | '/sitter/$userId'
     | '/admin'
+    | '/moderator'
     | '/admin/orders/$orderId'
     | '/bookings/$bookingId/payment-result'
     | '/sitter/stripe/complete'
@@ -301,6 +355,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/moderator'
     | '/ai-assistant'
     | '/blocked'
     | '/bookings'
@@ -317,8 +372,12 @@ export interface FileRouteTypes {
     | '/admin/content-moderation'
     | '/admin/finances'
     | '/admin/users'
+    | '/moderator/complaints'
+    | '/moderator/content-moderation'
+    | '/moderator/users'
     | '/sitter/$userId'
     | '/admin/'
+    | '/moderator/'
     | '/admin/orders/$orderId'
     | '/bookings_/$bookingId/payment-result'
     | '/sitter/stripe/complete'
@@ -329,6 +388,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  ModeratorRouteRoute: typeof ModeratorRouteRouteWithChildren
   AiAssistantRoute: typeof AiAssistantRoute
   BlockedRoute: typeof BlockedRoute
   BookingsRoute: typeof BookingsRoute
@@ -433,6 +493,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiAssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/moderator': {
+      id: '/moderator'
+      path: '/moderator'
+      fullPath: '/moderator'
+      preLoaderRoute: typeof ModeratorRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -447,6 +514,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/moderator/': {
+      id: '/moderator/'
+      path: '/'
+      fullPath: '/moderator/'
+      preLoaderRoute: typeof ModeratorIndexRouteImport
+      parentRoute: typeof ModeratorRouteRoute
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -460,6 +534,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/sitter/$userId'
       preLoaderRoute: typeof SitterUserIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/moderator/users': {
+      id: '/moderator/users'
+      path: '/users'
+      fullPath: '/moderator/users'
+      preLoaderRoute: typeof ModeratorUsersRouteImport
+      parentRoute: typeof ModeratorRouteRoute
+    }
+    '/moderator/content-moderation': {
+      id: '/moderator/content-moderation'
+      path: '/content-moderation'
+      fullPath: '/moderator/content-moderation'
+      preLoaderRoute: typeof ModeratorContentModerationRouteImport
+      parentRoute: typeof ModeratorRouteRoute
+    }
+    '/moderator/complaints': {
+      id: '/moderator/complaints'
+      path: '/complaints'
+      fullPath: '/moderator/complaints'
+      preLoaderRoute: typeof ModeratorComplaintsRouteImport
+      parentRoute: typeof ModeratorRouteRoute
     }
     '/admin/users': {
       id: '/admin/users'
@@ -551,9 +646,28 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface ModeratorRouteRouteChildren {
+  ModeratorComplaintsRoute: typeof ModeratorComplaintsRoute
+  ModeratorContentModerationRoute: typeof ModeratorContentModerationRoute
+  ModeratorUsersRoute: typeof ModeratorUsersRoute
+  ModeratorIndexRoute: typeof ModeratorIndexRoute
+}
+
+const ModeratorRouteRouteChildren: ModeratorRouteRouteChildren = {
+  ModeratorComplaintsRoute: ModeratorComplaintsRoute,
+  ModeratorContentModerationRoute: ModeratorContentModerationRoute,
+  ModeratorUsersRoute: ModeratorUsersRoute,
+  ModeratorIndexRoute: ModeratorIndexRoute,
+}
+
+const ModeratorRouteRouteWithChildren = ModeratorRouteRoute._addFileChildren(
+  ModeratorRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  ModeratorRouteRoute: ModeratorRouteRouteWithChildren,
   AiAssistantRoute: AiAssistantRoute,
   BlockedRoute: BlockedRoute,
   BookingsRoute: BookingsRoute,

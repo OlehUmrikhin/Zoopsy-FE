@@ -9,6 +9,7 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { isSignedIn, user } = useUser();
   const isAdmin = pathname.startsWith('/admin');
+  const isModerator = pathname.startsWith('/moderator');
 
   const isSignPage = pathname.startsWith('/sign');
   const isRoleSelectorPage = pathname.startsWith('/role-selector');
@@ -18,7 +19,7 @@ function RootComponent() {
 
   const logoHref = isSignedIn ? getAuthRedirectPath(user?.publicMetadata?.role) : undefined;
 
-  if (isAdmin) {
+  if (isAdmin || isModerator) {
     return <Outlet />;
   }
 
@@ -33,6 +34,9 @@ function RootComponent() {
                 <nav className="flex flex-1 gap-4 text-[#2C694E]">
                   <Link to="/bookings" className="[&.active]:font-bold">
                     Бронювання
+                  </Link>
+                  <Link to="/ai-assistant" className="[&.active]:font-bold">
+                    AI-Асистент
                   </Link>
                 </nav>
               )}
