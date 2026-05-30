@@ -91,6 +91,7 @@ export function BookingCard({
         mode={mode}
         sitterName={mode === 'owner' ? booking.contact.fullName : undefined}
         sitterProfileId={mode === 'owner' ? booking.sitterProfileId : undefined}
+        bookingId={booking.id}
         onApprove={onApprove}
         onCancel={onCancel}
         onCancelByOwner={onCancelByOwner}

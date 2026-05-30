@@ -39,9 +39,10 @@ type Props = {
   highlightedSitterId?: string | null;
   onSitterClick?: (userId: string) => void;
   city?: string;
+  userLocation?: { lat: number; lng: number } | null;
 };
 
-export function SittersMap({ sitters, highlightedSitterId, onSitterClick, city }: Props) {
+export function SittersMap({ sitters, highlightedSitterId, onSitterClick, city, userLocation }: Props) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: API_KEY,
@@ -61,12 +62,17 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick, city }
 
   useEffect(() => {
     if (!map) return;
-    const center = city ? CITY_CENTERS[city] : undefined;
+    if (userLocation) {
+      map.panTo(userLocation);
+      map.setZoom(14);
+      return;
+    }
+    const center = city ? CITY_CENTERS[city.toLowerCase()] : undefined;
     if (center) {
       map.panTo(center);
       map.setZoom(DEFAULT_ZOOM);
     }
-  }, [map, city]);
+  }, [map, city, userLocation]);
 
   const markers = useMemo(
     () =>
@@ -128,7 +134,7 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick, city }
         height: '100%',
         minHeight: '500px',
       }}
-      center={(city ? CITY_CENTERS[city] : undefined) ?? DEFAULT_CENTER}
+      center={userLocation ?? (city ? CITY_CENTERS[city.toLowerCase()] : undefined) ?? DEFAULT_CENTER}
       zoom={DEFAULT_ZOOM}
       onLoad={onLoad}
       onUnmount={onUnmount}
@@ -139,6 +145,24 @@ export function SittersMap({ sitters, highlightedSitterId, onSitterClick, city }
         zoomControl: true,
       }}
     >
+      {userLocation && (
+        <OverlayView
+          position={userLocation}
+          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        >
+          <div
+            style={{ transform: 'translate(-50%, -50%)' }}
+            title="Ваше місцезнаходження"
+          >
+            <div style={{
+              width: 16, height: 16, borderRadius: '50%',
+              background: '#2C694E', border: '3px solid white',
+              boxShadow: '0 0 0 3px rgba(44,105,78,0.3)',
+            }} />
+          </div>
+        </OverlayView>
+      )}
+
       {markers.map(({ sitter, approxPos }) => {
         const isHighlighted = sitter.userId === highlightedSitterId;
 

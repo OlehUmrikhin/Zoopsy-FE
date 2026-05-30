@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { TopSittersPage } from '../features/TopPage/TopSittersPage';
 
 export const Route = createFileRoute('/top')({
-  component: function TopPage() {
-    return <div className="p-8 text-center text-zoopsy-dark-gray">Топ найкращих (в розробці)</div>;
-  },
+  component: TopSittersPage,
 });
