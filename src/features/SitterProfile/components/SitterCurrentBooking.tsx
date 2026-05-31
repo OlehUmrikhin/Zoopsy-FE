@@ -3,12 +3,7 @@ import { Button } from '@heroui/react';
 import { useCurrentBooking } from '@api/booking';
 import { format, parseISO } from 'date-fns';
 import { uk } from 'date-fns/locale';
-
-const SERVICE_TYPE_LABELS: Record<string, string> = {
-  Boarding: 'Перетримка',
-  Walking: 'Вигул',
-  DayCare: 'Денний догляд',
-};
+import { SERVICE_TYPE_LABELS } from '@constants/serviceTypes';
 
 export function SitterCurrentBooking() {
   const { data: booking, isLoading } = useCurrentBooking();
@@ -41,7 +36,10 @@ export function SitterCurrentBooking() {
   const dateLabel = `${startFmt} – ${endFmt} (${booking.durationDays} діб)`;
 
   const details = [
-    { label: 'Послуга:', value: SERVICE_TYPE_LABELS[booking.serviceType] ?? booking.serviceType },
+    {
+      label: 'Послуга:',
+      value: SERVICE_TYPE_LABELS[Number(booking.serviceType)] ?? booking.serviceType,
+    },
     { label: 'Термін:', value: dateLabel },
     { label: 'Ціна:', value: `${booking.cost} грн` },
     { label: 'Власник:', value: booking.contactName },

@@ -1,18 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { sendChatMessage, type ChatMessage } from '../../api/ai';
 import { MdSend, MdPets, MdDeleteOutline, MdAutoAwesome } from 'react-icons/md';
-import {
-  FaDog,
-  FaCat,
-  FaStethoscope,
-  FaSearch,
-} from 'react-icons/fa';
+import { FaDog, FaCat, FaStethoscope, FaSearch } from 'react-icons/fa';
 
 const CATEGORIES = [
   {
     icon: FaDog,
     label: 'Догляд за собакою',
-    questions: ['Скільки разів виводити собаку на прогулянку?', 'Як доглядати за шерстю собаки?', 'Які щеплення потрібні цуценяті?'],
+    questions: [
+      'Скільки разів виводити собаку на прогулянку?',
+      'Як доглядати за шерстю собаки?',
+      'Які щеплення потрібні цуценяті?',
+    ],
   },
   {
     icon: FaCat,
@@ -22,12 +21,20 @@ const CATEGORIES = [
   {
     icon: FaStethoscope,
     label: 'Ветеринарія',
-    questions: ['Які симптоми потребують лікаря?', 'Як часто робити щеплення?', 'Що робити при отруєнні улюбленця?'],
+    questions: [
+      'Які симптоми потребують лікаря?',
+      'Як часто робити щеплення?',
+      'Що робити при отруєнні улюбленця?',
+    ],
   },
   {
     icon: FaSearch,
     label: 'Пошук пет-сіттера',
-    questions: ['Як обрати пет-сіттера?', 'Що перевірити у сіттера перед бронюванням?', 'Як підготувати улюбленця до сіттера?'],
+    questions: [
+      'Як обрати пет-сіттера?',
+      'Що перевірити у сіттера перед бронюванням?',
+      'Як підготувати улюбленця до сіттера?',
+    ],
   },
 ];
 
@@ -120,7 +127,6 @@ export function AiAssistantPage() {
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-50">
-
       {/* ── Sidebar ── */}
       <aside className="w-72 flex-shrink-0 flex flex-col border-r border-gray-100 bg-white overflow-y-auto">
         {/* Brand */}
@@ -139,7 +145,8 @@ export function AiAssistantPage() {
         {/* Info block */}
         <div className="px-5 py-4 border-b border-gray-100">
           <p className="text-xs text-gray-500 leading-relaxed">
-            Відповідаю на питання про догляд за улюбленцями, ветеринарію та пошук пет-сіттера. На інші теми не відповідаю.
+            Відповідаю на питання про догляд за улюбленцями, ветеринарію та пошук пет-сіттера. На
+            інші теми не відповідаю.
           </p>
         </div>
 
@@ -188,18 +195,18 @@ export function AiAssistantPage() {
 
       {/* ── Main chat area ── */}
       <div className="flex-1 flex flex-col min-w-0">
-
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5">
           {isEmpty ? (
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-zoopsy-green-600 to-zoopsy-green-800 flex items-center justify-center shadow-lg">
-                <MdPets size={30} className="text-white" />
+                <MdPets size={30} className="text-zoopsy-green-900" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">Привіт! Я Zoopsy AI</h3>
                 <p className="text-sm text-gray-500 max-w-sm">
-                  Запитайте мене про догляд за улюбленцями, здоров'я вихованців або пошук пет-сіттера
+                  Запитайте мене про догляд за улюбленцями, здоров&apos;я вихованців або пошук
+                  пет-сіттера
                 </p>
               </div>
               <p className="text-xs text-gray-400">← Оберіть питання з меню або напишіть своє</p>
