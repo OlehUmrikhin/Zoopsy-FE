@@ -1,6 +1,7 @@
 import { OwnerBalanceCard } from './components/OwnerBalanceCard';
 import { OwnerCurrentBooking } from './components/OwnerCurrentBooking';
 import { OwnerProfileForm } from './components/OwnerProfileForm';
+import { GoogleCalendarCard } from './components/GoogleCalendarCard';
 
 export function OwnerProfilePage() {
   return (
@@ -18,6 +19,7 @@ export function OwnerProfilePage() {
         <div className="w-[360px] flex-shrink-0 flex flex-col gap-5">
           <OwnerBalanceCard />
           <OwnerCurrentBooking />
+          <GoogleCalendarCard />
         </div>
 
         <div className="flex-1">
