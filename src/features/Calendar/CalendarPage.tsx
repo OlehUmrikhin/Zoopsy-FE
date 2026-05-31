@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, addMonths, subMonths } from 'date-fns';
@@ -154,11 +154,28 @@ export function CalendarPage() {
     });
   }
 
+  const handleNavigate = useCallback((action: 'PREV' | 'NEXT' | 'TODAY') => {
+    if (action === 'PREV') setCurrentDate((d) => subMonths(d, 1));
+    else if (action === 'NEXT') setCurrentDate((d) => addMonths(d, 1));
+    else setCurrentDate(new Date());
+  }, []);
+
+  const calendarComponents = useMemo(() => ({
+    toolbar: (props: { date: Date }) => (
+      <CustomToolbar
+        date={props.date}
+        view={currentView}
+        onNavigate={handleNavigate}
+        onView={setCurrentView}
+      />
+    ),
+  }), [currentView, handleNavigate]);
+
   const events = notes.map((note) => ({
     id: note.id,
     title: note.petName ? `${note.title} (${note.petName})` : note.title,
-    start: new Date(note.startDate),
-    end: new Date(note.endDate),
+    start: new Date(note.startDate + 'T00:00:00'),
+    end: new Date(note.endDate + 'T00:00:00'),
     allDay: true,
     resource: note,
   }));
@@ -202,20 +219,7 @@ export function CalendarPage() {
             view={currentView}
             onNavigate={(date) => setCurrentDate(date)}
             onView={(view) => setCurrentView(view as CalendarView)}
-            components={{
-              toolbar: (props) => (
-                <CustomToolbar
-                  date={props.date}
-                  view={currentView}
-                  onNavigate={(action) => {
-                    if (action === 'PREV') setCurrentDate((d) => subMonths(d, 1));
-                    else if (action === 'NEXT') setCurrentDate((d) => addMonths(d, 1));
-                    else setCurrentDate(new Date());
-                  }}
-                  onView={setCurrentView}
-                />
-              ),
-            }}
+            components={calendarComponents}
             style={{ height: '100%' }}
           />
         )}

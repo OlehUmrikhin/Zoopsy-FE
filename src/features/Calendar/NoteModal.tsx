@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import type { PetCareNote } from '@api/calendar';
 import type { Pet } from '@api/user';
 import { DateRangePicker } from './DateRangePicker';
@@ -50,8 +50,8 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
       title: title.trim(),
       description: description.trim(),
       petId,
-      startDate: startDate.toISOString().slice(0, 10),
-      endDate: endDate.toISOString().slice(0, 10),
+      startDate: format(startDate, 'yyyy-MM-dd'),
+      endDate: format(endDate, 'yyyy-MM-dd'),
     });
   }
 

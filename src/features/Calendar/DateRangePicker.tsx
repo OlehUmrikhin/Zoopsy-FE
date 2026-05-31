@@ -27,7 +27,9 @@ type Props = {
 export function DateRangePicker({ startDate, endDate, onChange, onConfirm }: Props) {
   const [viewDate, setViewDate] = useState(startDate ?? new Date());
   const [hovered, setHovered] = useState<Date | null>(null);
-  const [selecting, setSelecting] = useState<'start' | 'end'>(startDate ? 'end' : 'start');
+  const [selecting, setSelecting] = useState<'start' | 'end'>(
+    startDate && endDate ? 'start' : startDate ? 'end' : 'start',
+  );
 
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);
@@ -76,7 +78,7 @@ export function DateRangePicker({ startDate, endDate, onChange, onConfirm }: Pro
 
   const hasRange = startDate && endDate;
   const isSingleDay = hasRange && isSameDay(startDate, endDate);
-  const confirmed = hasRange;
+  const confirmed = hasRange && selecting === 'start';
 
   return (
     <div className="select-none">
@@ -158,7 +160,7 @@ export function DateRangePicker({ startDate, endDate, onChange, onConfirm }: Pro
         disabled={!confirmed}
         className="mt-3 w-full py-2 rounded-xl bg-zoopsy-green text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
       >
-        {selecting === 'end' && !endDate ? 'Оберіть кінцеву дату' : 'Підтвердити'}
+        {selecting === 'end' ? 'Оберіть кінцеву дату' : 'Підтвердити'}
       </button>
     </div>
   );
