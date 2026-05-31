@@ -6,11 +6,9 @@ import type {
   BookingActionPayload,
   BookingOwnerActionPayload,
   CreateBookingPayload,
-  CreateReviewPayload,
-  UpdateReviewPayload,
-  Review,
   CurrentBooking,
 } from './types';
+import type { CreateReviewPayload, UpdateReviewPayload, Review } from '../review/types';
 
 export async function createBooking(payload: CreateBookingPayload) {
   const { data } = await axiosInstance.post(BOOKING_PATHS.create, payload);

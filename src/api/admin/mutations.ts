@@ -20,7 +20,7 @@ export function useUpdateAdminComplaintStatusMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: 'active' | 'resolved' }) =>
+    mutationFn: ({ id, status }: { id: string; status: 'active' | 'resolved' | 'rejected' }) =>
       updateAdminComplaintStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.complaints({} as any).slice(0, 2) });

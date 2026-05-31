@@ -42,7 +42,7 @@ export async function fetchAdminOrderById(id: string): Promise<DetailedAdminOrde
 
 export async function updateAdminComplaintStatus(
   id: string,
-  status: 'active' | 'resolved',
+  status: 'active' | 'resolved' | 'rejected',
 ): Promise<void> {
   await axiosInstance.patch(ADMIN_PATHS.complaintStatus(id), { status });
 }

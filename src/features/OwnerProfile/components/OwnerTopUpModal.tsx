@@ -56,7 +56,7 @@ function TopUpPaymentForm({
       <Button
         type="submit"
         isDisabled={!stripe || isLoading}
-        isLoading={isLoading}
+        isPending={isLoading}
         className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-plus-jakarta font-bold"
       >
         Оплатити
@@ -151,7 +151,7 @@ export function OwnerTopUpModal({ isOpen, onClose }: Props) {
                 <Button
                   className="bg-zoopsy-green-900 text-white font-plus-jakarta font-bold rounded-xl"
                   onPress={handleProceed}
-                  isLoading={isCreating}
+                  isPending={isCreating}
                   isDisabled={isCreating}
                 >
                   Далі

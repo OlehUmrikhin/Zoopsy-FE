@@ -84,7 +84,7 @@ export interface AdminComplaintsPaginatedResponse {
 export interface AdminComplaintsParams {
   page: number;
   limit: number;
-  status?: 'active' | 'resolved' | 'all';
+  status?: 'active' | 'resolved' | 'rejected' | 'all';
   search?: string;
 }
 

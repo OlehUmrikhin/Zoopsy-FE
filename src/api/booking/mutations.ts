@@ -12,9 +12,8 @@ import type {
   BookingActionPayload,
   BookingOwnerActionPayload,
   CreateBookingPayload,
-  CreateReviewPayload,
-  UpdateReviewPayload,
 } from './types';
+import type { CreateReviewPayload, UpdateReviewPayload } from '../review/types';
 import { bookingQueryKeys } from './queries';
 
 type ActionCallbacks = {

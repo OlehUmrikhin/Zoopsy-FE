@@ -18,3 +18,9 @@ export type PatchReviewPayload = {
   rating?: number;
   comment?: string;
 };
+
+export type UpdateReviewPayload = {
+  id: number;
+  rating?: number;
+  comment?: string;
+};
