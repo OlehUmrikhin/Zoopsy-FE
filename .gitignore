@@ -30,3 +30,6 @@ dist-ssr
 
 #mcp
 mcp.json
+
+#local config with secrets
+appsettings.Development.json

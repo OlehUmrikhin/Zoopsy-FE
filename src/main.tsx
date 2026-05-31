@@ -28,7 +28,12 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      afterSignOutUrl="/"
+      routerPush={(to) => router.navigate({ to: to as any })}
+      routerReplace={(to) => router.navigate({ to: to as any, replace: true })}
+    >
       <QueryClientProvider client={queryClient}>
         <AxiosAuthProvider>
           <RouterProvider router={router} />

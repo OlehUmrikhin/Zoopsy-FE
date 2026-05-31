@@ -1,4 +1,4 @@
-import { createRootRoute, Outlet, Link, useRouterState } from '@tanstack/react-router';
+import { createRootRoute, Outlet, Link, useRouterState, useNavigate } from '@tanstack/react-router';
 import { Show, UserButton, useUser } from '@clerk/react';
 import { ToastContainer } from 'react-toastify';
 import { Header, Footer } from '../components';
@@ -6,6 +6,7 @@ import { getAuthRedirectPath } from '../utils';
 import { MdSettings } from 'react-icons/md';
 
 function RootComponent() {
+  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { isSignedIn, user } = useUser();
   const isAdmin = pathname.startsWith('/admin');
@@ -40,10 +41,13 @@ function RootComponent() {
                   </Link>
                 </nav>
               )}
-              {/* <UserButton /> */}
               <UserButton>
                 <UserButton.MenuItems>
-                  <UserButton.Link label="Профіль" href="/profile" labelIcon={<MdSettings />} />
+                  <UserButton.Action
+                    label="Профіль"
+                    labelIcon={<MdSettings size={16} />}
+                    onClick={() => navigate({ to: '/profile' })}
+                  />
                 </UserButton.MenuItems>
               </UserButton>
             </Show>
