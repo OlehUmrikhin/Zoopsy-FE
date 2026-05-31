@@ -7,7 +7,12 @@ import { resolve } from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tanstackRouter(), tailwindcss(), react(), babel({ presets: [reactCompilerPreset()] })],
+  plugins: [
+    tanstackRouter({ routeFileIgnorePattern: '\\.page\\.' }),
+    tailwindcss(),
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
+  ],
   resolve: {
     alias: {
       '@api': resolve(__dirname, 'src/api'),

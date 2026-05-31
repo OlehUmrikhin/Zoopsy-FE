@@ -40,7 +40,6 @@ export function BookingPaymentForm({ bookingId, onSuccess, onError }: Props) {
       <Button
         type="submit"
         isDisabled={!stripe || isLoading}
-        isLoading={isLoading}
         className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-plus-jakarta font-bold"
       >
         Підтвердити та заморозити оплату
