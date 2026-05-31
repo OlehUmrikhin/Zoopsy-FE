@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdAccountBalanceWallet, MdReceipt, MdTrendingUp, MdTimeline } from 'react-icons/md';
+import { MdAccountBalanceWallet, MdReceipt, MdTrendingUp, MdTimeline, MdCalendarMonth, MdPeopleAlt, MdPieChart } from 'react-icons/md';
 import classNames from 'classnames';
 import type { Metric } from '@api/admin/finance';
 import { formatCurrency } from './utils';
@@ -14,6 +14,10 @@ const IconMap: Record<string, React.ElementType> = {
   receipt: MdReceipt,
   trending: MdTrendingUp,
   activity: MdTimeline,
+  money: MdAccountBalanceWallet,
+  chart: MdPieChart,
+  calendar: MdCalendarMonth,
+  users: MdPeopleAlt,
 };
 
 export const MetricCard: React.FC<Props> = ({ metric, isLoading }) => {
@@ -33,7 +37,7 @@ export const MetricCard: React.FC<Props> = ({ metric, isLoading }) => {
   }
 
   const Icon = IconMap[metric.iconName] || MdTimeline;
-  const isCurrency = metric.id?.includes('revenue') || metric.id?.includes('amount');
+  const isCurrency = metric.id?.includes('revenue') || metric.id?.includes('amount') || metric.id?.includes('commission');
 
   return (
     <div className="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100 flex flex-col justify-between h-[140px] transition-transform hover:-translate-y-1">
