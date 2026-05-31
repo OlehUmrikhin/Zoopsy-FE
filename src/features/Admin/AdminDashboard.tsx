@@ -1,4 +1,5 @@
 import { useAdminDashboardStats } from '../../api/admin/queries';
+import { Link } from '@tanstack/react-router';
 import {
   AreaChart,
   Area,
@@ -87,8 +88,8 @@ export function AdminDashboard() {
               <h3 className="text-xs font-bold tracking-wider text-gray-400 uppercase">
                 ЗАГАЛОМ КОРИСТУВАЧІВ
               </h3>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700">
-                +12%
+              <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-600">
+                За весь час
               </span>
             </div>
             <p className="mt-2 text-3xl font-black text-gray-900">
@@ -96,13 +97,19 @@ export function AdminDashboard() {
             </p>
           </div>
           <div className="mt-6 flex h-8 items-end gap-1">
-            {[40, 50, 45, 60, 80, 100].map((h, i) => (
-              <div
-                key={i}
-                className="w-1/6 rounded-t-sm bg-green-500 transition-all duration-300"
-                style={{ height: `${h}%`, opacity: 0.3 + i * 0.14 }}
-              ></div>
-            ))}
+            {(data?.userGrowth?.length
+              ? data.userGrowth.slice(-6).map((d) => d.value)
+              : [0, 0, 0, 0, 0, 0]
+            ).map((v, i, arr) => {
+              const max = Math.max(...arr, 1);
+              return (
+                <div
+                  key={i}
+                  className="w-1/6 rounded-t-sm bg-green-500 transition-all duration-300"
+                  style={{ height: `${Math.max((v / max) * 100, 8)}%`, opacity: 0.3 + i * 0.14 }}
+                />
+              );
+            })}
           </div>
         </div>
 
@@ -114,7 +121,7 @@ export function AdminDashboard() {
                 ДОХІД ЗА МІСЯЦЬ
               </h3>
               <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700">
-                +8.4%
+                30 днів
               </span>
             </div>
             <p className="mt-2 text-3xl font-black text-gray-900">
@@ -122,13 +129,8 @@ export function AdminDashboard() {
             </p>
           </div>
           <div className="mt-6 flex items-center gap-3">
-            <div className="flex -space-x-2">
-              <div className="h-7 w-7 rounded-full border-2 border-white bg-green-200"></div>
-              <div className="h-7 w-7 rounded-full border-2 border-white bg-green-300"></div>
-              <div className="h-7 w-7 rounded-full border-2 border-white bg-green-400"></div>
-            </div>
             <span className="text-sm font-medium text-gray-500">
-              +{data?.newTransactions || 0} нових транзакцій
+              {data?.newTransactions || 0} транзакцій за місяць
             </span>
           </div>
         </div>
@@ -168,16 +170,21 @@ export function AdminDashboard() {
               <h3 className="text-xs font-bold tracking-wider text-gray-400 uppercase">
                 ВІДКРИТІ СКАРГИ
               </h3>
-              <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-600">
-                -5
-              </span>
+              {(data?.openComplaints ?? 0) > 0 && (
+                <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-bold text-red-600">
+                  Активні
+                </span>
+              )}
             </div>
-            <p className="mt-2 text-3xl font-black text-gray-900">{data?.openComplaints || 0}</p>
+            <p className="mt-2 text-3xl font-black text-gray-900">{data?.openComplaints ?? 0}</p>
           </div>
           <div className="mt-6 flex items-center justify-between">
-            <button className="text-sm font-semibold text-gray-400 transition-colors hover:text-green-600">
+            <Link
+              to="/admin/complaints"
+              className="text-sm font-semibold text-gray-400 transition-colors hover:text-green-600"
+            >
               Переглянути всі &rarr;
-            </button>
+            </Link>
           </div>
         </div>
       </div>
