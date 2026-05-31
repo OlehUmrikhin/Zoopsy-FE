@@ -60,14 +60,16 @@ export function OwnerProfileForm() {
       gender: values.gender,
       city: values.city,
       phoneNumber: values.phoneNumber,
-      pets: values.pets.map((pet) => ({
-        id: pet.id,
-        name: pet.name,
-        gender: PET_GENDER_MAP[pet.gender] ?? 0,
-        breed: pet.breed,
-        weight: Number(pet.weight),
-        species: SPECIES_MAP[pet.species] ?? 0,
-      })),
+      pets: values.pets.map((pet) => {
+        const mapped = {
+          name: pet.name,
+          gender: PET_GENDER_MAP[pet.gender] ?? 0,
+          breed: pet.breed,
+          weight: Number(pet.weight),
+          species: SPECIES_MAP[pet.species] ?? 0,
+        };
+        return pet.id ? { ...mapped, id: pet.id } : mapped;
+      }),
     };
 
     if (values.email) payload.email = values.email;
