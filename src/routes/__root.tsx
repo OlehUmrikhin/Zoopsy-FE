@@ -36,9 +36,6 @@ function RootComponent() {
                   <Link to="/bookings" className="[&.active]:font-bold">
                     Бронювання
                   </Link>
-                  <Link to="/ai-assistant" className="[&.active]:font-bold">
-                    AI-Асистент
-                  </Link>
                 </nav>
               )}
               <UserButton>
