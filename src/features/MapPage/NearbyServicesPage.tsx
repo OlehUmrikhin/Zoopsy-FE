@@ -127,7 +127,9 @@ export function NearbyServicesPage() {
           <div className="px-4 py-3 border-b border-gray-100 flex-shrink-0">
             <p className="font-plus-jakarta font-bold text-gray-900 text-sm">
               Сіттери на карті{' '}
-              <span className="font-normal text-gray-500 font-inter">({sittersWithCoords.length})</span>
+              <span className="font-normal text-gray-500 font-inter">
+                ({sittersWithCoords.length})
+              </span>
             </p>
             {sitters.length > sittersWithCoords.length && (
               <p className="text-[11px] text-gray-400 font-inter mt-0.5">
@@ -172,7 +174,12 @@ function SitterListCard({ sitter }: { sitter: SitterSearchResult }) {
   const uniqueTypes = [...new Set(sitter.services.map((s) => s.serviceType))];
 
   return (
-    <Link to="/sitter/$userId" params={{ userId: sitter.userId }} className="flex gap-3 group">
+    <Link
+      to="/sitter/$userId"
+      params={{ userId: sitter.userId }}
+      search={{ info: false }}
+      className="flex gap-3 group"
+    >
       <img
         src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${sitter.userId}`}
         alt={sitter.fullName}

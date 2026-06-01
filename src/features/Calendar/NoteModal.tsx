@@ -25,15 +25,24 @@ type Props = {
 
 type Step = 'dates' | 'details';
 
-export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, isSaving, isDeleting }: Props) {
+export function NoteModal({
+  initialDate,
+  note,
+  pets,
+  onClose,
+  onSave,
+  onDelete,
+  isSaving,
+  isDeleting,
+}: Props) {
   const toDate = (s: string) => parseISO(s);
 
   const [step, setStep] = useState<Step>(note ? 'details' : 'dates');
   const [startDate, setStartDate] = useState<Date | null>(
-    note ? toDate(note.startDate) : initialDate ?? null,
+    note ? toDate(note.startDate) : (initialDate ?? null),
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    note ? toDate(note.endDate) : initialDate ?? null,
+    note ? toDate(note.endDate) : (initialDate ?? null),
   );
   const [title, setTitle] = useState(note?.title ?? '');
   const [description, setDescription] = useState(note?.description ?? '');
@@ -68,14 +77,22 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
           <h2 className="font-plus-jakarta font-bold text-lg text-zoopsy-dark-gray">
             {note ? 'Редагувати нотатку' : step === 'dates' ? 'Оберіть дати' : 'Деталі нотатки'}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+          >
+            ✕
+          </button>
         </div>
 
         {step === 'dates' ? (
           <DateRangePicker
             startDate={startDate}
             endDate={endDate}
-            onChange={(s, e) => { setStartDate(s); setEndDate(e); }}
+            onChange={(s, e) => {
+              setStartDate(s);
+              setEndDate(e);
+            }}
             onConfirm={handleDateConfirm}
           />
         ) : (
@@ -85,7 +102,7 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
               <button
                 type="button"
                 onClick={() => setStep('dates')}
-                className="text-left text-xs text-zoopsy-green font-medium hover:underline"
+                className="text-left text-xs text-zoopsy-green-900 font-medium hover:underline"
               >
                 ← Змінити дати
               </button>
@@ -94,7 +111,7 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-600">Заголовок *</label>
               <input
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-zoopsy-green transition"
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-zoopsy-green-900 transition"
                 placeholder="Наприклад: Дати ліки Максу"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -107,13 +124,15 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-600">Тварина</label>
                 <select
-                  className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-zoopsy-green transition bg-white"
+                  className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-zoopsy-green-900 transition bg-white"
                   value={petId}
                   onChange={(e) => setPetId(e.target.value)}
                 >
                   <option value="">Без прив'язки</option>
                   {pets.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -122,7 +141,7 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-600">Опис</label>
               <textarea
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-zoopsy-green transition resize-none"
+                className="border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-zoopsy-green-900 transition resize-none"
                 rows={3}
                 placeholder="Додаткові деталі..."
                 value={description}
@@ -144,7 +163,7 @@ export function NoteModal({ initialDate, note, pets, onClose, onSave, onDelete, 
               <button
                 type="submit"
                 disabled={isSaving || !title.trim()}
-                className="flex-1 py-2 rounded-xl bg-zoopsy-green text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+                className="flex-1 py-2 rounded-xl bg-zoopsy-green-900 text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
               >
                 {isSaving ? 'Збереження...' : 'Зберегти'}
               </button>

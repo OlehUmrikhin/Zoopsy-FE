@@ -24,15 +24,16 @@ export function TopSittersPage() {
       {/* Header */}
       <div className="text-center mb-10 max-w-xl mx-auto">
         <h1 className="text-3xl font-bold font-plus-jakarta text-[#1a3a2a] leading-tight">
-          Рейтинг найкращих<br />пет-сіттерів
+          Рейтинг найкращих
+          <br />
+          пет-сіттерів
         </h1>
         <p className="text-sm text-[#5a7a6a] font-inter mt-3">
-          Відкрийте для себе найбільш кваліфікованих сіттерів у нашій спільноті,
-          перевірених на досвідність та любов до тварин
+          Відкрийте для себе найбільш кваліфікованих сіттерів у нашій спільноті, перевірених на
+          досвідність та любов до тварин
         </p>
       </div>
 
-      {/* List */}
       <div className="max-w-2xl mx-auto flex flex-col gap-3">
         {isLoading &&
           Array.from({ length: 8 }).map((_, i) => (
@@ -93,7 +94,9 @@ export function TopSittersPage() {
                   {sitter.city && (
                     <>
                       <span className="text-[#9ab8a8] text-xs">•</span>
-                      <span className="text-xs text-[#5a7a6a] font-inter truncate">{sitter.city}</span>
+                      <span className="text-xs text-[#5a7a6a] font-inter truncate">
+                        {sitter.city}
+                      </span>
                     </>
                   )}
                   {sitter.experienceYears > 0 && (
@@ -107,10 +110,10 @@ export function TopSittersPage() {
                 </div>
               </div>
 
-              {/* Button */}
               <Link
                 to="/sitter/$userId"
                 params={{ userId: sitter.userId }}
+                search={{ info: true }}
                 className="flex-shrink-0 px-4 py-1.5 rounded-xl border border-[#2C694E] text-[#2C694E] text-xs font-semibold font-inter hover:bg-[#EAF3EF] transition-colors whitespace-nowrap"
               >
                 Профіль

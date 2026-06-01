@@ -181,200 +181,204 @@ export function SitterFilters({ onChange, initialValues, initialPetId, isLoading
   const isSubmitDisabled = !city || serviceType === null;
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-5">
-      <h2 className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-lg">Фільтри</h2>
+    <form onSubmit={onSubmit} className="flex flex-col h-full">
+      <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-5">
+        <h2 className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-lg">Фільтри</h2>
 
-      <Controller
-        name="city"
-        control={control}
-        render={({ field: { value, onChange } }) => (
-          <FilterGroup title="МІСТО">
-            <CitySelect
-              value={value}
-              onChange={onChange}
-              className="w-full"
-              triggerClassName="bg-zoopsy-mint rounded-xl h-12 px-3 w-full flex items-center justify-between gap-2 text-zoopsy-dark-gray font-inter text-sm outline-none data-[hovered]:bg-zoopsy-mint/80 data-[pressed]:bg-zoopsy-mint/80"
+        <Controller
+          name="city"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <FilterGroup title="МІСТО">
+              <CitySelect
+                value={value}
+                onChange={onChange}
+                className="w-full"
+                triggerClassName="bg-zoopsy-mint rounded-xl h-12 px-3 w-full flex items-center justify-between gap-2 text-zoopsy-dark-gray font-inter text-sm outline-none data-[hovered]:bg-zoopsy-mint/80 data-[pressed]:bg-zoopsy-mint/80"
+              />
+            </FilterGroup>
+          )}
+        />
+
+        <FilterGroup title="Дата">
+          <DateRangeFilter
+            key={String(serviceType)}
+            isBoarding={isBoarding}
+            isDisabled={serviceType === null}
+            startDate={initialValues?.startDate}
+            endDate={initialValues?.endDate}
+            onChange={(s, e) => {
+              setValue('startDate', s ?? '');
+              setValue('endDate', e ?? '');
+            }}
+          />
+        </FilterGroup>
+
+        {/* Price */}
+        <FilterGroup title="Ціна (грн/год)">
+          <div className="grid grid-cols-2 gap-2">
+            <ZoopsyInput
+              label="від"
+              placeholder="100"
+              type="number"
+              min={0}
+              {...register('minPrice')}
             />
-          </FilterGroup>
-        )}
-      />
+            <ZoopsyInput
+              label="до"
+              placeholder="2000"
+              type="number"
+              min={0}
+              {...register('maxPrice')}
+            />
+          </div>
+        </FilterGroup>
 
-      <FilterGroup title="Дата">
-        <DateRangeFilter
-          key={String(serviceType)}
-          isBoarding={isBoarding}
-          isDisabled={serviceType === null}
-          startDate={initialValues?.startDate}
-          endDate={initialValues?.endDate}
-          onChange={(s, e) => {
-            setValue('startDate', s ?? '');
-            setValue('endDate', e ?? '');
-          }}
-        />
-      </FilterGroup>
-
-      {/* Price */}
-      <FilterGroup title="Ціна (грн/год)">
-        <div className="grid grid-cols-2 gap-2">
-          <ZoopsyInput
-            label="від"
-            placeholder="100"
-            type="number"
-            min={0}
-            {...register('minPrice')}
+        {/* Service type */}
+        <FilterGroup title="Послуга">
+          <Controller
+            name="serviceType"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <>
+                {SERVICE_TYPES.map((opt) => (
+                  <RadioOption
+                    key={opt.value}
+                    label={opt.label}
+                    value={opt.value}
+                    selected={value === opt.value}
+                    onSelect={(v) => {
+                      if (v === null) return;
+                      onChange(v);
+                      setValue('startDate', '');
+                      setValue('endDate', '');
+                    }}
+                  />
+                ))}
+              </>
+            )}
           />
-          <ZoopsyInput
-            label="до"
-            placeholder="2000"
-            type="number"
-            min={0}
-            {...register('maxPrice')}
+        </FilterGroup>
+
+        {/* Pet selector from owner profile */}
+        <FilterGroup title="Тварина">
+          <Controller
+            name="petId"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Select
+                aria-label="Оберіть тварину"
+                placeholder="Всі тварини"
+                value={value}
+                onChange={(val) => onChange(val as string)}
+              >
+                <Select.Trigger className="bg-zoopsy-mint rounded-xl h-10 px-3 w-full flex items-center justify-between gap-2 text-zoopsy-dark-gray font-inter text-sm outline-none data-[hovered]:bg-zoopsy-mint/80 data-[pressed]:bg-zoopsy-mint/80">
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover>
+                  <ListBox>
+                    {pets.map((pet) => (
+                      <ListBox.Item key={pet.id} id={pet.id} textValue={pet.name}>
+                        {pet.name}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+            )}
           />
-        </div>
-      </FilterGroup>
+        </FilterGroup>
 
-      {/* Service type */}
-      <FilterGroup title="Послуга">
-        <Controller
-          name="serviceType"
-          control={control}
-          render={({ field: { value, onChange } }) => (
+        {/* Housing type — checkboxes */}
+        <FilterGroup title="Тип житла">
+          <Controller
+            name="housingType"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <>
+                {HOUSING_TYPES.map((opt) => (
+                  <CheckboxOption
+                    key={opt.value}
+                    label={opt.label}
+                    value={opt.value}
+                    checked={value.includes(opt.value)}
+                    onToggle={(v, isChecked) => {
+                      //const current = getValues('housingType');
+                      onChange(isChecked ? [...value, v] : value.filter((x) => x !== v));
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          />
+        </FilterGroup>
+
+        {/* Experience */}
+        <FilterGroup title="Досвід">
+          <Controller
+            name="minExperienceYears"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <>
+                {EXPERIENCE_OPTIONS.map((opt) => (
+                  <RadioOption
+                    key={opt.value}
+                    label={opt.label}
+                    value={opt.value}
+                    selected={value === opt.value}
+                    onSelect={(v) => {
+                      if (v === null) return;
+                      onChange(v);
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          />
+        </FilterGroup>
+
+        {/* Gender — checkboxes */}
+        <FilterGroup title="Стать">
+          <Controller
+            name="gender"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <>
+                {GENDERS.map((opt) => (
+                  <CheckboxOption
+                    key={opt.value}
+                    label={opt.label}
+                    value={opt.value}
+                    checked={value.includes(opt.value)}
+                    onToggle={(v, isChecked) => {
+                      //const current = getValues('gender');
+                      onChange(isChecked ? [...value, v] : value.filter((x) => x !== v));
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          />
+        </FilterGroup>
+      </div>
+
+      <div className="p-5 pt-3 border-t border-zoopsy-light-gray/40 bg-white">
+        <Button
+          type="submit"
+          isPending={isLoading}
+          isDisabled={isSubmitDisabled}
+          className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-inter font-semibold text-sm hover:bg-zoopsy-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {({ isPending }) => (
             <>
-              {SERVICE_TYPES.map((opt) => (
-                <RadioOption
-                  key={opt.value}
-                  label={opt.label}
-                  value={opt.value}
-                  selected={value === opt.value}
-                  onSelect={(v) => {
-                    if (v === null) return;
-                    onChange(v);
-                    setValue('startDate', '');
-                    setValue('endDate', '');
-                  }}
-                />
-              ))}
+              {isPending ? <Spinner color="current" size="sm" /> : null}
+              Застосувати
             </>
           )}
-        />
-      </FilterGroup>
-
-      {/* Pet selector from owner profile */}
-      <FilterGroup title="Тварина">
-        <Controller
-          name="petId"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <Select
-              aria-label="Оберіть тварину"
-              placeholder="Всі тварини"
-              value={value}
-              onChange={(val) => onChange(val as string)}
-            >
-              <Select.Trigger className="bg-zoopsy-mint rounded-xl h-10 px-3 w-full flex items-center justify-between gap-2 text-zoopsy-dark-gray font-inter text-sm outline-none data-[hovered]:bg-zoopsy-mint/80 data-[pressed]:bg-zoopsy-mint/80">
-                <Select.Value />
-                <Select.Indicator />
-              </Select.Trigger>
-              <Select.Popover>
-                <ListBox>
-                  {pets.map((pet) => (
-                    <ListBox.Item key={pet.id} id={pet.id} textValue={pet.name}>
-                      {pet.name}
-                      <ListBox.ItemIndicator />
-                    </ListBox.Item>
-                  ))}
-                </ListBox>
-              </Select.Popover>
-            </Select>
-          )}
-        />
-      </FilterGroup>
-
-      {/* Housing type — checkboxes */}
-      <FilterGroup title="Тип житла">
-        <Controller
-          name="housingType"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <>
-              {HOUSING_TYPES.map((opt) => (
-                <CheckboxOption
-                  key={opt.value}
-                  label={opt.label}
-                  value={opt.value}
-                  checked={value.includes(opt.value)}
-                  onToggle={(v, isChecked) => {
-                    //const current = getValues('housingType');
-                    onChange(isChecked ? [...value, v] : value.filter((x) => x !== v));
-                  }}
-                />
-              ))}
-            </>
-          )}
-        />
-      </FilterGroup>
-
-      {/* Experience */}
-      <FilterGroup title="Досвід">
-        <Controller
-          name="minExperienceYears"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <>
-              {EXPERIENCE_OPTIONS.map((opt) => (
-                <RadioOption
-                  key={opt.value}
-                  label={opt.label}
-                  value={opt.value}
-                  selected={value === opt.value}
-                  onSelect={(v) => {
-                    if (v === null) return;
-                    onChange(v);
-                  }}
-                />
-              ))}
-            </>
-          )}
-        />
-      </FilterGroup>
-
-      {/* Gender — checkboxes */}
-      <FilterGroup title="Стать">
-        <Controller
-          name="gender"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <>
-              {GENDERS.map((opt) => (
-                <CheckboxOption
-                  key={opt.value}
-                  label={opt.label}
-                  value={opt.value}
-                  checked={value.includes(opt.value)}
-                  onToggle={(v, isChecked) => {
-                    //const current = getValues('gender');
-                    onChange(isChecked ? [...value, v] : value.filter((x) => x !== v));
-                  }}
-                />
-              ))}
-            </>
-          )}
-        />
-      </FilterGroup>
-
-      <Button
-        type="submit"
-        isPending={isLoading}
-        isDisabled={isSubmitDisabled}
-        className="w-full h-11 rounded-xl bg-zoopsy-green-900 text-white font-inter font-semibold text-sm hover:bg-zoopsy-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {({ isPending }) => (
-          <>
-            {isPending ? <Spinner color="current" size="sm" /> : null}
-            Застосувати
-          </>
-        )}
-      </Button>
+        </Button>
+      </div>
     </form>
   );
 }

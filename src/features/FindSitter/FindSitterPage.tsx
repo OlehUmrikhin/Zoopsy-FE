@@ -31,9 +31,12 @@ export function FindSitterPage({ initialParams, initialPetId }: Props = {}) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zoopsy-mint flex">
+    <div
+      className="overflow-hidden bg-zoopsy-mint flex"
+      style={{ height: 'calc(100vh - var(--site-header-height))' }}
+    >
       {/* Filters sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-white border-r border-zoopsy-light-gray/40 p-5 overflow-y-auto">
+      <aside className="w-64 flex-shrink-0 bg-white border-r border-zoopsy-light-gray/40 flex flex-col overflow-hidden">
         <SitterFilters
           onChange={(searchParams, petId) => {
             setParams(searchParams);
@@ -63,7 +66,7 @@ export function FindSitterPage({ initialParams, initialPetId }: Props = {}) {
         </div>
 
         {/* Results panel */}
-        <div className="w-[380px] flex-shrink-0 flex flex-col bg-white border-l border-zoopsy-light-gray/40">
+        <div className="w-[380px] flex-shrink-0 flex flex-col overflow-hidden bg-white border-l border-zoopsy-light-gray/40">
           <div className="p-4 border-b border-zoopsy-light-gray/40">
             <h2 className="font-plus-jakarta font-bold text-zoopsy-dark-gray text-lg">
               Результати пошуку
@@ -98,7 +101,12 @@ export function FindSitterPage({ initialParams, initialPetId }: Props = {}) {
                   onMouseEnter={() => setHighlightedSitterId(sitter.userId)}
                   onMouseLeave={() => setHighlightedSitterId(null)}
                 >
-                  <Link to="/sitter/$userId" params={{ userId: sitter.userId }} className="block">
+                  <Link
+                    to="/sitter/$userId"
+                    params={{ userId: sitter.userId }}
+                    search={{ info: false }}
+                    className="block"
+                  >
                     <SitterCard sitter={sitter} />
                   </Link>
                 </div>

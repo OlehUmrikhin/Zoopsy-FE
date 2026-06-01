@@ -9,9 +9,10 @@ import { BookSitterReviews } from './components/BookSitterReviews';
 
 type Props = {
   userId: string;
+  showWidget?: boolean;
 };
 
-export function BookSitterPage({ userId }: Props) {
+export function BookSitterPage({ userId, showWidget = true }: Props) {
   const { data: sitter, isLoading } = useSitterById(userId);
   const { data: reviews = [] } = useReviewsBySitter(sitter?.id);
 
@@ -48,7 +49,9 @@ export function BookSitterPage({ userId }: Props) {
         </div>
 
         {/* Right column — Booking widget */}
-        <BookSitterBookingWidget sitterId={sitter.userId} services={sitter.services} />
+        {showWidget && (
+          <BookSitterBookingWidget sitterId={sitter.userId} services={sitter.services} />
+        )}
       </div>
     </div>
   );

@@ -30,13 +30,16 @@ const messages = {
 
 type CalendarView = 'month' | 'week' | 'agenda';
 
-type ModalState =
-  | { type: 'create'; date: Date }
-  | { type: 'edit'; note: PetCareNote };
+type ModalState = { type: 'create'; date: Date } | { type: 'edit'; note: PetCareNote };
 
 type SearchParams = { connected?: string; error?: string };
 
-function CustomToolbar({ date, view, onNavigate, onView }: {
+function CustomToolbar({
+  date,
+  view,
+  onNavigate,
+  onView,
+}: {
   date: Date;
   view: CalendarView;
   onNavigate: (action: 'PREV' | 'NEXT' | 'TODAY') => void;
@@ -70,7 +73,9 @@ function CustomToolbar({ date, view, onNavigate, onView }: {
         >
           <ChevronRight size={18} />
         </button>
-        <span className="text-base font-semibold text-zoopsy-dark-gray capitalize ml-1">{label}</span>
+        <span className="text-base font-semibold text-zoopsy-dark-gray capitalize ml-1">
+          {label}
+        </span>
       </div>
       <div className="flex rounded-lg border border-gray-200 overflow-hidden">
         {views.map((v) => (
@@ -79,7 +84,7 @@ function CustomToolbar({ date, view, onNavigate, onView }: {
             onClick={() => onView(v.key)}
             className={`px-3 py-1.5 text-sm transition ${
               view === v.key
-                ? 'bg-zoopsy-green text-white font-medium'
+                ? 'bg-zoopsy-green-900 text-white font-medium'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
           >
@@ -124,7 +129,13 @@ export function CalendarPage() {
     setModal({ type: 'edit', note: event.resource });
   }
 
-  function handleSave(data: { title: string; description: string; petId: string; startDate: string; endDate: string }) {
+  function handleSave(data: {
+    title: string;
+    description: string;
+    petId: string;
+    startDate: string;
+    endDate: string;
+  }) {
     const payload = {
       title: data.title,
       description: data.description || undefined,
@@ -135,21 +146,33 @@ export function CalendarPage() {
 
     if (modal?.type === 'create') {
       createNote(payload, {
-        onSuccess: () => { toast.success('Нотатку додано!'); setModal(null); },
+        onSuccess: () => {
+          toast.success('Нотатку додано!');
+          setModal(null);
+        },
         onError: () => toast.error('Не вдалося додати нотатку.'),
       });
     } else if (modal?.type === 'edit') {
-      updateNote({ id: modal.note.id, ...payload }, {
-        onSuccess: () => { toast.success('Нотатку оновлено!'); setModal(null); },
-        onError: () => toast.error('Не вдалося оновити нотатку.'),
-      });
+      updateNote(
+        { id: modal.note.id, ...payload },
+        {
+          onSuccess: () => {
+            toast.success('Нотатку оновлено!');
+            setModal(null);
+          },
+          onError: () => toast.error('Не вдалося оновити нотатку.'),
+        },
+      );
     }
   }
 
   function handleDelete() {
     if (modal?.type !== 'edit') return;
     deleteNote(modal.note.id, {
-      onSuccess: () => { toast.success('Нотатку видалено.'); setModal(null); },
+      onSuccess: () => {
+        toast.success('Нотатку видалено.');
+        setModal(null);
+      },
       onError: () => toast.error('Не вдалося видалити нотатку.'),
     });
   }
@@ -160,16 +183,19 @@ export function CalendarPage() {
     else setCurrentDate(new Date());
   }, []);
 
-  const calendarComponents = useMemo(() => ({
-    toolbar: (props: { date: Date }) => (
-      <CustomToolbar
-        date={props.date}
-        view={currentView}
-        onNavigate={handleNavigate}
-        onView={setCurrentView}
-      />
-    ),
-  }), [currentView, handleNavigate]);
+  const calendarComponents = useMemo(
+    () => ({
+      toolbar: (props: { date: Date }) => (
+        <CustomToolbar
+          date={props.date}
+          view={currentView}
+          onNavigate={handleNavigate}
+          onView={setCurrentView}
+        />
+      ),
+    }),
+    [currentView, handleNavigate],
+  );
 
   const events = notes.map((note) => ({
     id: note.id,
@@ -200,9 +226,14 @@ export function CalendarPage() {
         <p className="text-sm text-gray-400">Натисніть на день, щоб додати нотатку</p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5" style={{ height: 620 }}>
+      <div
+        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5"
+        style={{ height: 620 }}
+      >
         {notesLoading ? (
-          <div className="h-full flex items-center justify-center text-gray-400">Завантаження...</div>
+          <div className="h-full flex items-center justify-center text-gray-400">
+            Завантаження...
+          </div>
         ) : (
           <Calendar
             localizer={localizer}

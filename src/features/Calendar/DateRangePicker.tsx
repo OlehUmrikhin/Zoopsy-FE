@@ -63,7 +63,9 @@ export function DateRangePicker({ startDate, endDate, onChange, onConfirm }: Pro
     if (!startDate) return false;
     const rangeEnd = selecting === 'end' && hovered ? hovered : endDate;
     if (!rangeEnd) return false;
-    const [from, to] = isBefore(startDate, rangeEnd) ? [startDate, rangeEnd] : [rangeEnd, startDate];
+    const [from, to] = isBefore(startDate, rangeEnd)
+      ? [startDate, rangeEnd]
+      : [rangeEnd, startDate];
     return isWithinInterval(d, { start: from, end: to });
   }
 
@@ -133,9 +135,10 @@ export function DateRangePicker({ startDate, endDate, onChange, onConfirm }: Pro
                 otherMonth ? 'text-gray-300' : 'text-gray-700',
                 inRange && !isS && !isE ? 'bg-emerald-50' : '',
                 isS || isE
-                  ? 'bg-zoopsy-green text-white font-semibold rounded-full z-10'
+                  ? 'bg-zoopsy-green-900 text-white font-semibold rounded-full z-10'
                   : 'hover:bg-gray-100 rounded-full',
-                isToday && !isS && !isE ? 'font-bold text-zoopsy-green' : '',
+                isToday && !isS && !isE ? 'font-bold text-zoopsy-green-900' : '',
+                ,
               ].join(' ')}
             >
               {format(d, 'd')}
@@ -158,7 +161,7 @@ export function DateRangePicker({ startDate, endDate, onChange, onConfirm }: Pro
         type="button"
         onClick={onConfirm}
         disabled={!confirmed}
-        className="mt-3 w-full py-2 rounded-xl bg-zoopsy-green text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
+        className="mt-3 w-full py-2 rounded-xl bg-zoopsy-green-900 text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
       >
         {selecting === 'end' ? 'Оберіть кінцеву дату' : 'Підтвердити'}
       </button>
