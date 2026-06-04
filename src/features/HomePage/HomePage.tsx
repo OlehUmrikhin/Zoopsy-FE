@@ -23,16 +23,7 @@ export function HomePage() {
   const visitedRef = useRef(false);
 
   useEffect(() => {
-    const sessionKey = 'zoopsy_home_visited';
-
-    // Prevent double-invocation in the same mount
     if (visitedRef.current) return;
-
-    // If we've already recorded a visit in this browser session, skip sending again
-    try {
-      if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(sessionKey)) return;
-    } catch (e) {}
-
     visitedRef.current = true;
 
     async function trackVisit() {
@@ -40,8 +31,8 @@ export function HomePage() {
         const token = await getToken();
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
-
-        const res = await fetch(`${import.meta.env.VITE_PHP_ZOOPSY_URL}/visit`, {
+        //check if already sent by session storage variable
+        await fetch(`${import.meta.env.VITE_PHP_ZOOPSY_URL}/visit`, {
           method: 'POST',
           headers,
           body: JSON.stringify({
@@ -50,19 +41,12 @@ export function HomePage() {
           }),
           credentials: 'include',
         });
-
-        if (res.ok) {
-          try {
-            if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(sessionKey, '1');
-          } catch (e) {}
-        } else {
-          console.error('Visit failed:', await res.text());
-        }
+        // set temporary session storage variable to prevent multiple hits in the same session
+        //sessionStorage.setItem('homePageVisited', 'true');
       } catch (err) {
         console.error('Visit error:', err);
       }
     }
-
     trackVisit();
   }, [getToken, userId]);
 
