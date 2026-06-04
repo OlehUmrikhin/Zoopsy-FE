@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/admin/complaints', label: 'Скарги', icon: MdReport },
   { to: '/admin/users', label: 'Користувачі', icon: MdPeople },
   { to: '/admin/content-moderation', label: 'Модерація', icon: MdArticle },
+  { to: '/admin/logs', label: 'Логи системи', icon: MdNotifications },
 ];
 
 export function AdminLayout() {

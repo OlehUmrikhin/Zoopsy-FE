@@ -10,25 +10,43 @@ import type { AdminComplaint, ComplaintUser } from '../../../api/admin/types';
 
 function fmtDate(iso: string) {
   try {
-    return new Date(iso).toLocaleDateString('uk-UA', { day: '2-digit', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString('uk-UA', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   } catch {
     return iso;
   }
 }
 
 const STATUS_FILTERS = [
-  { value: 'all',      label: 'Всі' },
-  { value: 'active',   label: 'Активні' },
+  { value: 'all', label: 'Всі' },
+  { value: 'active', label: 'Активні' },
   { value: 'resolved', label: 'Вирішені' },
   { value: 'rejected', label: 'Відхилені' },
 ] as const;
 
-type StatusFilter = typeof STATUS_FILTERS[number]['value'];
+type StatusFilter = (typeof STATUS_FILTERS)[number]['value'];
 
 function StatusBadge({ status }: { status: AdminComplaint['status'] }) {
-  if (status === 'resolved') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">Вирішено</span>;
-  if (status === 'rejected') return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-500">Відхилено</span>;
-  return <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">Активна</span>;
+  if (status === 'resolved')
+    return (
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">
+        Вирішено
+      </span>
+    );
+  if (status === 'rejected')
+    return (
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-500">
+        Відхилено
+      </span>
+    );
+  return (
+    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">
+      Активна
+    </span>
+  );
 }
 
 // ─── ParticipantCard ─────────────────────────────────────────────────────────
@@ -47,7 +65,11 @@ function ParticipantCard({ user, onBlock, isBlocking, onEdit }: ParticipantCardP
   return (
     <div className="flex-1 bg-white rounded-3xl p-5 flex items-start gap-4 shadow-sm border border-gray-50">
       <div className="relative flex-shrink-0">
-        <img src={avatarSrc} alt={user.name} className="w-14 h-14 rounded-full object-cover bg-[#EAF3EF]" />
+        <img
+          src={avatarSrc}
+          alt={user.name}
+          className="w-14 h-14 rounded-full object-cover bg-[#EAF3EF]"
+        />
         {blocked && (
           <span className="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-0.5">
             <ShieldOff size={10} className="text-white" />
@@ -191,7 +213,6 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
 
       {/* Main Content */}
       <div className="flex gap-6 flex-1 min-h-0">
-
         {/* LEFT COLUMN */}
         <div className="w-[340px] flex flex-col bg-white rounded-3xl p-5 shadow-sm min-h-0 shrink-0 border border-gray-50">
           {/* Header + count */}
@@ -253,7 +274,10 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                     <div className="flex items-center justify-between mt-2.5 pt-2.5 border-t border-gray-200/60">
                       <div className="flex items-center gap-1.5">
                         <img
-                          src={complaint.owner?.avatarUrl ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${complaint.owner?.id}`}
+                          src={
+                            complaint.owner?.avatarUrl ??
+                            `https://api.dicebear.com/7.x/avataaars/svg?seed=${complaint.owner?.id}`
+                          }
                           alt=""
                           className="w-5 h-5 rounded-full bg-[#EAF3EF]"
                         />
@@ -304,15 +328,20 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                       selected.chatMessages.map((msg) => {
                         const isOwner = msg.senderId === selected.owner?.id;
                         return (
-                          <div key={msg.id} className={`flex flex-col ${isOwner ? 'items-start' : 'items-end'}`}>
+                          <div
+                            key={msg.id}
+                            className={`flex flex-col ${isOwner ? 'items-start' : 'items-end'}`}
+                          >
                             <span className="text-[10px] text-gray-400 mb-1 ml-1 mr-1">
                               {msg.senderName} • {fmtDate(msg.timestamp)}
                             </span>
-                            <div className={`p-3 rounded-2xl max-w-[85%] text-sm ${
-                              isOwner
-                                ? 'bg-gray-100 text-gray-800 rounded-tl-sm'
-                                : 'bg-zoopsy-mint text-zoopsy-green-900 rounded-tr-sm'
-                            }`}>
+                            <div
+                              className={`p-3 rounded-2xl max-w-[85%] text-sm ${
+                                isOwner
+                                  ? 'bg-gray-100 text-gray-800 rounded-tl-sm'
+                                  : 'bg-zoopsy-mint text-zoopsy-green-900 rounded-tr-sm'
+                              }`}
+                            >
                               {msg.text}
                             </div>
                           </div>
@@ -330,7 +359,11 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                   <div className="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-1">
                     <div className="h-44 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100 shrink-0">
                       {selected.evidence?.photoUrl ? (
-                        <img src={selected.evidence.photoUrl} alt="Evidence" className="object-cover w-full h-full" />
+                        <img
+                          src={selected.evidence.photoUrl}
+                          alt="Evidence"
+                          className="object-cover w-full h-full"
+                        />
                       ) : (
                         <div className="flex flex-col items-center text-gray-300">
                           <ImageIcon size={36} className="mb-2" strokeWidth={1.5} />
@@ -339,25 +372,37 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                       )}
                     </div>
 
-                    {(selected.evidence?.lat || selected.evidence?.lng) ? (
+                    {selected.evidence?.lat || selected.evidence?.lng ? (
                       <div className="text-xs text-gray-600 font-mono bg-gray-50 border border-gray-100 p-3 rounded-xl shrink-0">
                         GPS: LAT: {selected.evidence.lat}, LONG: {selected.evidence.lng}
                       </div>
                     ) : (
-                      <div className="text-xs text-gray-400 text-center py-2">GPS-дані відсутні</div>
+                      <div className="text-xs text-gray-400 text-center py-2">
+                        GPS-дані відсутні
+                      </div>
                     )}
 
                     <div className="flex gap-3 mt-auto shrink-0">
                       <div className="flex-1 bg-zoopsy-mint/50 p-4 rounded-2xl border border-zoopsy-green-100">
-                        <div className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Відстань до об'єкта</div>
-                        <div className={`text-lg font-black ${
-                          selected.evidence?.distanceStatus === 'violation' ? 'text-rose-600' : 'text-zoopsy-green-700'
-                        }`}>
-                          {selected.evidence?.distanceMeters != null ? `${selected.evidence.distanceMeters} м` : '—'}
+                        <div className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">
+                          Відстань до об'єкта
+                        </div>
+                        <div
+                          className={`text-lg font-black ${
+                            selected.evidence?.distanceStatus === 'violation'
+                              ? 'text-rose-600'
+                              : 'text-zoopsy-green-700'
+                          }`}
+                        >
+                          {selected.evidence?.distanceMeters != null
+                            ? `${selected.evidence.distanceMeters} м`
+                            : '—'}
                         </div>
                       </div>
                       <div className="flex-1 bg-zoopsy-mint/50 p-4 rounded-2xl border border-zoopsy-green-100">
-                        <div className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">Цілісність послуги</div>
+                        <div className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">
+                          Цілісність послуги
+                        </div>
                         <div className="text-sm font-bold text-gray-900 mt-1">
                           {selected.evidence?.integrityStatus || 'Невідомо'}
                         </div>
@@ -378,20 +423,30 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                     <button
                       className="flex-1 py-3.5 bg-zoopsy-green-700 text-white rounded-2xl text-sm font-bold shadow-sm hover:bg-zoopsy-green-800 hover:-translate-y-0.5 transition-all active:translate-y-0 disabled:opacity-50"
                       disabled={updateStatusMutation.isPending}
-                      onClick={() => updateStatusMutation.mutate(
-                        { id: selected.id, status: 'resolved' },
-                        { onSuccess: () => toast.success('Скаргу вирішено'), onError: () => toast.error('Помилка') },
-                      )}
+                      onClick={() =>
+                        updateStatusMutation.mutate(
+                          { id: selected.id, status: 'resolved' },
+                          {
+                            onSuccess: () => toast.success('Скаргу вирішено'),
+                            onError: () => toast.error('Помилка'),
+                          },
+                        )
+                      }
                     >
                       {updateStatusMutation.isPending ? 'Збереження...' : 'Вирішити скаргу'}
                     </button>
                     <button
                       className="flex-1 py-3.5 bg-rose-900 text-white rounded-2xl text-sm font-bold shadow-sm hover:bg-rose-950 hover:-translate-y-0.5 transition-all active:translate-y-0 disabled:opacity-50"
                       disabled={updateStatusMutation.isPending}
-                      onClick={() => updateStatusMutation.mutate(
-                        { id: selected.id, status: 'rejected' },
-                        { onSuccess: () => toast.info('Скаргу відхилено'), onError: () => toast.error('Помилка') },
-                      )}
+                      onClick={() =>
+                        updateStatusMutation.mutate(
+                          { id: selected.id, status: 'rejected' },
+                          {
+                            onSuccess: () => toast.info('Скаргу відхилено'),
+                            onError: () => toast.error('Помилка'),
+                          },
+                        )
+                      }
                     >
                       Відхилити скаргу
                     </button>

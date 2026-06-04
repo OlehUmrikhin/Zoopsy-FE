@@ -1,6 +1,15 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { fetchAdminDashboardStats, fetchAdminOrders, fetchAdminOrderById, fetchAdminComplaints } from './fetchers';
-import type { AdminOrdersParams, AdminComplaintsParams, AdminComplaintsPaginatedResponse } from './types';
+import {
+  fetchAdminDashboardStats,
+  fetchAdminOrders,
+  fetchAdminOrderById,
+  fetchAdminComplaints,
+} from './fetchers';
+import type {
+  AdminOrdersParams,
+  AdminComplaintsParams,
+  AdminComplaintsPaginatedResponse,
+} from './types';
 
 export const adminQueryKeys = {
   dashboard: () => ['admin', 'dashboard'] as const,

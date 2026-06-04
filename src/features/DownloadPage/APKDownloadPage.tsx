@@ -17,8 +17,6 @@ export function APKDownloadPage() {
         >
           Завантажити для Android
         </a>
-
-        
       </div>
     </div>
   );

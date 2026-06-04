@@ -50,9 +50,7 @@ export function AddressAutocomplete({ value, onChange, onCoordinatesChange, onCi
   const [open, setOpen] = useState(false);
   const [cityError, setCityError] = useState(false);
 
-  // Session token groups autocomplete requests + one getDetails into a single billing session
   const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
-  // PlacesService requires a DOM node for attribution rendering (we hide it)
   const attributionRef = useRef<HTMLDivElement>(null);
 
   function getSessionToken() {
@@ -84,7 +82,6 @@ export function AddressAutocomplete({ value, onChange, onCoordinatesChange, onCi
           },
         );
       }, DEBOUNCE_MS),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isLoaded],
   );
 

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from '@tanstack/react-router';
+import { useAuth } from '@clerk/react';
 import { useOwnerProfile } from '@api';
 import { Button, Select, ListBox } from '@heroui/react';
 import cn from 'classnames';
@@ -17,6 +18,36 @@ const SERVICE_TYPES = [
 export function HomePage() {
   const navigate = useNavigate();
   const { data: ownerProfile, isLoading: isProfileLoading } = useOwnerProfile();
+  const { getToken, userId } = useAuth();
+
+  const visitedRef = useRef(false);
+
+  useEffect(() => {
+    if (visitedRef.current) return;
+    visitedRef.current = true;
+
+    async function trackVisit() {
+      try {
+        const token = await getToken();
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        // Відстеження візиту
+        await fetch(`${import.meta.env.VITE_PHP_ZOOPSY_URL}/visit`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            page: '/home',
+            userId: userId || 'anonymous',
+          }),
+          credentials: 'include',
+        });
+      } catch (err) {
+        console.error('Visit error:', err);
+      }
+    }
+    trackVisit();
+  }, [getToken, userId]);
 
   const [selectedService, setSelectedService] = useState<number | null>(null);
   const [selectedPetId, setSelectedPetId] = useState<string>('');
@@ -213,8 +244,6 @@ export function HomePage() {
           </div>
         </div>
       </div>
-      {/* Mint section – gives the date-picker popover room so the page never grows */}
-      <div className="w-full bg-[#DCFFDE]" style={{ minHeight: '380px' }} />
     </div>
   );
 }

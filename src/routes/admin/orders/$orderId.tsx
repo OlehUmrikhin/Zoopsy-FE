@@ -7,6 +7,6 @@ export const Route = createFileRoute('/admin/orders/$orderId')({
 
 function OrderRouteComponent() {
   const { orderId } = Route.useParams();
-  
+
   return <OrderDetails orderId={orderId} />;
 }

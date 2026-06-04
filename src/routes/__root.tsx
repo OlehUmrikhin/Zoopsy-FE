@@ -1,7 +1,7 @@
 import { createRootRoute, Outlet, Link, useRouterState, useNavigate } from '@tanstack/react-router';
 import { Show, UserButton, useUser } from '@clerk/react';
 import { ToastContainer } from 'react-toastify';
-import { Header, Footer } from '../components';
+import { Header, Footer, MicroserviceStatsModal } from '../components';
 import { getAuthRedirectPath } from '../utils';
 import { MdSettings } from 'react-icons/md';
 
@@ -32,8 +32,9 @@ function RootComponent() {
           <div className="flex items-center w-full gap-4">
             <Show when="signed-in">
               {!hideNav && (
-                <nav className="flex flex-1 gap-4 text-[#2C694E]">
-                  <Link to="/bookings" className="[&.active]:font-bold">
+                <nav className="flex flex-1 items-center gap-4 text-[#2C694E] justify-end mr-4">
+                  <MicroserviceStatsModal />
+                  <Link to="/bookings" className="[&.active]:font-bold ml-2">
                     Бронювання
                   </Link>
                 </nav>
