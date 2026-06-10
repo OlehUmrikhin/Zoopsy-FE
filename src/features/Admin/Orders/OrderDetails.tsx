@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { MdPhone, MdLocationOn, MdStar, MdAccessTime, MdKeyboardArrowRight, MdInfoOutline } from 'react-icons/md';
+import { MdPhone, MdLocationOn, MdStar, MdAccessTime, MdKeyboardArrowRight, MdInfoOutline, MdWarning, MdGavel } from 'react-icons/md';
 import { toast } from 'react-toastify';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useAdminOrder, useUpdateAdminOrderStatusMutation, useRefundAdminOrderMutation } from '../../../api/admin';
 import type { OrderStatus } from '../../../api/admin/types';
 
@@ -42,6 +42,7 @@ interface OrderDetailsProps {
 }
 
 export const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId }) => {
+  const navigate = useNavigate();
   const { data: order, isLoading, isError, error } = useAdminOrder(orderId);
   const updateStatusMutation = useUpdateAdminOrderStatusMutation();
   const refundMutation = useRefundAdminOrderMutation();
@@ -82,24 +83,28 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId }) => {
       toast.warning('Будь ласка, вкажіть коректну суму для часткового повернення');
       return;
     }
-    
     if (!refundComment.trim()) {
       toast.warning('Будь ласка, вкажіть причину повернення у коментарі');
       return;
     }
-
     try {
       await refundMutation.mutateAsync({
         orderId: order.id,
         type: refundType,
         amount: refundType === 'full' ? undefined : Number(refundAmount),
-        comment: refundComment
+        comment: refundComment,
       });
-      toast.success('Запит на повернення коштів успішно надіслано');
-      // Reset form
       setRefundType('full');
       setRefundAmount('');
       setRefundComment('');
+      if (order.status === 'DISPUTED') {
+        toast.success('Кошти повернено. Перейдіть до скарг щоб закрити тікет.', {
+          onClick: () => navigate({ to: '/admin/complaints' as any }),
+          autoClose: 6000,
+        });
+      } else {
+        toast.success('Запит на повернення коштів успішно надіслано');
+      }
     } catch (e) {
       toast.error('Помилка під час відправки запиту на повернення');
     }
@@ -206,23 +211,50 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId }) => {
           {/* Блок "Керування замовленням" */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 border-b border-gray-100 pb-4 mb-4">Керування замовленням</h3>
-            
+
             <div className="space-y-6">
-              {/* Вибір статусу */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Змінити статус</label>
-                <select 
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(e.target.value as OrderStatus)}
-                  disabled={updateStatusMutation.isPending}
-                  className="w-full md:w-1/2 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-3 outline-none disabled:opacity-50"
-                >
-                  <option value="ACTIVE">В процесі (Активно)</option>
-                  <option value="COMPLETED">Виконано</option>
-                  <option value="DISPUTED">Спір / Потребує уваги</option>
-                  <option value="CANCELLED">Скасовано</option>
-                </select>
-              </div>
+              {/* Контекстні дії залежно від статусу */}
+              {order.status === 'ACTIVE' && (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleStatusChange('COMPLETED')}
+                    disabled={updateStatusMutation.isPending}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-green-100 text-green-700 rounded-xl text-sm font-bold hover:bg-green-200 transition-colors disabled:opacity-50"
+                  >
+                    Виконано
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange('CANCELLED')}
+                    disabled={updateStatusMutation.isPending}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-red-100 text-red-700 rounded-xl text-sm font-bold hover:bg-red-200 transition-colors disabled:opacity-50"
+                  >
+                    Скасувати
+                  </button>
+                </div>
+              )}
+
+              {order.status === 'DISPUTED' && (
+                <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-200 rounded-2xl">
+                  <MdWarning className="text-orange-500 text-xl mt-0.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-orange-800">По цьому замовленню є активна скарга</p>
+                    <p className="text-xs text-orange-600 mt-0.5">Поверніть кошти клієнту та закрийте тікет у розділі скарг.</p>
+                  </div>
+                  <Link
+                    to="/admin/complaints"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-orange-600 text-white rounded-xl text-xs font-bold hover:bg-orange-700 transition-colors shrink-0"
+                  >
+                    <MdGavel className="w-3.5 h-3.5" />
+                    Скарги
+                  </Link>
+                </div>
+              )}
+
+              {(order.status === 'COMPLETED' || order.status === 'CANCELLED') && (
+                <p className="text-sm text-gray-500 italic">
+                  Замовлення завершено — зміна статусу недоступна.
+                </p>
+              )}
 
               {/* Панель системи повернення */}
               <div className={`p-6 rounded-2xl border ${order.isRefunded ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-100'}`}>
@@ -346,13 +378,6 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ orderId }) => {
               )}
             </div>
 
-            {order.timeline && order.timeline.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <button className="w-full py-2 text-teal-600 font-medium hover:text-teal-700 hover:bg-teal-50 rounded-xl transition-colors text-sm">
-                  Дивитися всю історію
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>

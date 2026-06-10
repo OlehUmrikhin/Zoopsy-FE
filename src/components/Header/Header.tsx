@@ -31,12 +31,13 @@ export const Header: React.FC<HeaderProps> = ({ children, logoHref, hideNav }) =
           {!hideNav && (
             <Show when="signed-in">
               <div className="hidden lg:flex items-center gap-5">
-                <Link
-                  to="/download-apk"
+                <a
+                  href="/zoopsy.apk"
+                  download
                   className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"
                 >
                   Завантаження APK
-                </Link>
+                </a>
                 <Link
                   to="/map"
                   className="text-sm font-inter font-medium text-zoopsy-dark-gray hover:text-zoopsy-green-700 transition-colors"

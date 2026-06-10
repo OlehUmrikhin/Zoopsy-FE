@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { Search, Image as ImageIcon, Clock, ShieldOff, Shield, UserCog } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useNavigate } from '@tanstack/react-router';
-import { useAdminComplaints, useUpdateAdminComplaintStatusMutation } from '../../../api/admin';
+import {
+  useAdminComplaints,
+  useUpdateAdminComplaintStatusMutation,
+} from '../../../api/admin';
 import { useUpdateAdminUserStatusMutation } from '../../../api/admin/users';
 import type { AdminComplaint, ComplaintUser } from '../../../api/admin/types';
 
@@ -134,6 +137,7 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [blockingUserId, setBlockingUserId] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<'resolved' | 'rejected' | null>(null);
 
   const { data, isLoading, isError } = useAdminComplaints({
     page: 1,
@@ -154,6 +158,10 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
     if (selectedId && complaints.length > 0 && !complaints.some((c) => c.id === selectedId))
       setSelectedId(complaints[0].id);
   }, [complaints, selectedId]);
+
+  useEffect(() => {
+    setPendingAction(null);
+  }, [selectedId]);
 
   const handleBlock = (userId: string, currentlyBlocked: boolean) => {
     const newStatus = currentlyBlocked ? 'active' : 'blocked';
@@ -354,60 +362,21 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                 {/* Evidence */}
                 <div className="w-1/2 flex flex-col bg-white rounded-3xl p-5 shadow-sm min-h-0 border border-gray-50">
                   <h3 className="text-[10px] font-bold text-gray-400 mb-4 tracking-widest uppercase shrink-0">
-                    GPS-метадані, фотозвіти та докази
+                    Фотозвіти та докази
                   </h3>
-                  <div className="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-1">
-                    <div className="h-44 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border border-gray-100 shrink-0">
-                      {selected.evidence?.photoUrl ? (
-                        <img
-                          src={selected.evidence.photoUrl}
-                          alt="Evidence"
-                          className="object-cover w-full h-full"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center text-gray-300">
-                          <ImageIcon size={36} className="mb-2" strokeWidth={1.5} />
-                          <span className="text-xs font-medium">Фото не додано</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {selected.evidence?.lat || selected.evidence?.lng ? (
-                      <div className="text-xs text-gray-600 font-mono bg-gray-50 border border-gray-100 p-3 rounded-xl shrink-0">
-                        GPS: LAT: {selected.evidence.lat}, LONG: {selected.evidence.lng}
-                      </div>
+                  <div className="flex-1 flex items-center justify-center overflow-hidden">
+                    {selected.evidence?.photoUrl ? (
+                      <img
+                        src={selected.evidence.photoUrl}
+                        alt="Evidence"
+                        className="object-contain w-full h-full rounded-xl"
+                      />
                     ) : (
-                      <div className="text-xs text-gray-400 text-center py-2">
-                        GPS-дані відсутні
+                      <div className="flex flex-col items-center text-gray-300">
+                        <ImageIcon size={36} className="mb-2" strokeWidth={1.5} />
+                        <span className="text-xs font-medium">Фото не додано</span>
                       </div>
                     )}
-
-                    <div className="flex gap-3 mt-auto shrink-0">
-                      <div className="flex-1 bg-zoopsy-mint/50 p-4 rounded-2xl border border-zoopsy-green-100">
-                        <div className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">
-                          Відстань до об'єкта
-                        </div>
-                        <div
-                          className={`text-lg font-black ${
-                            selected.evidence?.distanceStatus === 'violation'
-                              ? 'text-rose-600'
-                              : 'text-zoopsy-green-700'
-                          }`}
-                        >
-                          {selected.evidence?.distanceMeters != null
-                            ? `${selected.evidence.distanceMeters} м`
-                            : '—'}
-                        </div>
-                      </div>
-                      <div className="flex-1 bg-zoopsy-mint/50 p-4 rounded-2xl border border-zoopsy-green-100">
-                        <div className="text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">
-                          Цілісність послуги
-                        </div>
-                        <div className="text-sm font-bold text-gray-900 mt-1">
-                          {selected.evidence?.integrityStatus || 'Невідомо'}
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -422,18 +391,14 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                   <>
                     <button
                       className="flex-1 py-3.5 bg-zoopsy-green-700 text-white rounded-2xl text-sm font-bold shadow-sm hover:bg-zoopsy-green-800 hover:-translate-y-0.5 transition-all active:translate-y-0 disabled:opacity-50"
-                      disabled={updateStatusMutation.isPending}
-                      onClick={() =>
-                        updateStatusMutation.mutate(
-                          { id: selected.id, status: 'resolved' },
-                          {
-                            onSuccess: () => toast.success('Скаргу вирішено'),
-                            onError: () => toast.error('Помилка'),
-                          },
-                        )
-                      }
+                      disabled={!selected.bookingId}
+                      onClick={() => {
+                        if (selected.bookingId) {
+                          navigate({ to: '/admin/orders/$orderId' as any, params: { orderId: selected.bookingId } });
+                        }
+                      }}
                     >
-                      {updateStatusMutation.isPending ? 'Збереження...' : 'Вирішити скаргу'}
+                      Вирішити скаргу
                     </button>
                     <button
                       className="flex-1 py-3.5 bg-rose-900 text-white rounded-2xl text-sm font-bold shadow-sm hover:bg-rose-950 hover:-translate-y-0.5 transition-all active:translate-y-0 disabled:opacity-50"

@@ -1,5 +1,6 @@
-import { MdChat, MdPhoneIphone } from 'react-icons/md';
+import { MdPhoneIphone } from 'react-icons/md';
 import { Button } from '@heroui/react';
+import { useNavigate } from '@tanstack/react-router';
 import { useCurrentBooking } from '@api/booking';
 import { format, parseISO } from 'date-fns';
 import { uk } from 'date-fns/locale';
@@ -7,6 +8,7 @@ import { SERVICE_TYPE_LABELS } from '@constants/serviceTypes';
 
 export function SitterCurrentBooking() {
   const { data: booking, isLoading } = useCurrentBooking();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -82,12 +84,6 @@ export function SitterCurrentBooking() {
             </span>
           </div>
         </div>
-        <button
-          type="button"
-          className="w-9 h-9 rounded-full bg-zoopsy-green-500 text-white flex items-center justify-center hover:bg-zoopsy-green-700 transition-colors flex-shrink-0"
-        >
-          <MdChat className="text-base" />
-        </button>
       </div>
 
       {/* Booking details */}
@@ -112,6 +108,7 @@ export function SitterCurrentBooking() {
       <Button
         fullWidth
         className="bg-red-500 text-white font-inter font-semibold text-sm rounded-xl h-10 hover:bg-red-600 transition-colors"
+        onPress={() => navigate({ to: '/download-apk' })}
       >
         Завантажити АРК ↓
       </Button>

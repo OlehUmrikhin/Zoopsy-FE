@@ -52,7 +52,7 @@ export function UsersPage({ restrictedRoles = [] }: UsersPageProps) {
   const editMutation = useUpdateAdminUserMutation();
   const statusMutation = useUpdateAdminUserStatusMutation();
 
-  const { data, isLoading, isError } = useAdminUsers({
+  const { data, isLoading, isError, refetch } = useAdminUsers({
     page: currentPage,
     limit: 20,
     role: roleFilter,
@@ -182,7 +182,7 @@ export function UsersPage({ restrictedRoles = [] }: UsersPageProps) {
       {/* Table toolbar */}
       <div className="flex items-center justify-end gap-2">
         <button
-          onClick={() => (data as any)?.refetch?.()}
+          onClick={() => refetch()}
           className="px-3 py-1 bg-gray-100 rounded-md text-sm"
         >
           Оновити
