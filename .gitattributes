@@ -1,0 +1,5 @@
+# Auto-generated files — normalize to LF to avoid phantom CRLF diffs on Windows
+src/routeTree.gen.ts text eol=lf
+
+# Default: auto-detect
+* text=auto
