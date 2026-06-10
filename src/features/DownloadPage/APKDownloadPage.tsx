@@ -1,5 +1,5 @@
 export function APKDownloadPage() {
-  const apkUrl = 'zoopsy.apk';
+  const apkUrl = '/zoopsy.apk';
 
   return (
     <div className="min-h-screen bg-zoopsy-mint flex items-center justify-center p-6">

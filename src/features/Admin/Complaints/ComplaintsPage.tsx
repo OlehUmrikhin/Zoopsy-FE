@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Image as ImageIcon, Clock, ShieldOff, Shield, UserCog } from 'lucide-react';
+import { Search, Image as ImageIcon, Clock, ShieldOff, Shield, UserCog, Expand, X, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -137,6 +137,8 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [blockingUserId, setBlockingUserId] = useState<string | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const { data, isLoading, isError } = useAdminComplaints({
     page: 1,
     limit: 100,
@@ -156,6 +158,8 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
     if (selectedId && complaints.length > 0 && !complaints.some((c) => c.id === selectedId))
       setSelectedId(complaints[0].id);
   }, [complaints, selectedId]);
+
+  useEffect(() => { setPhotoIndex(0); }, [selectedId]);
 
   const handleBlock = (userId: string, currentlyBlocked: boolean) => {
     const newStatus = currentlyBlocked ? 'active' : 'blocked';
@@ -316,64 +320,129 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                 />
               </div>
 
-              {/* Chat + Evidence */}
-              <div className="flex gap-5 flex-1 min-h-0">
-                {/* Chat */}
-                <div className="w-1/2 flex flex-col bg-white rounded-3xl p-5 shadow-sm min-h-0 border border-gray-50">
-                  <h3 className="text-[10px] font-bold text-gray-400 mb-4 tracking-widest uppercase shrink-0">
-                    Історія чату
-                  </h3>
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar flex flex-col">
-                    {!selected.chatMessages?.length ? (
-                      <p className="text-xs text-gray-400 text-center mt-4">Повідомлень немає</p>
-                    ) : (
-                      selected.chatMessages.map((msg) => {
-                        const isOwner = msg.senderId === selected.owner?.id;
-                        return (
-                          <div
-                            key={msg.id}
-                            className={`flex flex-col ${isOwner ? 'items-start' : 'items-end'}`}
-                          >
-                            <span className="text-[10px] text-gray-400 mb-1 ml-1 mr-1">
-                              {msg.senderName} • {fmtDate(msg.timestamp)}
-                            </span>
-                            <div
-                              className={`p-3 rounded-2xl max-w-[85%] text-sm ${
-                                isOwner
-                                  ? 'bg-gray-100 text-gray-800 rounded-tl-sm'
-                                  : 'bg-zoopsy-mint text-zoopsy-green-900 rounded-tr-sm'
-                              }`}
-                            >
-                              {msg.text}
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
+              {/* Evidence gallery */}
+              {(() => {
+                const photos = selected.photos ?? [];
+                const total = photos.length;
+                const current = photos[photoIndex] ?? null;
+                const hasGps = current && (current.lat !== 0 || current.lng !== 0);
 
-                {/* Evidence */}
-                <div className="w-1/2 flex flex-col bg-white rounded-3xl p-5 shadow-sm min-h-0 border border-gray-50">
-                  <h3 className="text-[10px] font-bold text-gray-400 mb-4 tracking-widest uppercase shrink-0">
-                    Фотозвіти та докази
-                  </h3>
-                  <div className="flex-1 flex items-center justify-center overflow-hidden">
-                    {selected.evidence?.photoUrl ? (
-                      <img
-                        src={selected.evidence.photoUrl}
-                        alt="Evidence"
-                        className="object-contain w-full h-full rounded-xl"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center text-gray-300">
-                        <ImageIcon size={36} className="mb-2" strokeWidth={1.5} />
-                        <span className="text-xs font-medium">Фото не додано</span>
+                return (
+                  <div className="flex flex-col bg-white rounded-3xl p-5 shadow-sm min-h-0 border border-gray-50 flex-1">
+                    {/* Header */}
+                    <div className="flex items-center justify-between shrink-0 mb-4">
+                      <h3 className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+                        Фотозвіти та докази
+                      </h3>
+                      <div className="flex items-center gap-2">
+                        {total > 1 && (
+                          <>
+                            <button
+                              onClick={() => setPhotoIndex((i) => Math.max(0, i - 1))}
+                              disabled={photoIndex === 0}
+                              className="p-0.5 rounded-full hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                            >
+                              <ChevronLeft size={14} />
+                            </button>
+                            <span className="text-[11px] font-semibold text-gray-500">
+                              {photoIndex + 1} / {total}
+                            </span>
+                            <button
+                              onClick={() => setPhotoIndex((i) => Math.min(total - 1, i + 1))}
+                              disabled={photoIndex === total - 1}
+                              className="p-0.5 rounded-full hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                            >
+                              <ChevronRight size={14} />
+                            </button>
+                          </>
+                        )}
+                        <span className="text-[10px] font-semibold text-gray-400 ml-1">
+                          {total} {total === 1 ? 'фото' : 'фото'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-5 flex-1 min-h-0">
+                      {/* Photo */}
+                      <div className="flex-1 flex items-center justify-center overflow-hidden">
+                        {current ? (
+                          <div
+                            className="w-full h-full relative group cursor-zoom-in"
+                            onClick={() => setLightboxOpen(true)}
+                          >
+                            <img
+                              src={current.photoUrl}
+                              alt={`Фото ${photoIndex + 1}`}
+                              className="object-contain w-full h-full rounded-xl"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/0 group-hover:bg-black/25 transition-colors">
+                              <Expand size={28} className="text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                            </div>
+                            {current.timestamp && (
+                              <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full font-mono backdrop-blur-sm">
+                                {new Date(current.timestamp).toLocaleString('uk-UA')}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center text-gray-300">
+                            <ImageIcon size={36} className="mb-2" strokeWidth={1.5} />
+                            <span className="text-xs font-medium">Фото не додано</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* GPS info */}
+                      {hasGps && current && (
+                        <div className="w-[180px] shrink-0 flex flex-col gap-4 justify-center">
+                          <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                              <MapPin size={10} /> GPS
+                            </p>
+                            <p className="text-xs font-mono text-gray-700">{current.lat.toFixed(6)}</p>
+                            <p className="text-xs font-mono text-gray-700">{current.lng.toFixed(6)}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Цілісність</p>
+                            <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                              current.integrityStatus === 'Підтверджено' || current.integrityStatus === 'GPS наявний'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {current.integrityStatus}
+                            </span>
+                          </div>
+                          {current.timestamp && (
+                            <div>
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Час зйомки</p>
+                              <p className="text-[11px] font-mono text-gray-700">
+                                {new Date(current.timestamp).toLocaleString('uk-UA')}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Thumbnail strip for multiple photos */}
+                    {total > 1 && (
+                      <div className="flex gap-2 mt-3 shrink-0 overflow-x-auto pb-1">
+                        {photos.map((p, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setPhotoIndex(i)}
+                            className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                              i === photoIndex ? 'border-[#2C694E] opacity-100' : 'border-transparent opacity-50 hover:opacity-80'
+                            }`}
+                          >
+                            <img src={p.photoUrl} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
                       </div>
                     )}
                   </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Action buttons */}
               <div className="flex gap-4 shrink-0">
@@ -420,6 +489,85 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
           )}
         </div>
       </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && selected && (() => {
+        const photos = selected.photos ?? [];
+        const current = photos[photoIndex] ?? null;
+        if (!current) return null;
+        return (
+          <div
+            className="fixed inset-0 z-50 bg-black/92 flex flex-col items-center justify-center gap-3"
+            onClick={() => setLightboxOpen(false)}
+          >
+            {/* Close */}
+            <button
+              className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors"
+              onClick={() => setLightboxOpen(false)}
+            >
+              <X size={28} />
+            </button>
+
+            {/* Prev / Next */}
+            {photos.length > 1 && (
+              <>
+                <button
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white disabled:opacity-20 transition-colors"
+                  disabled={photoIndex === 0}
+                  onClick={(e) => { e.stopPropagation(); setPhotoIndex((i) => Math.max(0, i - 1)); }}
+                >
+                  <ChevronLeft size={40} />
+                </button>
+                <button
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white disabled:opacity-20 transition-colors"
+                  disabled={photoIndex === photos.length - 1}
+                  onClick={(e) => { e.stopPropagation(); setPhotoIndex((i) => Math.min(photos.length - 1, i + 1)); }}
+                >
+                  <ChevronRight size={40} />
+                </button>
+              </>
+            )}
+
+            <img
+              src={current.photoUrl}
+              alt={`Фото ${photoIndex + 1}`}
+              className="max-w-[85vw] max-h-[78vh] object-contain rounded-lg shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            {/* Meta bar */}
+            <div
+              className="flex items-center gap-5 bg-white/10 backdrop-blur-sm px-5 py-2.5 rounded-2xl text-white text-xs"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {photos.length > 1 && (
+                <span className="font-semibold">{photoIndex + 1} / {photos.length}</span>
+              )}
+              {current.timestamp && (
+                <span className="flex items-center gap-1.5 font-mono">
+                  <Clock size={12} />
+                  {new Date(current.timestamp).toLocaleString('uk-UA')}
+                </span>
+              )}
+              {(current.lat !== 0 || current.lng !== 0) && (
+                <span className="flex items-center gap-1.5 font-mono">
+                  <MapPin size={12} />
+                  {current.lat.toFixed(5)}, {current.lng.toFixed(5)}
+                </span>
+              )}
+              {current.integrityStatus && (
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  current.integrityStatus === 'Підтверджено' || current.integrityStatus === 'GPS наявний'
+                    ? 'bg-green-500/30 text-green-300'
+                    : 'bg-amber-500/30 text-amber-300'
+                }`}>
+                  {current.integrityStatus}
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
