@@ -61,6 +61,14 @@ export interface Evidence {
   integrityStatus: string;
 }
 
+export interface ComplaintPhoto {
+  photoUrl: string;
+  timestamp: string | null;
+  lat: number;
+  lng: number;
+  integrityStatus: string;
+}
+
 export interface AdminComplaint {
   id: string;
   bookingId?: string | null;
@@ -73,6 +81,7 @@ export interface AdminComplaint {
   sitter: ComplaintUser;
   chatMessages: ChatMessage[];
   evidence: Evidence;
+  photos: ComplaintPhoto[];
 }
 
 export interface AdminComplaintsPaginatedResponse {
