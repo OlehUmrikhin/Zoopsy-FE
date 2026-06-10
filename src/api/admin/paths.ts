@@ -11,4 +11,7 @@ export const ADMIN_PATHS = {
   contentModeration: '/api/admin/content-moderation',
   approveContent: '/api/admin/content-moderation/approve',
   rejectContent: '/api/admin/content-moderation/reject',
+  adminReview: (id: number) => `/api/admin/review/${id}`,
+  adminReviews: '/api/admin/reviews',
+  adminReviewById: (id: number) => `/api/admin/reviews/${id}`,
 };

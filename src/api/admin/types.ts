@@ -63,6 +63,7 @@ export interface Evidence {
 
 export interface AdminComplaint {
   id: string;
+  bookingId?: string | null;
   ticketId: string;
   title: string;
   shortDesc: string;
