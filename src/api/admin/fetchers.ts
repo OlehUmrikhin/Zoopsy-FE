@@ -54,3 +54,14 @@ export async function updateAdminOrderStatus(id: string, status: OrderStatus): P
 export async function refundAdminOrder(payload: RefundPayload): Promise<void> {
   await axiosInstance.post(ADMIN_PATHS.orderRefund(payload.orderId), payload);
 }
+
+export async function adminUpdateReview(
+  id: number,
+  payload: { rating?: number; comment?: string },
+): Promise<void> {
+  await axiosInstance.patch(ADMIN_PATHS.adminReview(id), payload);
+}
+
+export async function adminDeleteReview(id: number): Promise<void> {
+  await axiosInstance.delete(ADMIN_PATHS.adminReview(id));
+}

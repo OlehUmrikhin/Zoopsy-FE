@@ -39,7 +39,7 @@ export function OrdersPage() {
   const totalItems = data?.totalItems || 0;
   const totalPages = data?.totalPages || 1;
   
-  const currentRange = totalItems === 0 ? 0 : `${(currentPage - 1) * itemsPerPage + 1}-${Math.min(currentPage * itemsPerPage, totalItems)}`;
+  const currentRange = totalItems === 0 ? '0' : `${(currentPage - 1) * itemsPerPage + 1}-${Math.min(currentPage * itemsPerPage, totalItems)}`;
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
@@ -174,74 +174,60 @@ export function OrdersPage() {
                     {/* Actions */}
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const promise = updateStatusMutation.mutateAsync({ id: order.id, status: 'COMPLETED' });
-                            toast.promise(promise, {
-                              pending: 'Оновлення статусу...',
-                              success: 'Статус змінено на "Виконано"',
-                              error: 'Помилка оновлення статусу'
-                            });
-                          }}
-                          disabled={order.status === 'COMPLETED'}
-                          className={classNames(
-                            "flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm",
-                            order.status === 'COMPLETED'
-                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                              : "bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer active:scale-95"
-                          )}
-                          title="Відмітити як Виконано"
-                        >
-                          <LuCheck className="w-3.5 h-3.5" />
-                          Виконати
-                        </button>
-                        
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const promise = updateStatusMutation.mutateAsync({ id: order.id, status: 'CANCELLED' });
-                            toast.promise(promise, {
-                              pending: 'Оновлення статусу...',
-                              success: 'Статус змінено на "Скасовано"',
-                              error: 'Помилка оновлення статусу'
-                            });
-                          }}
-                          disabled={order.status === 'CANCELLED'}
-                          className={classNames(
-                            "flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm",
-                            order.status === 'CANCELLED'
-                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                              : "bg-red-100 text-red-700 hover:bg-red-200 cursor-pointer active:scale-95"
-                          )}
-                          title="Скасувати"
-                        >
-                          <LuX className="w-3.5 h-3.5" />
-                          Скасувати
-                        </button>
+                        {order.status === 'DISPUTED' ? (
+                          <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-orange-50 text-orange-600 border border-orange-200">
+                            <MdWarning className="w-3.5 h-3.5" />
+                            Активна скарга
+                          </span>
+                        ) : (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const promise = updateStatusMutation.mutateAsync({ id: order.id, status: 'COMPLETED' });
+                                toast.promise(promise, {
+                                  pending: 'Оновлення статусу...',
+                                  success: 'Статус змінено на "Виконано"',
+                                  error: 'Помилка оновлення статусу'
+                                });
+                              }}
+                              disabled={order.status === 'COMPLETED' || order.status === 'CANCELLED'}
+                              className={classNames(
+                                "flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm",
+                                order.status === 'COMPLETED' || order.status === 'CANCELLED'
+                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                  : "bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer active:scale-95"
+                              )}
+                              title="Відмітити як Виконано"
+                            >
+                              <LuCheck className="w-3.5 h-3.5" />
+                              Виконати
+                            </button>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const promise = updateStatusMutation.mutateAsync({ id: order.id, status: 'DISPUTED' });
-                            toast.promise(promise, {
-                              pending: 'Оновлення статусу...',
-                              success: 'Відкрито спір',
-                              error: 'Помилка оновлення статусу'
-                            });
-                          }}
-                          disabled={order.status === 'DISPUTED'}
-                          className={classNames(
-                            "flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm",
-                            order.status === 'DISPUTED'
-                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                              : "bg-orange-100 text-orange-700 hover:bg-orange-200 cursor-pointer active:scale-95"
-                          )}
-                          title="Відкрити спір"
-                        >
-                          <MdWarning className="w-3.5 h-3.5" />
-                          Спір
-                        </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const promise = updateStatusMutation.mutateAsync({ id: order.id, status: 'CANCELLED' });
+                                toast.promise(promise, {
+                                  pending: 'Оновлення статусу...',
+                                  success: 'Статус змінено на "Скасовано"',
+                                  error: 'Помилка оновлення статусу'
+                                });
+                              }}
+                              disabled={order.status === 'CANCELLED' || order.status === 'COMPLETED'}
+                              className={classNames(
+                                "flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm",
+                                order.status === 'CANCELLED' || order.status === 'COMPLETED'
+                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                  : "bg-red-100 text-red-700 hover:bg-red-200 cursor-pointer active:scale-95"
+                              )}
+                              title="Скасувати"
+                            >
+                              <LuX className="w-3.5 h-3.5" />
+                              Скасувати
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

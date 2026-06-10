@@ -1,5 +1,6 @@
 import { useQuery, keepPreviousData, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchContentForModeration, approveContent, rejectContent } from './fetchers';
+import { adminUpdateReview, adminDeleteReview } from '../fetchers';
 import type { ContentModerationParams } from './types';
 
 export const contentModerationQueryKeys = {
@@ -29,6 +30,27 @@ export function useRejectContentMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: rejectContent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: contentModerationQueryKeys.all() });
+    },
+  });
+}
+
+export function useAdminUpdateReviewMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...payload }: { id: number; rating?: number; comment?: string }) =>
+      adminUpdateReview(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: contentModerationQueryKeys.all() });
+    },
+  });
+}
+
+export function useAdminDeleteReviewMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => adminDeleteReview(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: contentModerationQueryKeys.all() });
     },

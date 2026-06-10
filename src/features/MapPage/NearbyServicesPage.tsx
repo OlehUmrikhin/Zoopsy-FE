@@ -177,7 +177,7 @@ function SitterListCard({ sitter }: { sitter: SitterSearchResult }) {
     <Link
       to="/sitter/$userId"
       params={{ userId: sitter.userId }}
-      search={{ info: false }}
+      search={{ info: true }}
       className="flex gap-3 group"
     >
       <img

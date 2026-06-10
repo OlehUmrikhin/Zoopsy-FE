@@ -31,6 +31,7 @@ import { Route as ModeratorUsersRouteImport } from './routes/moderator/users'
 import { Route as ModeratorContentModerationRouteImport } from './routes/moderator/content-moderation'
 import { Route as ModeratorComplaintsRouteImport } from './routes/moderator/complaints'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminReviewsRouteImport } from './routes/admin/reviews'
 import { Route as AdminLogsRouteImport } from './routes/admin/logs'
 import { Route as AdminFinancesRouteImport } from './routes/admin/finances'
 import { Route as AdminContentModerationRouteImport } from './routes/admin/content-moderation'
@@ -152,6 +153,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminReviewsRoute = AdminReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminLogsRoute = AdminLogsRouteImport.update({
   id: '/logs',
   path: '/logs',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
   '/admin/logs': typeof AdminLogsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/users': typeof AdminUsersRoute
   '/moderator/complaints': typeof ModeratorComplaintsRoute
   '/moderator/content-moderation': typeof ModeratorContentModerationRoute
@@ -250,6 +257,7 @@ export interface FileRoutesByTo {
   '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
   '/admin/logs': typeof AdminLogsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/users': typeof AdminUsersRoute
   '/moderator/complaints': typeof ModeratorComplaintsRoute
   '/moderator/content-moderation': typeof ModeratorContentModerationRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/admin/content-moderation': typeof AdminContentModerationRoute
   '/admin/finances': typeof AdminFinancesRoute
   '/admin/logs': typeof AdminLogsRoute
+  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/users': typeof AdminUsersRoute
   '/moderator/complaints': typeof ModeratorComplaintsRoute
   '/moderator/content-moderation': typeof ModeratorContentModerationRoute
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
     | '/admin/content-moderation'
     | '/admin/finances'
     | '/admin/logs'
+    | '/admin/reviews'
     | '/admin/users'
     | '/moderator/complaints'
     | '/moderator/content-moderation'
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/admin/content-moderation'
     | '/admin/finances'
     | '/admin/logs'
+    | '/admin/reviews'
     | '/admin/users'
     | '/moderator/complaints'
     | '/moderator/content-moderation'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/admin/content-moderation'
     | '/admin/finances'
     | '/admin/logs'
+    | '/admin/reviews'
     | '/admin/users'
     | '/moderator/complaints'
     | '/moderator/content-moderation'
@@ -575,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/reviews': {
+      id: '/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AdminReviewsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/logs': {
       id: '/admin/logs'
       path: '/logs'
@@ -646,6 +665,7 @@ interface AdminRouteRouteChildren {
   AdminContentModerationRoute: typeof AdminContentModerationRoute
   AdminFinancesRoute: typeof AdminFinancesRoute
   AdminLogsRoute: typeof AdminLogsRoute
+  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminOrdersOrderIdRoute: typeof AdminOrdersOrderIdRoute
@@ -657,6 +677,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminContentModerationRoute: AdminContentModerationRoute,
   AdminFinancesRoute: AdminFinancesRoute,
   AdminLogsRoute: AdminLogsRoute,
+  AdminReviewsRoute: AdminReviewsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminOrdersOrderIdRoute: AdminOrdersOrderIdRoute,

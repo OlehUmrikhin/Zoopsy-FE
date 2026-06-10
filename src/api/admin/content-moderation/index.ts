@@ -1,4 +1,10 @@
-export { useContentModeration, useApproveContentMutation, useRejectContentMutation } from './queries';
+export {
+  useContentModeration,
+  useApproveContentMutation,
+  useRejectContentMutation,
+  useAdminUpdateReviewMutation,
+  useAdminDeleteReviewMutation,
+} from './queries';
 export { fetchContentForModeration, approveContent, rejectContent } from './fetchers';
 export type {
   UserReview,

@@ -1,4 +1,4 @@
-import { MdAccessTime, MdChat } from 'react-icons/md';
+import { MdAccessTime } from 'react-icons/md';
 import { useCurrentBooking } from '@api/booking';
 import { format, parseISO } from 'date-fns';
 import { uk } from 'date-fns/locale';
@@ -92,17 +92,11 @@ export function OwnerCurrentBooking() {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-3 border-t border-zoopsy-light-gray/60">
+      <div className="flex items-center pt-3 border-t border-zoopsy-light-gray/60">
         <div className="flex items-center gap-2 text-zoopsy-gray">
           <MdAccessTime className="text-base flex-shrink-0" />
           <span className="text-xs font-inter">Очікування фотозвіту від сіттера</span>
         </div>
-        <button
-          type="button"
-          className="w-9 h-9 rounded-full bg-zoopsy-green-500 text-white flex items-center justify-center hover:bg-zoopsy-green-700 transition-colors"
-        >
-          <MdChat className="text-base" />
-        </button>
       </div>
     </div>
   );
