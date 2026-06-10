@@ -137,8 +137,6 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [blockingUserId, setBlockingUserId] = useState<string | null>(null);
-  const [pendingAction, setPendingAction] = useState<'resolved' | 'rejected' | null>(null);
-
   const { data, isLoading, isError } = useAdminComplaints({
     page: 1,
     limit: 100,
@@ -158,10 +156,6 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
     if (selectedId && complaints.length > 0 && !complaints.some((c) => c.id === selectedId))
       setSelectedId(complaints[0].id);
   }, [complaints, selectedId]);
-
-  useEffect(() => {
-    setPendingAction(null);
-  }, [selectedId]);
 
   const handleBlock = (userId: string, currentlyBlocked: boolean) => {
     const newStatus = currentlyBlocked ? 'active' : 'blocked';
@@ -394,7 +388,7 @@ export function ComplaintsPage({ usersPath = '/admin/users' }: ComplaintsPagePro
                       disabled={!selected.bookingId}
                       onClick={() => {
                         if (selected.bookingId) {
-                          navigate({ to: '/admin/orders/$orderId' as any, params: { orderId: selected.bookingId } });
+                          navigate({ to: '/admin/orders/$orderId' as any, params: { orderId: selected.bookingId } as any });
                         }
                       }}
                     >
